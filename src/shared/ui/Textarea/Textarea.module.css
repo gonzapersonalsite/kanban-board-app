@@ -1,0 +1,31 @@
+.textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  resize: vertical;
+  min-height: 60px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* Touch: 16px font prevents iOS Safari auto-zoom when focusing the textarea */
+@media (pointer: coarse) {
+  .textarea {
+    font-size: 16px;
+  }
+}
+

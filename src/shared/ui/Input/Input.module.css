@@ -1,0 +1,34 @@
+.input {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/*
+ * Touch: taller touch target + 16px font prevents iOS Safari auto-zoom
+ * when focusing the input (iOS zooms in when font-size < 16px).
+ */
+@media (pointer: coarse) {
+  .input {
+    height: var(--touch-target-min);
+    font-size: 16px;
+  }
+}
+

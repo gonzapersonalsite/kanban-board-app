@@ -1,0 +1,74 @@
+/*
+ * Mobile: Dialog as a bottom-sheet — anchored to the bottom of the viewport.
+ * This is the standard native UX pattern on iOS and Android.
+ */
+.dialog {
+  border: none;
+  padding: 0;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+
+  /* Full-width bottom-anchored sheet on mobile */
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  /* Position at the bottom, accounting for safe-area (home indicator) */
+  margin-bottom: 0;
+  margin-top: auto;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+
+  /* Limit height so content above is still partially visible */
+  max-height: 92dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Backdrop: semi-transparent overlay */
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.body {
+  padding: 20px;
+  /* Allow the form to scroll if the virtual keyboard reduces viewport height */
+  overflow-y: auto;
+  /* Respect the iOS home indicator at the bottom of the sheet */
+  padding-bottom: max(20px, var(--safe-bottom));
+  flex: 1;
+  min-height: 0;
+}
+
+/*
+ * Tablet & desktop: centered modal, not a bottom-sheet.
+ */
+@media (min-width: 600px) {
+  .dialog {
+    /* Center in viewport */
+    margin: auto;
+    width: 90vw;
+    max-width: 480px;
+    max-height: 90dvh;
+    border-radius: var(--radius-lg);
+  }
+
+  .body {
+    padding-bottom: 20px;
+  }
+}
+
