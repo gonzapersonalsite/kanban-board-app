@@ -1,12 +1,5 @@
-export type BoardId = string
 export type ColumnId = string
 export type TaskId = string
-
-export interface Board {
-  id: BoardId
-  title: string
-  columnOrder: ColumnId[]
-}
 
 export interface Column {
   id: ColumnId

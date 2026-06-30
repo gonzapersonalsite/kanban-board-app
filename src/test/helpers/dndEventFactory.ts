@@ -28,7 +28,7 @@ interface TaskToTaskDragEventParams {
   targetTaskId: string
 }
 
-export function createTaskToTaskDragOverEvent({
+function createTaskToTaskDragOverEvent({
   taskId,
   sourceColumnId,
   targetColumnId,
@@ -69,7 +69,7 @@ interface TaskToColumnDragEventParams {
   targetIndex: number
 }
 
-export function createTaskToColumnDragOverEvent({
+function createTaskToColumnDragOverEvent({
   taskId,
   sourceColumnId,
   targetColumnId,
