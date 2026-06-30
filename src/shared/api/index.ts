@@ -4,4 +4,5 @@ export type {
   TaskId,
   Column,
   Task,
+  KanbanState,
 } from './slices/types'
