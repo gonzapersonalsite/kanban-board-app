@@ -39,6 +39,10 @@
   background: rgba(37, 99, 235, 0.03);
 }
 
+.dragging {
+  opacity: 0.4;
+}
+
 .content {
   flex: 1;
   /* On mobile, disable internal scroll so it grows */

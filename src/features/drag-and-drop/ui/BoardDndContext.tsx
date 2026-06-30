@@ -11,10 +11,14 @@ import { useKanbanStore } from '@/shared/api'
 import { TaskCard } from '@/entities/task'
 import {
   applyTaskDragOver,
+  applyColumnDragOver,
   cloneTasksSnapshot,
+  cloneColumnsSnapshot,
   resolveTasksAfterDragEnd,
+  resolveColumnsAfterDragEnd,
   type TasksByColumn,
 } from '../model/boardDndHandlers'
+import type { Column } from '@/shared/api'
 import styles from './BoardDndContext.module.css'
 
 interface BoardDndContextProps {
@@ -50,37 +54,78 @@ function TaskDragOverlayContent({
   return null
 }
 
+function ColumnDragOverlayContent({
+  source,
+}: {
+  source: DragOverEvent['operation']['source'] | null
+}) {
+  if (!source || source.type !== 'column') return null
+
+  const columnId = String(source.id)
+  const state = useKanbanStore.getState()
+  const column = state.columns.find((c) => c.id === columnId)
+  if (!column) return null
+
+  return <div className={styles.overlayColumn}>{column.title}</div>
+}
+
 export function BoardDndContext({ children }: BoardDndContextProps) {
   const previousTasksRef = useRef<TasksByColumn | null>(null)
+  const previousColumnsRef = useRef<Column[] | null>(null)
 
   const handleDragStart = () => {
     previousTasksRef.current = cloneTasksSnapshot(
       useKanbanStore.getState().tasks,
     )
+    previousColumnsRef.current = cloneColumnsSnapshot(
+      useKanbanStore.getState().columns,
+    )
   }
 
   const handleDragOver = (event: DragOverEvent) => {
     const { source } = event.operation
-    if (!source || source.type !== 'task') return
+    if (!source) return
 
-    useKanbanStore.setState((state) => ({
-      tasks: applyTaskDragOver(state.tasks, event),
-    }))
+    if (source.type === 'task') {
+      useKanbanStore.setState((state) => ({
+        tasks: applyTaskDragOver(state.tasks, event),
+      }))
+    } else if (source.type === 'column') {
+      useKanbanStore.setState((state) => ({
+        columns: applyColumnDragOver(state.columns, event),
+      }))
+    }
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const currentTasks = useKanbanStore.getState().tasks
-    const nextTasks = resolveTasksAfterDragEnd(
-      previousTasksRef.current,
-      event,
-      currentTasks,
-    )
+    const { source } = event.operation
 
-    if (nextTasks !== currentTasks) {
-      useKanbanStore.setState({ tasks: nextTasks })
+    if (source?.type === 'task') {
+      const currentTasks = useKanbanStore.getState().tasks
+      const nextTasks = resolveTasksAfterDragEnd(
+        previousTasksRef.current,
+        event,
+        currentTasks,
+      )
+
+      if (nextTasks !== currentTasks) {
+        useKanbanStore.setState({ tasks: nextTasks })
+      }
+    } else if (source?.type === 'column') {
+      const currentColumns = useKanbanStore.getState().columns
+      const nextColumns = resolveColumnsAfterDragEnd(
+        previousColumnsRef.current,
+        event,
+        currentColumns,
+      )
+
+      if (nextColumns !== currentColumns) {
+        useKanbanStore.setState({ columns: nextColumns })
+      }
     }
 
     previousTasksRef.current = null
+    previousColumnsRef.current = null
   }
 
   return (
@@ -92,7 +137,12 @@ export function BoardDndContext({ children }: BoardDndContextProps) {
     >
       {children}
       <DragOverlay className={styles.overlay}>
-        {(source) => <TaskDragOverlayContent source={source} />}
+        {(source) => (
+          <>
+            <TaskDragOverlayContent source={source} />
+            <ColumnDragOverlayContent source={source} />
+          </>
+        )}
       </DragOverlay>
     </DragDropProvider>
   )

@@ -1,3 +1,4 @@
+import { GripVertical } from 'lucide-react'
 import {
   BoardDndContext,
   SortableColumn,
@@ -18,14 +19,19 @@ function BoardContent() {
   return (
     <>
       <div className={styles.board}>
-        {board.columns.map((col) => (
-          <SortableColumn key={col.id} columnId={col.id}>
-            <ColumnHeader
-              column={col}
-              onRename={(title) => board.handleRename(col.id, title)}
-              onDelete={() => board.handleDeleteColumn(col.id)}
-              canDelete={board.canDeleteColumn(col.id)}
-            />
+        {board.columns.map((col, index) => (
+          <SortableColumn key={col.id} columnId={col.id} index={index}>
+            <div className={styles.columnHeaderArea}>
+              <div className={styles.columnDragHandle} data-dnd-handle>
+                <GripVertical size={16} />
+              </div>
+              <ColumnHeader
+                column={col}
+                onRename={(title) => board.handleRename(col.id, title)}
+                onDelete={() => board.handleDeleteColumn(col.id)}
+                canDelete={board.canDeleteColumn(col.id)}
+              />
+            </div>
             <div className={styles.taskList}>
               {board.getColumnTasks(col.id).map((task, taskIndex) => (
                 <DraggableTaskCard

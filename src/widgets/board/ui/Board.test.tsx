@@ -11,7 +11,7 @@ vi.mock('@dnd-kit/react', () => ({
   ),
   DragOverlay: () => null,
   useDroppable: () => ({ ref: () => undefined, isDropTarget: false }),
-  useDragOperation: () => ({ source: null }),
+  useDragOperation: () => ({ source: null, target: null }),
   PointerSensor: {
     configure: () => 'PointerSensor',
   },

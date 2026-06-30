@@ -27,6 +27,18 @@
   gap: 6px;
 }
 
+.gripIcon {
+  color: var(--color-text);
+  flex-shrink: 0;
+  opacity: 0.15;
+  transition: opacity 120ms ease;
+  margin-top: 1px;
+}
+
+.card:hover .gripIcon {
+  opacity: 0.45;
+}
+
 .title {
   margin: 0;
   font-size: 14px;
@@ -76,6 +88,11 @@
 
   .card:active {
     cursor: default;
+  }
+
+  .gripIcon {
+    /* Always visible on touch — no hover available */
+    opacity: 0.35;
   }
 
   .actions {

@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from 'lucide-react'
+import { GripVertical, Pencil, Trash2 } from 'lucide-react'
 import type { Task } from '@/shared/api'
 import { useTranslation } from '@/shared/i18n'
 import { IconButton, Tooltip } from '@/shared/ui'
@@ -25,6 +25,7 @@ export function TaskCard({
   return (
     <div className={classes}>
       <div className={styles.header}>
+        <GripVertical size={14} className={styles.gripIcon} />
         <h3 className={styles.title}>{task.title}</h3>
         <div className={styles.actions}>
           <Tooltip text={t('task.edit', { title: task.title })}>
