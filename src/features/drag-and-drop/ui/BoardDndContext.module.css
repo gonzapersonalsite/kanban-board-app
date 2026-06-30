@@ -1,0 +1,25 @@
+.overlay {
+  z-index: 1000;
+}
+
+.overlayCard {
+  transform: scale(1.03);
+  box-shadow: var(--shadow-md);
+  opacity: 0.95;
+  width: calc(90vw - 16px);
+  max-width: 500px;
+}
+
+@media (min-width: 768px) {
+  .overlayCard {
+    width: 296px;
+    max-width: 296px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .overlayCard {
+    width: 276px;
+    max-width: 276px;
+  }
+}
