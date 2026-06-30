@@ -1,0 +1,58 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
+  /* Mobile: full width, stacked vertically */
+  width: 100%;
+  min-width: unset;
+  max-width: none;
+  /* On mobile, let the column grow to show all tasks, so we scroll the whole page */
+  max-height: none;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 150ms ease, background-color 150ms ease;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .shell {
+    /* Tablet: switch back to horizontal Kanban columns with internal scroll */
+    width: 280px;
+    max-width: 280px;
+    max-height: calc(100dvh - 88px);
+    scroll-snap-align: start;
+  }
+}
+
+@media (min-width: 1024px) {
+  .shell {
+    /* Desktop: slightly wider columns */
+    width: 300px;
+    max-width: 340px;
+    max-height: calc(100dvh - 92px);
+  }
+}
+
+.highlighted {
+  border-color: var(--color-primary);
+  background: rgba(37, 99, 235, 0.03);
+}
+
+.content {
+  flex: 1;
+  /* On mobile, disable internal scroll so it grows */
+  overflow-y: visible;
+  padding: 0 12px;
+  /* Bottom padding includes safe-area for iOS home indicator */
+  padding-bottom: max(12px, var(--safe-bottom));
+  min-height: 60px;
+}
+
+@media (min-width: 768px) {
+  .content {
+    /* Tablet/Desktop: internal scroll for columns */
+    overflow-y: auto;
+  }
+}
+

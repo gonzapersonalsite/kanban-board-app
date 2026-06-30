@@ -1,0 +1,80 @@
+.header {
+  padding: 12px 12px 8px;
+}
+
+.displayRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.titleButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  min-width: 0;
+  flex: 1;
+}
+
+.titleButton:hover {
+  background: var(--color-surface-hover);
+}
+
+.titleButton:hover .editIcon {
+  opacity: 1;
+}
+
+.titleButton:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editIcon {
+  opacity: 0;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  transition: opacity 120ms ease;
+}
+
+.editRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editInput {
+  font-size: 14px;
+  font-weight: 600;
+  height: 30px;
+}
+
+/*
+ * Touch devices don't have hover — always show the edit icon
+ * and ensure the button meets the 44px touch target minimum (WCAG 2.5.5).
+ */
+@media (pointer: coarse) {
+  .titleButton {
+    min-height: var(--touch-target-min);
+  }
+
+  .editIcon {
+    opacity: 1;
+  }
+}
+
