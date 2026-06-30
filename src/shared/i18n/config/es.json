@@ -3,30 +3,32 @@
     "title": "Tablero Kanban"
   },
   "board": {
-    "empty_column": "Sin tareas aún",
-    "add_column": "Agregar Columna",
-    "new_column_title": "Nuevo título de columna...",
-    "column_title_aria": "Título de columna"
+    "empty_column": "Sin tareas aún"
+  },
+  "column": {
+    "add": "Agregar Columna",
+    "rename": "Renombrar columna",
+    "save_title": "Guardar título",
+    "cancel_edit": "Cancelar edición",
+    "delete": "Eliminar columna \"{{title}}\"",
+    "title_placeholder": "Nuevo título de columna...",
+    "title_aria": "Título de columna"
   },
   "task": {
-    "add": "Agregar Carta",
-    "new_task_title": "Nuevo título de tarea...",
-    "task_title_aria": "Título de tarea",
-    "edit_dialog_title": "Editar Tarea",
+    "add": "Agregar Tarjeta",
+    "edit": "Editar tarea \"{{title}}\"",
+    "delete": "Eliminar tarea \"{{title}}\"",
+    "title_placeholder": "Nuevo título de tarea...",
+    "title_aria": "Título de tarea"
+  },
+  "task_dialog": {
+    "title": "Editar Tarea",
     "title_label": "Título",
     "title_placeholder": "Título de la tarea",
     "description_label": "Descripción",
     "description_placeholder": "Descripción de la tarea (opcional)",
     "cancel": "Cancelar",
-    "save": "Guardar",
-    "edit": "Editar tarea \"{{title}}\"",
-    "delete": "Eliminar tarea \"{{title}}\""
-  },
-  "column": {
-    "save_title": "Guardar título",
-    "cancel_edit": "Cancelar edición",
-    "rename": "Renombrar columna",
-    "delete": "Eliminar columna \"{{title}}\""
+    "save": "Guardar"
   },
   "dialog": {
     "close": "Cerrar diálogo"

@@ -34,8 +34,8 @@ export function AddTaskForm({ columnId }: AddTaskFormProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={t('task.new_task_title')}
-        aria-label={t('task.task_title_aria')}
+        placeholder={t('task.title_placeholder')}
+        aria-label={t('task.title_aria')}
         className={styles.input}
       />
       <Button onClick={handleSubmit} size="sm" variant="ghost">

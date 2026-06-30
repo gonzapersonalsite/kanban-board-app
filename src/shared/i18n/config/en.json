@@ -3,30 +3,32 @@
     "title": "Kanban Board"
   },
   "board": {
-    "empty_column": "No tasks yet",
-    "add_column": "Add Column",
-    "new_column_title": "New column title...",
-    "column_title_aria": "Column title"
+    "empty_column": "No tasks yet"
+  },
+  "column": {
+    "add": "Add Column",
+    "rename": "Rename column",
+    "save_title": "Save title",
+    "cancel_edit": "Cancel edit",
+    "delete": "Delete column \"{{title}}\"",
+    "title_placeholder": "New column title...",
+    "title_aria": "Column title"
   },
   "task": {
     "add": "Add Card",
-    "new_task_title": "New task title...",
-    "task_title_aria": "Task title",
-    "edit_dialog_title": "Edit Task",
+    "edit": "Edit task \"{{title}}\"",
+    "delete": "Delete task \"{{title}}\"",
+    "title_placeholder": "New task title...",
+    "title_aria": "Task title"
+  },
+  "task_dialog": {
+    "title": "Edit Task",
     "title_label": "Title",
     "title_placeholder": "Task title",
     "description_label": "Description",
     "description_placeholder": "Task description (optional)",
     "cancel": "Cancel",
-    "save": "Save",
-    "edit": "Edit task \"{{title}}\"",
-    "delete": "Delete task \"{{title}}\""
-  },
-  "column": {
-    "save_title": "Save title",
-    "cancel_edit": "Cancel edit",
-    "rename": "Rename column",
-    "delete": "Delete column \"{{title}}\""
+    "save": "Save"
   },
   "dialog": {
     "close": "Close dialog"

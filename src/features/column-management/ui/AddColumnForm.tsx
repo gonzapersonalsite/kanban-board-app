@@ -29,13 +29,13 @@ export function AddColumnForm() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={t('board.new_column_title')}
-        aria-label={t('board.column_title_aria')}
+        placeholder={t('column.title_placeholder')}
+        aria-label={t('column.title_aria')}
         className={styles.input}
       />
       <Button onClick={handleSubmit} size="sm">
         <Plus size={16} />
-        {t('board.add_column')}
+        {t('column.add')}
       </Button>
     </div>
   )

@@ -36,32 +36,32 @@ export function TaskDialog({
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} title={t('task.edit_dialog_title')} closeLabel={t('dialog.close')}>
+    <Dialog open={open} onClose={handleClose} title={t('task_dialog.title')} closeLabel={t('dialog.close')}>
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.label}>
-          {t('task.title_label')}
+          {t('task_dialog.title_label')}
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder={t('task.title_placeholder')}
+            placeholder={t('task_dialog.title_placeholder')}
             autoFocus
           />
         </label>
         <label className={styles.label}>
-          {t('task.description_label')}
+          {t('task_dialog.description_label')}
           <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder={t('task.description_placeholder')}
+            placeholder={t('task_dialog.description_placeholder')}
             rows={4}
           />
         </label>
         <div className={styles.actions}>
           <Button type="button" variant="ghost" onClick={handleClose}>
-            {t('task.cancel')}
+            {t('task_dialog.cancel')}
           </Button>
           <Button type="submit" disabled={!title.trim()}>
-            {t('task.save')}
+            {t('task_dialog.save')}
           </Button>
         </div>
       </form>
