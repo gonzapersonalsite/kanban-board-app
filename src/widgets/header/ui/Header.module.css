@@ -1,0 +1,36 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* Safe-area: respects notch/island at the top and lateral bars in landscape */
+  padding-top: max(10px, var(--safe-top));
+  padding-bottom: 10px;
+  padding-left: max(14px, var(--safe-left));
+  padding-right: max(14px, var(--safe-right));
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  /* Prevent orphaned single words on narrow screens */
+  text-wrap: balance;
+}
+
+@media (min-width: 768px) {
+  .header {
+    padding-top: max(12px, var(--safe-top));
+    padding-bottom: 12px;
+    padding-left: max(20px, var(--safe-left));
+    padding-right: max(20px, var(--safe-right));
+  }
+
+  .title {
+    font-size: 1.125rem;
+  }
+}
+

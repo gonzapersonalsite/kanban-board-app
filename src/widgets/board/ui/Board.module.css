@@ -1,0 +1,46 @@
+.board {
+  display: flex;
+  gap: 16px;
+  /* Mobile layout: stacked vertically */
+  flex-direction: column;
+  padding-block: 16px;
+  padding-inline: max(16px, var(--safe-left));
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1;
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .board {
+    /* Tablet layout: Wrap as a grid if preferred, but usually flex row is better. Let's make it horizontal scroll from tablet up */
+    flex-direction: row;
+    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block: 16px;
+    padding-right: max(16px, var(--safe-right));
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .board {
+    gap: 16px;
+    padding-block: 20px;
+    padding-inline: max(20px, var(--safe-left));
+    padding-right: max(20px, var(--safe-right));
+    /* Desktop: no forced snap — mouse users can scroll freely */
+    scroll-snap-type: none;
+  }
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
