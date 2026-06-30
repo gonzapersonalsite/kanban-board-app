@@ -2,6 +2,7 @@ import { useState, type KeyboardEvent } from 'react'
 import { Plus } from 'lucide-react'
 import { useKanbanStore } from '@/shared/api'
 import type { ColumnId } from '@/shared/api'
+import { useTranslation } from '@/shared/i18n'
 import { Button, Input } from '@/shared/ui'
 import styles from './AddTaskForm.module.css'
 
@@ -10,6 +11,7 @@ interface AddTaskFormProps {
 }
 
 export function AddTaskForm({ columnId }: AddTaskFormProps) {
+  const { t } = useTranslation()
   const [title, setTitle] = useState('')
   const addTask = useKanbanStore((state) => state.addTask)
 
@@ -32,13 +34,13 @@ export function AddTaskForm({ columnId }: AddTaskFormProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="New task title..."
-        aria-label="Task title"
+        placeholder={t('task.new_task_title')}
+        aria-label={t('task.task_title_aria')}
         className={styles.input}
       />
       <Button onClick={handleSubmit} size="sm" variant="ghost">
         <Plus size={15} />
-        Add Card
+        {t('task.add')}
       </Button>
     </div>
   )

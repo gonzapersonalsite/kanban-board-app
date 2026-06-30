@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { useTranslation } from '@/shared/i18n'
 import { Dialog, Input, Textarea, Button } from '@/shared/ui'
 import styles from './TaskDialog.module.css'
 
@@ -17,6 +18,7 @@ export function TaskDialog({
   initialTitle = '',
   initialDescription = '',
 }: TaskDialogProps) {
+  const { t } = useTranslation()
   const [title, setTitle] = useState(initialTitle)
   const [description, setDescription] = useState(initialDescription)
 
@@ -34,32 +36,32 @@ export function TaskDialog({
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} title="Edit Task">
+    <Dialog open={open} onClose={handleClose} title={t('task.edit_dialog_title')} closeLabel={t('dialog.close')}>
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.label}>
-          Title
+          {t('task.title_label')}
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Task title"
+            placeholder={t('task.title_placeholder')}
             autoFocus
           />
         </label>
         <label className={styles.label}>
-          Description
+          {t('task.description_label')}
           <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Task description (optional)"
+            placeholder={t('task.description_placeholder')}
             rows={4}
           />
         </label>
         <div className={styles.actions}>
           <Button type="button" variant="ghost" onClick={handleClose}>
-            Cancel
+            {t('task.cancel')}
           </Button>
           <Button type="submit" disabled={!title.trim()}>
-            Save
+            {t('task.save')}
           </Button>
         </div>
       </form>

@@ -30,9 +30,9 @@ describe('Board', () => {
   it('renders_seed_columns_and_tasks', () => {
     renderWithKanban(<Board />)
 
-    expect(screen.getByRole('button', { name: /to do/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /in progress/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /^done$/i })).toBeInTheDocument()
+    expect(screen.getByText('To Do')).toBeInTheDocument()
+    expect(screen.getByText('In Progress')).toBeInTheDocument()
+    expect(screen.getByText('Done')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Alpha' })).toBeInTheDocument()
   })
 

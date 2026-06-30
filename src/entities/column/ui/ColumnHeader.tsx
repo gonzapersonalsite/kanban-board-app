@@ -1,8 +1,8 @@
 import { useState, type KeyboardEvent } from 'react'
 import { Pencil, Trash2, Check, X } from 'lucide-react'
 import type { Column } from '@/shared/api'
-import { IconButton } from '@/shared/ui'
-import { Input } from '@/shared/ui'
+import { useTranslation } from '@/shared/i18n'
+import { IconButton, Input, Tooltip } from '@/shared/ui'
 import styles from './ColumnHeader.module.css'
 
 interface ColumnHeaderProps {
@@ -18,6 +18,7 @@ export function ColumnHeader({
   onDelete,
   canDelete,
 }: ColumnHeaderProps) {
+  const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false)
   const [draftTitle, setDraftTitle] = useState(column.title)
 
@@ -59,26 +60,35 @@ export function ColumnHeader({
             autoFocus
             className={styles.editInput}
           />
-          <IconButton icon={<Check size={16} />} label="Save title" onClick={handleSave} />
-          <IconButton icon={<X size={16} />} label="Cancel edit" onClick={handleCancel} />
+          <Tooltip text={t('column.save_title')}>
+            <IconButton icon={<Check size={16} />} label={t('column.save_title')} onClick={handleSave} />
+          </Tooltip>
+          <Tooltip text={t('column.cancel_edit')}>
+            <IconButton icon={<X size={16} />} label={t('column.cancel_edit')} onClick={handleCancel} />
+          </Tooltip>
         </div>
       ) : (
         <div className={styles.displayRow}>
-          <button
-            type="button"
-            className={styles.titleButton}
-            onClick={handleStartEdit}
-          >
-            <span className={styles.title}>{column.title}</span>
-            <Pencil size={13} className={styles.editIcon} />
-          </button>
+          <Tooltip text={t('column.rename')}>
+            <button
+              type="button"
+              className={styles.titleButton}
+              aria-label={t('column.rename')}
+              onClick={handleStartEdit}
+            >
+              <span className={styles.title}>{column.title}</span>
+              <Pencil size={13} className={styles.editIcon} />
+            </button>
+          </Tooltip>
           {canDelete && (
-            <IconButton
-              icon={<Trash2 size={15} />}
-              label={`Delete column "${column.title}"`}
-              variant="danger"
-              onClick={onDelete}
-            />
+            <Tooltip text={t('column.delete', { title: column.title })}>
+              <IconButton
+                icon={<Trash2 size={15} />}
+                label={t('column.delete', { title: column.title })}
+                variant="danger"
+                onClick={onDelete}
+              />
+            </Tooltip>
           )}
         </div>
       )}

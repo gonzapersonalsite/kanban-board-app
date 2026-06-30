@@ -1,0 +1,39 @@
+{
+  "app": {
+    "title": "Tablero Kanban"
+  },
+  "board": {
+    "empty_column": "Sin tareas aún",
+    "add_column": "Agregar Columna",
+    "new_column_title": "Nuevo título de columna...",
+    "column_title_aria": "Título de columna"
+  },
+  "task": {
+    "add": "Agregar Carta",
+    "new_task_title": "Nuevo título de tarea...",
+    "task_title_aria": "Título de tarea",
+    "edit_dialog_title": "Editar Tarea",
+    "title_label": "Título",
+    "title_placeholder": "Título de la tarea",
+    "description_label": "Descripción",
+    "description_placeholder": "Descripción de la tarea (opcional)",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar tarea \"{{title}}\"",
+    "delete": "Eliminar tarea \"{{title}}\""
+  },
+  "column": {
+    "save_title": "Guardar título",
+    "cancel_edit": "Cancelar edición",
+    "rename": "Renombrar columna",
+    "delete": "Eliminar columna \"{{title}}\""
+  },
+  "dialog": {
+    "close": "Cerrar diálogo"
+  },
+  "seed": {
+    "column_todo": "Por Hacer",
+    "column_in_progress": "En Progreso",
+    "column_done": "Terminado"
+  }
+}

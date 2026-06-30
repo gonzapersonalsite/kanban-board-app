@@ -1,10 +1,12 @@
 import { useState, type KeyboardEvent } from 'react'
 import { Plus } from 'lucide-react'
 import { useKanbanStore } from '@/shared/api'
+import { useTranslation } from '@/shared/i18n'
 import { Button, Input } from '@/shared/ui'
 import styles from './AddColumnForm.module.css'
 
 export function AddColumnForm() {
+  const { t } = useTranslation()
   const [title, setTitle] = useState('')
   const addColumn = useKanbanStore((state) => state.addColumn)
 
@@ -27,13 +29,13 @@ export function AddColumnForm() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="New column title..."
-        aria-label="Column title"
+        placeholder={t('board.new_column_title')}
+        aria-label={t('board.column_title_aria')}
         className={styles.input}
       />
       <Button onClick={handleSubmit} size="sm">
         <Plus size={16} />
-        Add Column
+        {t('board.add_column')}
       </Button>
     </div>
   )

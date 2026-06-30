@@ -1,12 +1,17 @@
 import { nanoid } from 'nanoid'
 import type { StateCreator } from 'zustand'
+import type { Column } from './types'
 import type { ColumnSlice, KanbanState } from './types'
+import { useI18nStore } from '@/shared/i18n'
 
-const seedColumns = [
-  { id: nanoid(), title: 'To Do' },
-  { id: nanoid(), title: 'In Progress' },
-  { id: nanoid(), title: 'Done' },
-]
+function getSeedColumns(): Column[] {
+  const t = useI18nStore.getState().t
+  return [
+    { id: nanoid(), title: t('seed.column_todo') },
+    { id: nanoid(), title: t('seed.column_in_progress') },
+    { id: nanoid(), title: t('seed.column_done') },
+  ]
+}
 
 export const createColumnSlice: StateCreator<
   KanbanState,
@@ -14,7 +19,7 @@ export const createColumnSlice: StateCreator<
   [],
   ColumnSlice
 > = (set) => ({
-  columns: seedColumns,
+  columns: getSeedColumns(),
 
   addColumn: (title) => {
     const trimmed = title.trim()

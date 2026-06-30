@@ -18,7 +18,7 @@ describe('ColumnHeader', () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: /to do/i }))
+    fireEvent.click(screen.getByRole('button', { name: /rename column/i }))
     fireEvent.change(screen.getByDisplayValue('To Do'), {
       target: { value: '  Backlog  ' },
     })

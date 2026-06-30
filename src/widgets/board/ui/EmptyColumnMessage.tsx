@@ -1,5 +1,8 @@
+import { useTranslation } from '@/shared/i18n'
 import styles from './EmptyColumnMessage.module.css'
 
 export function EmptyColumnMessage() {
-  return <p className={styles.message}>No tasks yet</p>
+  const { t } = useTranslation()
+
+  return <p className={styles.message}>{t('board.empty_column')}</p>
 }

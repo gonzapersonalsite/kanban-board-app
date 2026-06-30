@@ -8,9 +8,10 @@ interface DialogProps {
   onClose: () => void
   title: string
   children: ReactNode
+  closeLabel?: string
 }
 
-export function Dialog({ open, onClose, title, children }: DialogProps) {
+export function Dialog({ open, onClose, title, children, closeLabel = 'Close dialog' }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
         <h2 className={styles.title}>{title}</h2>
         <IconButton
           icon={<X size={18} />}
-          label="Close dialog"
+          label={closeLabel}
           onClick={onClose}
         />
       </div>

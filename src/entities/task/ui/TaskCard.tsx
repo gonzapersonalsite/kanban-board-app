@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react'
 import type { Task } from '@/shared/api'
-import { IconButton } from '@/shared/ui'
+import { useTranslation } from '@/shared/i18n'
+import { IconButton, Tooltip } from '@/shared/ui'
 import styles from './TaskCard.module.css'
 
 interface TaskCardProps {
@@ -16,6 +17,7 @@ export function TaskCard({
   onDelete,
   isDragging = false,
 }: TaskCardProps) {
+  const { t } = useTranslation()
   const classes = [styles.card, isDragging ? styles.dragging : '']
     .filter(Boolean)
     .join(' ')
@@ -25,17 +27,21 @@ export function TaskCard({
       <div className={styles.header}>
         <h3 className={styles.title}>{task.title}</h3>
         <div className={styles.actions}>
-          <IconButton
-            icon={<Pencil size={14} />}
-            label={`Edit task "${task.title}"`}
-            onClick={onEdit}
-          />
-          <IconButton
-            icon={<Trash2 size={14} />}
-            label={`Delete task "${task.title}"`}
-            variant="danger"
-            onClick={onDelete}
-          />
+          <Tooltip text={t('task.edit', { title: task.title })}>
+            <IconButton
+              icon={<Pencil size={14} />}
+              label={t('task.edit', { title: task.title })}
+              onClick={onEdit}
+            />
+          </Tooltip>
+          <Tooltip text={t('task.delete', { title: task.title })}>
+            <IconButton
+              icon={<Trash2 size={14} />}
+              label={t('task.delete', { title: task.title })}
+              variant="danger"
+              onClick={onDelete}
+            />
+          </Tooltip>
         </div>
       </div>
       {task.description && (
