@@ -12,7 +12,7 @@ export const createTaskSlice: StateCreator<
 > = (set) => ({
   tasks: {},
 
-  addTask: (columnId, title, description = '') => {
+  addTask: (columnId, title, description = '', dueDate) => {
     const trimmed = title.trim()
     if (!trimmed) {
       const t = useI18nStore.getState().t
@@ -24,6 +24,7 @@ export const createTaskSlice: StateCreator<
         id: nanoid(),
         title: trimmed,
         description: description.trim(),
+        ...(dueDate ? { dueDate } : {}),
       }
       const columnTasks = state.tasks[columnId] ?? []
       return {

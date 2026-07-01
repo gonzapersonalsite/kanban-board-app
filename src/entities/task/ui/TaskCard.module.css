@@ -111,6 +111,25 @@
   }
 }
 
+.dueDate {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.overdue {
+  color: #ef4444;
+}
+
+.dueToday {
+  color: #f59e0b;
+}
+
+.upcoming {
+  color: var(--color-text-secondary);
+}
+
 @keyframes cardEnter {
   from {
     opacity: 0;

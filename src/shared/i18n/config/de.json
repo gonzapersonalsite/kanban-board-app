@@ -19,7 +19,10 @@
     "edit": "Aufgabe \"{{title}}\" bearbeiten",
     "delete": "Aufgabe \"{{title}}\" löschen",
     "title_placeholder": "Neuer Aufgabentitel...",
-    "title_aria": "Aufgabentitel"
+    "title_aria": "Aufgabentitel",
+    "overdue": "Überfällig",
+    "due_today": "Heute fällig",
+    "due": "Fällig"
   },
   "task_dialog": {
     "title": "Aufgabe bearbeiten",
@@ -27,6 +30,7 @@
     "title_placeholder": "Aufgabentitel",
     "description_label": "Beschreibung",
     "description_placeholder": "Aufgabenbeschreibung (optional)",
+    "due_date_label": "Fälligkeitsdatum",
     "cancel": "Abbrechen",
     "save": "Speichern"
   },

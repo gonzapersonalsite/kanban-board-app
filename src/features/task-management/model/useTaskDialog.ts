@@ -23,10 +23,14 @@ export function useTaskDialog() {
   }, [])
 
   const handleSave = useCallback(
-    (title: string, description: string) => {
+    (title: string, description: string, dueDate: string) => {
       if (!editingColumnId || !editingTask) return
 
-      updateTask(editingColumnId, editingTask.id, { title, description })
+      updateTask(editingColumnId, editingTask.id, {
+        title,
+        description,
+        dueDate: dueDate || undefined,
+      })
       close()
     },
     [editingTask, editingColumnId, updateTask, close],

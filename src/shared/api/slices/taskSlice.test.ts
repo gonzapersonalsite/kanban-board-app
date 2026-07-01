@@ -53,7 +53,7 @@ describe('taskSlice', () => {
         (task) => task.id === TASK_ALPHA_ID,
       )
 
-      expect(updated).toEqual({
+      expect(updated).toMatchObject({
         id: TASK_ALPHA_ID,
         title: 'Updated alpha',
         description: 'Updated description',

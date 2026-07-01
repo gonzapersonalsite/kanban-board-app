@@ -19,7 +19,10 @@
     "edit": "Editar tarea \"{{title}}\"",
     "delete": "Eliminar tarea \"{{title}}\"",
     "title_placeholder": "Nuevo título de tarea...",
-    "title_aria": "Título de tarea"
+    "title_aria": "Título de tarea",
+    "overdue": "Vencida",
+    "due_today": "Vence hoy",
+    "due": "Vence"
   },
   "task_dialog": {
     "title": "Editar Tarea",
@@ -27,6 +30,7 @@
     "title_placeholder": "Título de la tarea",
     "description_label": "Descripción",
     "description_placeholder": "Descripción de la tarea (opcional)",
+    "due_date_label": "Fecha de vencimiento",
     "cancel": "Cancelar",
     "save": "Guardar"
   },

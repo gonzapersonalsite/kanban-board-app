@@ -19,7 +19,10 @@
     "edit": "Edit task \"{{title}}\"",
     "delete": "Delete task \"{{title}}\"",
     "title_placeholder": "New task title...",
-    "title_aria": "Task title"
+    "title_aria": "Task title",
+    "overdue": "Overdue",
+    "due_today": "Due today",
+    "due": "Due"
   },
   "task_dialog": {
     "title": "Edit Task",
@@ -27,6 +30,7 @@
     "title_placeholder": "Task title",
     "description_label": "Description",
     "description_placeholder": "Task description (optional)",
+    "due_date_label": "Due date",
     "cancel": "Cancel",
     "save": "Save"
   },

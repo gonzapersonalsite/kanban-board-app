@@ -1,4 +1,5 @@
 import { useState, useId, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './Tooltip.module.css'
 
 interface TooltipProps {
@@ -36,16 +37,18 @@ export function Tooltip({ text, children }: TooltipProps) {
       <span ref={triggerRef} aria-describedby={id} className={styles.trigger}>
         {children}
       </span>
-      {visible && (
-        <span
-          className={styles.tooltip}
-          id={id}
-          role="tooltip"
-          style={{ top: coords.top, left: coords.left }}
-        >
-          {text}
-        </span>
-      )}
+      {visible &&
+        createPortal(
+          <span
+            className={styles.tooltip}
+            id={id}
+            role="tooltip"
+            style={{ top: coords.top, left: coords.left }}
+          >
+            {text}
+          </span>,
+          document.body,
+        )}
     </span>
   )
 }

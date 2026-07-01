@@ -78,6 +78,7 @@ function BoardContent() {
           onSave={board.taskDialog.handleSave}
           initialTitle={board.taskDialog.editingTask?.title}
           initialDescription={board.taskDialog.editingTask?.description}
+          initialDueDate={board.taskDialog.editingTask?.dueDate}
         />
       )}
     </>

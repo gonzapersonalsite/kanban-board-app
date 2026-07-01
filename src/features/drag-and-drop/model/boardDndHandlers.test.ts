@@ -3,7 +3,6 @@ import {
   applyTaskDragOver,
   cloneTasksSnapshot,
   resolveTasksAfterDragEnd,
-  shouldApplyTaskDragOver,
 } from '@/features/drag-and-drop/model/boardDndHandlers'
 import {
   COLUMN_DONE_ID,
@@ -21,17 +20,6 @@ import {
 } from '@/test/helpers/dndEventFactory'
 
 describe('boardDndHandlers', () => {
-  describe('shouldApplyTaskDragOver', () => {
-    it('returns_true_for_task_sources', () => {
-      expect(shouldApplyTaskDragOver({ type: 'task' })).toBe(true)
-    })
-
-    it('returns_false_for_non_task_sources', () => {
-      expect(shouldApplyTaskDragOver({ type: 'column' })).toBe(false)
-      expect(shouldApplyTaskDragOver(undefined)).toBe(false)
-    })
-  })
-
   describe('cloneTasksSnapshot', () => {
     it('creates_a_deep_copy_of_tasks', () => {
       const snapshot = cloneTasksSnapshot(fixtureTasks)

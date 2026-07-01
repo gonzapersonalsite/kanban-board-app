@@ -16,7 +16,7 @@ export const fixtureColumns: Column[] = [
 
 export const fixtureTasks: Record<ColumnId, Task[]> = {
   [COLUMN_TODO_ID]: [
-    { id: TASK_ALPHA_ID, title: 'Alpha', description: 'First task' },
+    { id: TASK_ALPHA_ID, title: 'Alpha', description: 'First task', dueDate: '2026-07-15' },
     { id: TASK_BETA_ID, title: 'Beta', description: '' },
   ],
   [COLUMN_PROGRESS_ID]: [

@@ -6,9 +6,10 @@ import styles from './TaskDialog.module.css'
 interface TaskDialogProps {
   open: boolean
   onClose: () => void
-  onSave: (title: string, description: string) => void
+  onSave: (title: string, description: string, dueDate: string) => void
   initialTitle?: string
   initialDescription?: string
+  initialDueDate?: string
 }
 
 export function TaskDialog({
@@ -17,21 +18,24 @@ export function TaskDialog({
   onSave,
   initialTitle = '',
   initialDescription = '',
+  initialDueDate = '',
 }: TaskDialogProps) {
   const { t } = useTranslation()
   const [title, setTitle] = useState(initialTitle)
   const [description, setDescription] = useState(initialDescription)
+  const [dueDate, setDueDate] = useState(initialDueDate)
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const trimmed = title.trim()
     if (!trimmed) return
-    onSave(trimmed, description.trim())
+    onSave(trimmed, description.trim(), dueDate)
   }
 
   const handleClose = () => {
     setTitle(initialTitle)
     setDescription(initialDescription)
+    setDueDate(initialDueDate)
     onClose()
   }
 
@@ -54,6 +58,14 @@ export function TaskDialog({
             onChange={(e) => setDescription(e.target.value)}
             placeholder={t('task_dialog.description_placeholder')}
             rows={4}
+          />
+        </label>
+        <label className={styles.label}>
+          {t('task_dialog.due_date_label')}
+          <Input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
           />
         </label>
         <div className={styles.actions}>

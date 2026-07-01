@@ -37,7 +37,7 @@ describe('useTaskDialog', () => {
       })
 
       act(() => {
-        result.current.handleSave('Edited alpha', 'Edited description')
+        result.current.handleSave('Edited alpha', 'Edited description', '')
       })
 
       const updated = useKanbanStore
@@ -45,11 +45,12 @@ describe('useTaskDialog', () => {
         .tasks[COLUMN_TODO_ID]
         .find((item) => item.id === TASK_ALPHA_ID)
 
-      expect(updated).toEqual({
+      expect(updated).toMatchObject({
         id: TASK_ALPHA_ID,
         title: 'Edited alpha',
         description: 'Edited description',
       })
+      expect(updated?.dueDate).toBeUndefined()
     })
   })
 

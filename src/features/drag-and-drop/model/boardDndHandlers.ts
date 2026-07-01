@@ -12,12 +12,6 @@ export function cloneColumnsSnapshot(columns: Column[]): Column[] {
   return [...columns]
 }
 
-export function shouldApplyTaskDragOver(
-  source: { type?: string | number | symbol } | null | undefined,
-): boolean {
-  return source?.type === 'task'
-}
-
 export function applyTaskDragOver(
   tasks: TasksByColumn,
   event: DragOverEvent,

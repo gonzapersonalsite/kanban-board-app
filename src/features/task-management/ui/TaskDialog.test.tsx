@@ -22,7 +22,7 @@ describe('TaskDialog', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /save/i }))
 
-    expect(onSave).toHaveBeenCalledWith('Updated title', 'Existing description')
+    expect(onSave).toHaveBeenCalledWith('Updated title', 'Existing description', '')
   })
 
   it('does_not_submit_when_title_is_blank', () => {

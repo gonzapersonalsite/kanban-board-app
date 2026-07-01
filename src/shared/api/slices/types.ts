@@ -10,6 +10,7 @@ export interface Task {
   id: TaskId
   title: string
   description: string
+  dueDate?: string
 }
 
 export interface ColumnSlice {
@@ -21,7 +22,7 @@ export interface ColumnSlice {
 
 export interface TaskSlice {
   tasks: Record<ColumnId, Task[]>
-  addTask: (columnId: ColumnId, title: string, description?: string) => void
+  addTask: (columnId: ColumnId, title: string, description?: string, dueDate?: string) => void
   updateTask: (
     columnId: ColumnId,
     taskId: TaskId,
