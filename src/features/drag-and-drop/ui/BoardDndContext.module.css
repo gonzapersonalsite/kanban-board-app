@@ -3,7 +3,7 @@
 }
 
 .overlayCard {
-  transform: scale(1.03);
+  transform: scale(1.03) rotate(2deg);
   box-shadow: var(--shadow-md);
   opacity: 0.95;
   width: calc(90vw - 16px);

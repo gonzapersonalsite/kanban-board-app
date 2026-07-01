@@ -8,7 +8,7 @@
   font-family: var(--font-family);
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 120ms ease, box-shadow 120ms ease;
+  transition: background-color 120ms ease, box-shadow 120ms ease, transform 150ms ease;
   line-height: 1;
 }
 
@@ -37,12 +37,15 @@
 
 /* Variants */
 .primary {
-  background: var(--color-primary);
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
   color: #fff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
 }
 
 .primary:hover:not(:disabled) {
-  background: var(--color-primary-hover);
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  transform: translateY(-1px);
 }
 
 .ghost {

@@ -9,6 +9,7 @@ interface DraggableTaskCardProps {
   index: number
   onEdit: () => void
   onDelete: () => void
+  accentColor?: string
 }
 
 export function DraggableTaskCard({
@@ -17,6 +18,7 @@ export function DraggableTaskCard({
   index,
   onEdit,
   onDelete,
+  accentColor,
 }: DraggableTaskCardProps) {
   const { ref, isDragging } = useSortable({
     id: task.id,
@@ -34,6 +36,7 @@ export function DraggableTaskCard({
         onEdit={onEdit}
         onDelete={onDelete}
         isDragging={isDragging}
+        accentColor={accentColor}
       />
     </div>
   )

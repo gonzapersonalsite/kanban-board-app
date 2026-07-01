@@ -7,7 +7,7 @@ export function AppIcon() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect width="32" height="32" rx="6" fill="#2563eb" />
+      <rect width="32" height="32" rx="6" fill="#6366f1" />
       <rect
         x="5"
         y="6"

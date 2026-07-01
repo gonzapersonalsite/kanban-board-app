@@ -1,5 +1,4 @@
 .select {
-  margin-left: auto;
   padding: 4px 8px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -11,5 +10,5 @@
 }
 
 .select:focus-visible {
-  box-shadow: 0 0 0 2px var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
 }

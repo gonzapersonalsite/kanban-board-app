@@ -3,11 +3,12 @@
 ## State Management
 
 - **Zustand** is the ONLY state library. Do NOT introduce Redux, Jotai, Context API, or any other state tool for cross-component state.
-- Store files live at: `shared/api/store.ts` (single store with persist middleware).
-- Use the **slices pattern** to organize store logic: create separate slice functions per domain (`createBoardSlice`, `createColumnSlice`, `createTaskSlice`) and compose them into one bound store.
-- Apply the `persist` middleware ONLY at the composed store level, never inside individual slices.
+- **Domain store** (kanban board data): lives at `shared/api/store.ts`. This is a single store with `persist` middleware.
+- **Infrastructure stores** (i18n, theme): live in their own `shared/<slice>/model/store.ts` files. Each is a separate Zustand store with its own `persist` middleware. This pattern is distinct from the domain store — infrastructure stores manage cross-cutting concerns, not business entities.
+- Use the **slices pattern** to organize domain store logic: create separate slice functions per domain (`createBoardSlice`, `createColumnSlice`, `createTaskSlice`) and compose them into one bound store.
+- Apply the `persist` middleware ONLY at the composed store level for the domain store, never inside individual slices.
 - Storage engine: `localStorage` via `createJSONStorage(() => localStorage)` (Zustand built-in). No IndexedDB unless explicitly required.
-- Store key name: `kanban-board-storage`.
+- Domain store key name: `kanban-board-storage`. Infrastructure stores use their own keys (`i18n-locale`, `theme-preference`).
 
 ## Drag & Drop
 
@@ -189,13 +190,52 @@ Guidelines:
 - **Slice**: `features/language-switcher/` — renders a `<select>` with available locales.
 - Calls `setLocale` on change; the component subscribes to `state.locale` so the select reflects the current value.
 - Display labels are defined in a `LABELS` constant within the component (not translated — locale codes like "EN", "ES" are language-independent abbreviations).
-- Embedded in `widgets/header/ui/Header.tsx` with `margin-left: auto` for right alignment.
+- Embedded in `widgets/header/ui/Header.tsx` inside a `.actions` wrapper div that groups it with `ThemeSwitcher`. The header title has `flex: 1` to push `.actions` to the right.
+
+## Theme System (Dark Mode)
+
+- **Infrastructure slice**: `shared/theme/` — store + types, zero UI. Follows the same pattern as `shared/i18n/`.
+- **State**: Zustand store at `shared/theme/model/store.ts` with `persist` middleware (storage key: `theme-preference`). Persists only `theme` value (`'light' | 'dark'`).
+- **Initialization**: On rehydration, the store applies `data-theme` attribute on `document.documentElement`. If no persisted value, it falls back to `prefers-color-scheme` media query.
+- **UI feature**: `features/theme-switcher/` — renders a sun/moon toggle button (lucide-react `Sun`/`Moon` icons). Imports `useThemeStore` from `@/shared/theme`.
+- **Import pattern**:
+  ```ts
+  import { useThemeStore } from '@/shared/theme'
+  import { ThemeSwitcher } from '@/features/theme-switcher'
+  ```
+- **Public API** (`shared/theme/index.ts`): exports `useThemeStore`, `Theme` type, `ThemeStore` type.
+- **Public API** (`features/theme-switcher/index.ts`): exports `ThemeSwitcher` only. The store is NOT re-exported from features — consumers import it directly from `@/shared/theme`.
+
+## Design Tokens & Dark Mode
+
+- **Token location**: All design tokens live in `app/styles/global.css` inside `:root` for light mode and `[data-theme='dark']` for dark mode.
+- **Dark mode approach**: Rely EXCLUSIVELY on CSS custom properties. NEVER use class selectors in global.css to target dark-mode overrides on CSS Module components — CSS Modules hash class names, so `[data-theme='dark'] .card` would NOT match `TaskCard_card__abc123`.
+- **Element selectors are safe**: `[data-theme='dark'] header`, `[data-theme='dark'] dialog::backdrop`, etc. target HTML elements (not classes), so they work across CSS Modules.
+- **Card-specific tokens**: Since card backgrounds are translucent glass effects, they need their own tokens:
+  - `--color-card-bg`: semi-transparent background (light: `rgba(255,255,255,0.7)`, dark: `rgba(39,39,42,0.6)`)
+  - `--color-card-border`: semi-transparent border (light: `rgba(255,255,255,0.5)`, dark: `rgba(255,255,255,0.06)`)
+  - `--color-card-shadow`: card shadow color (light: indigo tint, dark: black tint)
+  - `--color-card-shadow-hover`: card hover shadow color
+- **Column accent colors**: Defined as a constant array `COLUMN_ACCENT_COLORS` in `widgets/board/ui/Board.tsx`. Passed to `SortableColumn` → `ColumnShell` as `accentColor` prop, applied via inline `style` as `--column-accent` CSS custom property. Same color is passed to `DraggableTaskCard` → `TaskCard` as `--card-accent` for the left border stripe. Colors cycle via `index % COLUMN_ACCENT_COLORS.length`.
+- **Header glassmorphism**: `widgets/header/ui/Header.module.css` uses `background: rgba(255,255,255,0.75)` + `backdrop-filter: blur(16px)`. Dark mode override via element selector `[data-theme='dark'] header { background: rgba(39,39,42,0.75) }` in global.css.
+- **Button primary gradient**: `shared/ui/Button/Button.module.css` uses `background: linear-gradient(135deg, #6366f1, #8b5cf6)` with colored `box-shadow`. Hover darkens the gradient + `translateY(-1px)`.
+
+## CSS & Animation Constraints
+
+- **No `transform` in `@keyframes` on sortable elements**: CSS animation declarations (`@keyframes`) sit above normal author declarations (including inline `style`) in the CSS cascade. If a `@keyframes` declares `transform`, it overrides any inline `transform` set by `@dnd-kit` during drag operations, breaking drag-and-drop entirely.
+  - ✅ `@keyframes` with `opacity` only → safe for enter animations on cards and columns.
+  - ✅ `transform` in `.hover` or `.overlayCard` selectors → safe (not inside `@keyframes`, and overlays are separate elements).
+  - ❌ `@keyframes` with `transform: scale(...)` or `transform: translateY(...)` → BREAKS dnd-kit positioning.
+- **Enter animations**: `cardEnter` (TaskCard) and `columnEnter` (ColumnShell) are simple `opacity` fades with `animation-fill-mode: both`. No scale/slide.
+- **Drag overlay rotation**: `BoardDndContext.module.css` adds `rotate(2deg)` to `.overlayCard` via a static `transform` rule (not a keyframe). This is safe because the DragOverlay is a separate element rendered by dnd-kit, not a sortable item.
 
 ## Anti-Patterns (Zero Tolerance)
 
 - Never install Tailwind CSS or any CSS-in-JS library.
 - Never use `react-beautiful-dnd` or `react-dnd`.
-- Never place store logic (Zustand `create`) outside `shared/api/store.ts`.
+- Never place domain store logic (Zustand `create` for kanban entities) outside `shared/api/store.ts`. Infrastructure stores (i18n, theme) are exceptions — see State Management.
 - Never import from internal files — always use the public API (`index.ts`).
 - Never create top-level directories under `src/` outside the 6 FSD layers.
 - Never modify `AGENTS.md` or `.agents/skills/react-fsd-maintainer/SKILL.md`.
+- Never use CSS class selectors in `app/styles/global.css` to target dark mode overrides on CSS Module components. Use design tokens (CSS custom properties) instead — see Design Tokens & Dark Mode.
+- Never use `transform` inside `@keyframes` animations on components that participate in drag-and-drop. CSS animation declarations override inline styles in the cascade, which breaks `@dnd-kit` positioning. Use only `opacity` in enter animations — see CSS & Animation Constraints.

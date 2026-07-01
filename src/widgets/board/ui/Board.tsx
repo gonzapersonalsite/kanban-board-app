@@ -12,6 +12,17 @@ import { useBoard } from '../model/useBoard'
 import { EmptyColumnMessage } from './EmptyColumnMessage'
 import styles from './Board.module.css'
 
+const COLUMN_ACCENT_COLORS = [
+  '#6366f1',
+  '#8b5cf6',
+  '#a78bfa',
+  '#c084fc',
+  '#e879f9',
+  '#f472b6',
+  '#38bdf8',
+  '#818cf8',
+]
+
 function BoardContent() {
   const board = useBoard()
   const isTaskDragging = useIsTaskDragging()
@@ -20,7 +31,12 @@ function BoardContent() {
     <>
       <div className={styles.board}>
         {board.columns.map((col, index) => (
-          <SortableColumn key={col.id} columnId={col.id} index={index}>
+          <SortableColumn
+            key={col.id}
+            columnId={col.id}
+            index={index}
+            accentColor={COLUMN_ACCENT_COLORS[index % COLUMN_ACCENT_COLORS.length]}
+          >
             <div className={styles.columnHeaderArea}>
               <div className={styles.columnDragHandle} data-dnd-handle>
                 <GripVertical size={16} />
@@ -39,6 +55,7 @@ function BoardContent() {
                   task={task}
                   columnId={col.id}
                   index={taskIndex}
+                  accentColor={COLUMN_ACCENT_COLORS[index % COLUMN_ACCENT_COLORS.length]}
                   onEdit={() => board.taskDialog.openForEdit(task, col.id)}
                   onDelete={() =>
                     board.taskDialog.handleDelete(col.id, task.id)

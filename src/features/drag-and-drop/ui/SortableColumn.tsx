@@ -8,9 +8,10 @@ interface SortableColumnProps {
   columnId: ColumnId
   index: number
   children: ReactNode
+  accentColor?: string
 }
 
-export function SortableColumn({ columnId, index, children }: SortableColumnProps) {
+export function SortableColumn({ columnId, index, children, accentColor }: SortableColumnProps) {
   const { ref, isDragging } = useSortable({
     id: columnId,
     index,
@@ -27,7 +28,12 @@ export function SortableColumn({ columnId, index, children }: SortableColumnProp
     (dragOp?.target?.id === columnId || dragOp?.target?.data?.columnId === columnId)
 
   return (
-    <ColumnShell isHighlighted={isTaskDropTarget} isDragging={isDragging} contentRef={ref}>
+    <ColumnShell
+      isHighlighted={isTaskDropTarget}
+      isDragging={isDragging}
+      contentRef={ref}
+      accentColor={accentColor}
+    >
       {children}
     </ColumnShell>
   )

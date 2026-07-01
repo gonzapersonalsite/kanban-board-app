@@ -9,6 +9,7 @@ interface TaskCardProps {
   onEdit: () => void
   onDelete: () => void
   isDragging?: boolean
+  accentColor?: string
 }
 
 export function TaskCard({
@@ -16,6 +17,7 @@ export function TaskCard({
   onEdit,
   onDelete,
   isDragging = false,
+  accentColor,
 }: TaskCardProps) {
   const { t } = useTranslation()
   const classes = [styles.card, isDragging ? styles.dragging : '']
@@ -23,7 +25,10 @@ export function TaskCard({
     .join(' ')
 
   return (
-    <div className={classes}>
+    <div
+      className={classes}
+      style={accentColor ? ({ '--card-accent': accentColor } as React.CSSProperties) : undefined}
+    >
       <div className={styles.header}>
         <GripVertical size={14} className={styles.gripIcon} />
         <h3 className={styles.title}>{task.title}</h3>
