@@ -39,7 +39,7 @@ function BoardContent() {
           >
             <div className={styles.columnHeaderArea}>
               <div className={styles.columnDragHandle} data-dnd-handle>
-                <GripVertical size={16} />
+                <GripVertical />
               </div>
               <ColumnHeader
                 column={col}

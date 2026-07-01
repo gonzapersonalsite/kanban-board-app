@@ -11,7 +11,7 @@ import { nanoid } from 'nanoid'
 
 export const KANBAN_STORAGE_KEY = 'kanban-board-storage'
 
-export function createSafeStorage(): PersistStorage<KanbanState> {
+export function createSafeStorage(): PersistStorage<Partial<KanbanState>> {
   return {
     getItem: (name: string) => {
       try {
@@ -20,7 +20,7 @@ export function createSafeStorage(): PersistStorage<KanbanState> {
           return null
         }
 
-        return JSON.parse(storedValue) as StorageValue<KanbanState>
+        return JSON.parse(storedValue) as StorageValue<Partial<KanbanState>>
       } catch {
         notifyStorageError('load_error')
 
@@ -33,7 +33,7 @@ export function createSafeStorage(): PersistStorage<KanbanState> {
         return null
       }
     },
-    setItem: (name: string, value: StorageValue<KanbanState>) => {
+    setItem: (name: string, value: StorageValue<Partial<KanbanState>>) => {
       try {
         localStorage.setItem(name, JSON.stringify(value))
       } catch {
@@ -72,7 +72,7 @@ type LegacyKanbanState = {
 export function migrateKanbanState(
   persistedState: unknown,
   version: number,
-): KanbanState | Partial<KanbanState> {
+): Partial<KanbanState> {
   if (version >= 1 && isMultiBoardState(persistedState)) {
     return persistedState
   }

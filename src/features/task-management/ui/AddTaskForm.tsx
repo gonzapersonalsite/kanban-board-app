@@ -56,7 +56,7 @@ export function AddTaskForm({ columnId }: AddTaskFormProps) {
         </p>
       )}
       <Button onClick={handleSubmit} size="sm" variant="ghost">
-        <Plus size={15} />
+        <Plus />
         {t('task.add')}
       </Button>
     </div>

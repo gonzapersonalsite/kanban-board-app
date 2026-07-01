@@ -5,11 +5,8 @@ import {
 } from '@/shared/api'
 import { useTranslation } from '@/shared/i18n'
 import { useToastStore } from '@/shared/ui'
-import {
-  type KanbanSnapshot,
-  deserializeKanbanSnapshot,
-} from './snapshot'
-import type { KanbanSnapshotError } from './types'
+import { deserializeKanbanSnapshot } from './snapshot'
+import type { KanbanSnapshot, KanbanSnapshotError } from './types'
 
 export const MAX_BACKUP_FILE_SIZE_BYTES = 5 * 1024 * 1024
 

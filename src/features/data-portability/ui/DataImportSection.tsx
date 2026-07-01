@@ -77,7 +77,7 @@ export function DataImportSection({ onImportComplete }: DataImportSectionProps) 
           }}
           disabled={!selectedFile || isReviewing}
         >
-          <Upload size={16} aria-hidden="true" />
+          <Upload aria-hidden="true" />
           <span>
             {isReviewing
               ? t('data_portability.review_loading')
@@ -119,7 +119,7 @@ export function DataImportSection({ onImportComplete }: DataImportSectionProps) 
           </dl>
 
           <div className={styles.warningBox} role="alert">
-            <TriangleAlert size={18} aria-hidden="true" />
+            <TriangleAlert aria-hidden="true" />
             <p>{t('data_portability.import_warning')}</p>
           </div>
 

@@ -17,7 +17,8 @@
   gap: 8px;
   border: none;
   background: none;
-  padding: 2px 4px;
+  min-height: var(--control-size-sm);
+  padding: 4px 6px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: var(--font-family);
@@ -40,7 +41,7 @@
 }
 
 .title {
-  font-size: 14px;
+  font-size: var(--font-size-body);
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -52,6 +53,8 @@
   color: var(--color-text-secondary);
   flex-shrink: 0;
   transition: opacity 120ms ease;
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
 }
 
 .editRow {
@@ -61,9 +64,9 @@
 }
 
 .editInput {
-  font-size: 14px;
+  font-size: var(--font-size-body);
   font-weight: 600;
-  height: 30px;
+  height: var(--control-size-sm);
 }
 
 /*

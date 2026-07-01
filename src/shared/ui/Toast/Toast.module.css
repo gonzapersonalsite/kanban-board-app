@@ -42,6 +42,8 @@
 .icon {
   flex-shrink: 0;
   margin-top: 1px;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
 }
 
 .success .icon {
@@ -62,7 +64,7 @@
 
 .message {
   flex: 1;
-  font-size: 13px;
+  font-size: var(--font-size-body-sm);
   line-height: 1.45;
   color: var(--color-text);
   word-break: break-word;

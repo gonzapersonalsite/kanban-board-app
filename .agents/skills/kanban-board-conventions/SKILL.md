@@ -27,6 +27,17 @@
 - Global styles (reset, CSS custom properties) live exclusively in `app/styles/global.css`.
 - Shared design tokens (if needed) go in `shared/ui/variables.css`.
 - No `styles/` segment in any slice — co-location is the rule.
+- Typography, iconography, and interactive control sizing MUST be driven by global tokens from `app/styles/global.css`. Do NOT scatter new hard-coded `12px`, `13px`, `14px`, `32px`, or `36px` values across component CSS when an equivalent token already exists.
+- Use the typography scale tokens:
+  - `--font-size-caption` for metadata, helper text, and compact secondary copy.
+  - `--font-size-body-sm` for compact UI text such as nav items, inline buttons, and dense form controls.
+  - `--font-size-body` for primary interface text and card titles.
+  - `--font-size-body-lg` and heading tokens for prominent labels and page headings.
+- Use the control size tokens:
+  - `--control-size-sm` for desktop compact controls.
+  - `--control-size-md` for primary inputs/selects.
+  - `--control-size-lg` for coarse-pointer/touch contexts.
+- Use fluid `clamp()`-based tokens for scalable UI. Prefer token reuse over component-specific responsive font rules unless the component has a genuinely unique need.
 
 ## Icons
 
@@ -35,6 +46,13 @@
   import { Plus, Trash2, Pencil, GripVertical, X } from 'lucide-react'
   ```
 - Do NOT import the entire library with `import * as Icons`.
+- Icon sizing MUST be consistent with the global icon tokens from `app/styles/global.css`.
+- For icons rendered inside shared `Button` or `IconButton`, let the component CSS control the final rendered size. Do NOT micro-tune each icon with ad-hoc per-call sizes unless there is a clear visual exception.
+- For standalone icons not wrapped by shared controls, match one of the token tiers conceptually:
+  - small affordance/icon hint → `--icon-size-sm`
+  - standard action icon → `--icon-size-md`
+  - prominent icon → `--icon-size-lg`
+- Desktop icon-only controls MUST NOT be visually smaller than `--control-size-sm`. Touch/coarse-pointer contexts MUST use `--control-size-lg`.
 
 ## ID Generation
 

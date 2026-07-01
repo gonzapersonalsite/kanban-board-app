@@ -58,19 +58,19 @@ export function TaskCard({
       style={accentColor ? ({ '--card-accent': accentColor } as React.CSSProperties) : undefined}
     >
       <div className={styles.header}>
-        <GripVertical size={14} className={styles.gripIcon} />
+        <GripVertical className={styles.gripIcon} />
         <h3 className={styles.title}>{task.title}</h3>
         <div className={styles.actions}>
           <Tooltip text={t('task.edit', { title: task.title })}>
             <IconButton
-              icon={<Pencil size={14} />}
+              icon={<Pencil />}
               label={t('task.edit', { title: task.title })}
               onClick={onEdit}
             />
           </Tooltip>
           <Tooltip text={t('task.delete', { title: task.title })}>
             <IconButton
-              icon={<Trash2 size={14} />}
+              icon={<Trash2 />}
               label={t('task.delete', { title: task.title })}
               variant="danger"
               onClick={onDelete}

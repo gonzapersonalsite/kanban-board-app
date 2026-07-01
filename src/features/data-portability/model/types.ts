@@ -1,5 +1,7 @@
 import type { PortableKanbanState } from '@/shared/api'
 
+export type { PortableKanbanState }
+
 export const KANBAN_SNAPSHOT_SCHEMA_VERSION = 1 as const
 
 export interface KanbanSnapshotV1 extends PortableKanbanState {

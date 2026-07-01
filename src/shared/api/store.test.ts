@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useToastStore } from '@/shared/ui'
+import { useKanbanStore } from './store'
 import { createSafeStorage, migrateKanbanState } from './store'
 
 describe('store migration', () => {
@@ -39,6 +40,7 @@ describe('store migration', () => {
 
     storage.setItem('kanban-board-storage', {
       state: {
+        ...useKanbanStore.getState(),
         boards: [],
         activeBoardId: null,
         columnsByBoard: {},

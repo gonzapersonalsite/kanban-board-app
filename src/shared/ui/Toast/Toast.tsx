@@ -30,10 +30,10 @@ function ToastItem({
 
   return (
     <div className={`${styles.item} ${styles[notification.type]}`} role="alert">
-      <Icon size={18} className={styles.icon} aria-hidden="true" />
+      <Icon className={styles.icon} aria-hidden="true" />
       <span className={styles.message}>{notification.message}</span>
       <IconButton
-        icon={<X size={14} />}
+        icon={<X />}
         label="Dismiss notification"
         onClick={onDismiss}
         className={styles.dismiss}

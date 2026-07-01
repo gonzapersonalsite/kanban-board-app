@@ -36,7 +36,7 @@ export class ErrorBoundary extends Component<
       return (
         <div className={styles.container}>
           <div className={styles.card}>
-            <AlertTriangle size={40} className={styles.icon} aria-hidden="true" />
+            <AlertTriangle className={styles.icon} aria-hidden="true" />
             <h1 className={styles.title}>Something went wrong</h1>
             <p className={styles.description}>
               An unexpected error occurred. Please try reloading the page.

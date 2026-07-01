@@ -25,8 +25,14 @@ describe('DataExportSection', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete (navigator as Navigator & { share?: unknown }).share
-    delete (navigator as Navigator & { canShare?: unknown }).canShare
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: undefined,
+    })
+    Object.defineProperty(navigator, 'canShare', {
+      configurable: true,
+      value: undefined,
+    })
   })
 
   it('downloads_a_backup_and_shows_success_feedback', async () => {
@@ -89,7 +95,7 @@ describe('DataExportSection', () => {
   })
 
   it('shares_a_backup_and_shows_success_feedback', async () => {
-    const shareSpy = vi.fn(() => Promise.resolve())
+    const shareSpy = vi.fn<(data?: ShareData) => Promise<void>>(async () => {})
 
     Object.defineProperty(navigator, 'maxTouchPoints', {
       configurable: true,
@@ -112,10 +118,16 @@ describe('DataExportSection', () => {
       expect(shareSpy).toHaveBeenCalledTimes(1)
     })
 
-    const sharePayload = shareSpy.mock.calls[0][0] as { files: File[]; title: string; text: string }
+    const sharePayload = shareSpy.mock.calls[0]?.[0]
+
+    expect(sharePayload).toBeDefined()
+
+    if (!sharePayload) {
+      throw new Error('Share payload should be defined')
+    }
 
     expect(sharePayload.title).toBe('Kanban backup')
-    expect(sharePayload.files[0]?.name).toMatch(/^kanban-board-backup-.*\.json$/)
+    expect(sharePayload.files?.[0]?.name).toMatch(/^kanban-board-backup-.*\.json$/)
     expect(useToastStore.getState().notifications.at(-1)?.message).toBe('Backup shared')
   })
 })

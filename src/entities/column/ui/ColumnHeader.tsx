@@ -61,10 +61,10 @@ export function ColumnHeader({
             className={styles.editInput}
           />
           <Tooltip text={t('column.save_title')}>
-            <IconButton icon={<Check size={16} />} label={t('column.save_title')} onClick={handleSave} />
+            <IconButton icon={<Check />} label={t('column.save_title')} onClick={handleSave} />
           </Tooltip>
           <Tooltip text={t('column.cancel_edit')}>
-            <IconButton icon={<X size={16} />} label={t('column.cancel_edit')} onClick={handleCancel} />
+            <IconButton icon={<X />} label={t('column.cancel_edit')} onClick={handleCancel} />
           </Tooltip>
         </div>
       ) : (
@@ -77,13 +77,13 @@ export function ColumnHeader({
               onClick={handleStartEdit}
             >
               <span className={styles.title}>{column.title}</span>
-              <Pencil size={13} className={styles.editIcon} />
+              <Pencil className={styles.editIcon} />
             </button>
           </Tooltip>
           {canDelete && (
             <Tooltip text={t('column.delete', { title: column.title })}>
               <IconButton
-                icon={<Trash2 size={15} />}
+                icon={<Trash2 />}
                 label={t('column.delete', { title: column.title })}
                 variant="danger"
                 onClick={onDelete}

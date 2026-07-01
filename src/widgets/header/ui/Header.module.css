@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   /* Safe-area: respects notch/island at the top and lateral bars in landscape */
   padding-top: max(10px, var(--safe-top));
   padding-bottom: 10px;
@@ -19,7 +19,7 @@
 .primary {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -31,7 +31,7 @@
 .secondary {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex: 0 1 auto;
   min-width: 0;
 }
@@ -39,18 +39,22 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   flex: 0 1 auto;
   min-width: 0;
 }
 
 .navLink {
   font-family: 'Plus Jakarta Sans', var(--font-family);
-  font-size: 0.8125rem;
+  font-size: var(--font-size-body-sm);
   font-weight: 500;
   color: var(--color-text-secondary);
   text-decoration: none;
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-size-sm);
+  padding: 0 12px;
   border-radius: 6px;
   border-bottom: 2px solid transparent;
   transition: color 150ms ease, background 150ms ease, border-color 150ms ease;
@@ -88,18 +92,18 @@
 }
 
 .settingLabel {
-  font-size: 0.9375rem;
+  font-size: var(--font-size-body);
   font-weight: 600;
   color: var(--color-text);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1120px) {
   .header {
     flex-wrap: nowrap;
-    padding-top: max(12px, var(--safe-top));
-    padding-bottom: 12px;
-    padding-left: max(20px, var(--safe-left));
-    padding-right: max(20px, var(--safe-right));
+    padding-top: max(14px, var(--safe-top));
+    padding-bottom: 14px;
+    padding-left: max(24px, var(--safe-left));
+    padding-right: max(24px, var(--safe-right));
   }
 
   .primary {
@@ -111,7 +115,19 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (min-width: 1280px) {
+  .header {
+    padding-left: max(28px, var(--safe-left));
+    padding-right: max(28px, var(--safe-right));
+  }
+
+  .primary,
+  .secondary {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 1119px) {
   .header {
     align-items: flex-start;
   }
@@ -121,8 +137,13 @@
   }
 
   .secondary {
+    flex: 1 1 100%;
     width: 100%;
     justify-content: space-between;
+  }
+
+  .nav {
+    flex: 1 1 auto;
   }
 }
 
@@ -145,11 +166,8 @@
   }
 
   .navLink {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 36px;
-    padding: 6px 10px;
+    min-height: var(--control-size-md);
+    padding: 0 10px;
   }
 
 }

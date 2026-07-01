@@ -139,6 +139,12 @@
   color: var(--color-text);
 }
 
+.warningBox svg {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  flex-shrink: 0;
+}
+
 .warningBox p {
   margin: 0;
   font-size: 0.875rem;

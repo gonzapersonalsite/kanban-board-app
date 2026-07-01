@@ -69,7 +69,7 @@ export function Header() {
         <div className={styles.settingsAction}>
           <Tooltip text={t('header.settings')}>
             <IconButton
-              icon={<Settings2 size={16} />}
+              icon={<Settings2 />}
               label={t('header.settings')}
               onClick={() => setIsSettingsOpen(true)}
             />

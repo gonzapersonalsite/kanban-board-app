@@ -1,41 +1,16 @@
 .board {
-  display: flex;
-  gap: 16px;
-  /* Mobile layout: stacked vertically */
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 18px;
+  align-items: start;
+  align-content: start;
   padding-block: 16px;
   padding-inline: max(16px, var(--safe-left));
   overflow-x: hidden;
   overflow-y: auto;
   flex: 1;
-  align-items: stretch;
-}
-
-@media (min-width: 768px) {
-  .board {
-    /* Tablet layout: Wrap as a grid if preferred, but usually flex row is better. Let's make it horizontal scroll from tablet up */
-    flex-direction: row;
-    align-items: flex-start;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-block: 16px;
-    padding-right: max(16px, var(--safe-right));
-    scroll-snap-type: x proximity;
-    scroll-behavior: smooth;
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-@media (min-width: 1024px) {
-  .board {
-    gap: 16px;
-    padding-block: 20px;
-    padding-inline: max(20px, var(--safe-left));
-    padding-right: max(20px, var(--safe-right));
-    /* Desktop: no forced snap — mouse users can scroll freely */
-    scroll-snap-type: none;
-  }
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .columnHeaderArea {
@@ -47,7 +22,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
+  min-width: var(--control-size-sm);
   cursor: grab;
   color: var(--color-text-secondary);
   opacity: 0.35;
@@ -55,6 +30,11 @@
   flex-shrink: 0;
   touch-action: none;
   user-select: none;
+}
+
+.columnDragHandle svg {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
 }
 
 .columnDragHandle:hover {
@@ -71,4 +51,3 @@
   flex-direction: column;
   gap: 8px;
 }
-

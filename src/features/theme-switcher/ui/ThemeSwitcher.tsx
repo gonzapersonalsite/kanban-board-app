@@ -14,7 +14,7 @@ export function ThemeSwitcher() {
         theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
       }
     >
-      {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+      {theme === 'light' ? <Moon /> : <Sun />}
     </button>
   )
 }

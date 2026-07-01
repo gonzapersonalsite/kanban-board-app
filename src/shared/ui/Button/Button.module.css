@@ -2,7 +2,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   border: none;
   border-radius: var(--radius-md);
   font-family: var(--font-family);
@@ -10,6 +10,12 @@
   cursor: pointer;
   transition: background-color 120ms ease, box-shadow 120ms ease, transform 150ms ease;
   line-height: 1;
+}
+
+.button svg {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  flex-shrink: 0;
 }
 
 .button:disabled {
@@ -24,15 +30,15 @@
 
 /* Sizes */
 .sm {
-  padding: 6px 12px;
-  font-size: 13px;
-  height: 30px;
+  padding: 0 14px;
+  font-size: var(--font-size-body-sm);
+  height: var(--control-size-sm);
 }
 
 .md {
-  padding: 8px 16px;
-  font-size: 14px;
-  height: 36px;
+  padding: 0 18px;
+  font-size: var(--font-size-body);
+  height: var(--control-size-md);
 }
 
 /* Variants */
@@ -73,12 +79,11 @@
  */
 @media (pointer: coarse) {
   .sm {
-    height: var(--touch-target-min);
-    padding-inline: 14px;
+    height: var(--control-size-lg);
+    padding-inline: 16px;
   }
 
   .md {
-    height: var(--touch-target-min);
+    height: var(--control-size-lg);
   }
 }
-

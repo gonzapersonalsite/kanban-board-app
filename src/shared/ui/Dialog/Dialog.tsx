@@ -59,7 +59,7 @@ export function Dialog({ open, onClose, title, children, closeLabel = 'Close dia
       <div className={styles.header}>
         <h2 className={styles.title}>{title}</h2>
         <IconButton
-          icon={<X size={18} />}
+          icon={<X />}
           label={closeLabel}
           onClick={onClose}
         />

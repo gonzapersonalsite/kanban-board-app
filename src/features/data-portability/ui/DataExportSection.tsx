@@ -20,7 +20,7 @@ export function DataExportSection() {
           className={styles.actionButton}
           onClick={downloadBackup}
         >
-          <Download size={16} aria-hidden="true" />
+          <Download aria-hidden="true" />
           <span>{t('data_portability.download')}</span>
         </Button>
         {canShareBackup && (
@@ -32,7 +32,7 @@ export function DataExportSection() {
               void shareBackup()
             }}
           >
-            <Share2 size={16} aria-hidden="true" />
+            <Share2 aria-hidden="true" />
             <span>{t('data_portability.share')}</span>
           </Button>
         )}

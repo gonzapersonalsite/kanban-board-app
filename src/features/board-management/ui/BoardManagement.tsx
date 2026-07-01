@@ -29,14 +29,14 @@ export function BoardManagement({
           <>
             <Tooltip text={t('board.add')}>
               <IconButton
-                icon={<Plus size={16} />}
+                icon={<Plus />}
                 label={t('board.add')}
                 onClick={boardManagement.openCreateDialog}
               />
             </Tooltip>
             <Tooltip text={t('board.rename')}>
               <IconButton
-                icon={<Pencil size={16} />}
+                icon={<Pencil />}
                 label={t('board.rename')}
                 onClick={boardManagement.openRenameDialog}
                 disabled={!boardManagement.activeBoard}
@@ -44,7 +44,7 @@ export function BoardManagement({
             </Tooltip>
             <Tooltip text={t('board.delete')}>
               <IconButton
-                icon={<Trash2 size={16} />}
+                icon={<Trash2 />}
                 label={t('board.delete')}
                 variant="danger"
                 onClick={boardManagement.openDeleteDialog}

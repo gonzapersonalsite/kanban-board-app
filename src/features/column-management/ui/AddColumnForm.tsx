@@ -51,7 +51,7 @@ export function AddColumnForm() {
         </p>
       )}
       <Button onClick={handleSubmit} size="sm">
-        <Plus size={16} />
+        <Plus />
         {t('column.add')}
       </Button>
     </div>
