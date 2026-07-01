@@ -11,7 +11,7 @@ const mockUseSortable = vi.hoisted(() =>
 )
 
 const mockUseDragOperation = vi.hoisted(() =>
-  vi.fn(() => ({
+  vi.fn<() => { source: object | null; target: object | null }>(() => ({
     source: null,
     target: null,
   })),
