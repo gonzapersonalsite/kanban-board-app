@@ -52,5 +52,9 @@
     "task_deleted": "Aufgabe gelöscht",
     "column_created": "Spalte erstellt",
     "column_deleted": "Spalte gelöscht"
+  },
+  "not_found": {
+    "message": "Die gesuchte Seite existiert nicht.",
+    "back_home": "Zurück zur Startseite"
   }
 }

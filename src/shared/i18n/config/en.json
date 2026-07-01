@@ -52,5 +52,9 @@
     "task_deleted": "Task deleted",
     "column_created": "Column created",
     "column_deleted": "Column deleted"
+  },
+  "not_found": {
+    "message": "The page you are looking for does not exist.",
+    "back_home": "Back to Home"
   }
 }

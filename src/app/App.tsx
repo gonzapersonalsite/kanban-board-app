@@ -1,12 +1,12 @@
 import './styles/global.css'
-import { HomePage } from '@/pages/home'
 import { Toast } from '@/shared/ui'
 import { ErrorBoundary } from '@/app/providers'
+import { AppRouter } from '@/app/router'
 
 export default function App() {
   return (
     <ErrorBoundary>
-      <HomePage />
+      <AppRouter />
       <Toast />
     </ErrorBoundary>
   )

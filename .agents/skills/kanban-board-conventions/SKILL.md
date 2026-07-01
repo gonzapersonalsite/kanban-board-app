@@ -72,9 +72,13 @@
 
 ## Routing
 
-- No router for MVP. The app is a single-page Kanban board.
-- If multi-board navigation is needed later, use `react-router` with lazy-loaded routes defined in `app/router/index.tsx`.
-- Until then, no routing dependency.
+- **react-router-dom** (v7) is the ONLY routing library. Do NOT install Next.js router, TanStack Router, or any alternative.
+- All route definitions live in `app/router/ui/AppRouter.tsx` using `createBrowserRouter` and `RouterProvider`.
+- The public API is exported from `app/router/index.tsx` as `AppRouter`.
+- Pages MUST be lazy-loaded via `React.lazy()` at the route level for code splitting.
+- Route components are wrapped in `<Suspense>` — the fallback is currently `null` (add a shared `<LoadingFallback />` from `shared/ui/` when non-trivial).
+- Error boundaries are handled per-route in the future via `errorElement` on route definitions. For now, the app-level `<ErrorBoundary>` in `app/providers/` catches all errors.
+- New routes are added by appending to the `createBrowserRouter` array in `AppRouter.tsx`. No other file needs modification.
 
 ## Store Architecture
 
