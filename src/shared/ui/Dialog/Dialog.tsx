@@ -51,6 +51,8 @@ export function Dialog({ open, onClose, title, children, closeLabel = 'Close dia
     return () => dialog.removeEventListener('click', handleBackdropClick)
   }, [onClose])
 
+  if (!open) return null
+
   return (
     <dialog
       ref={dialogRef}

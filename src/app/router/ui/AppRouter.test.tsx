@@ -10,4 +10,14 @@ describe('AppRouter', () => {
       expect(screen.getByText('Kanban Board')).toBeInTheDocument()
     })
   })
+
+  it('navigates_to_calendar_page', async () => {
+    window.history.pushState({}, '', '/calendar')
+
+    render(<AppRouter />)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Calendar/)).toBeInTheDocument()
+    })
+  })
 })

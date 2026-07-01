@@ -2,6 +2,16 @@
   "app": {
     "title": "Kanban-Board"
   },
+  "nav": {
+    "board": "Board",
+    "calendar": "Kalender"
+  },
+  "calendar": {
+    "today": "Heute",
+    "prev_month": "Vorheriger Monat",
+    "next_month": "Nächster Monat",
+    "more": "mehr"
+  },
   "board": {
     "empty_column": "Noch keine Aufgaben"
   },

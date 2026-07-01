@@ -27,6 +27,36 @@
   flex: 1;
 }
 
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.navLink {
+  font-family: 'Plus Jakarta Sans', var(--font-family);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border-bottom: 2px solid transparent;
+  transition: color 150ms ease, background 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+}
+
+.navLink:hover {
+  color: var(--color-text);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.navLink[aria-current='page'] {
+  color: var(--color-text);
+  background: rgba(99, 102, 241, 0.08);
+  border-bottom-color: #6366f1;
+}
+
 .actions {
   display: flex;
   align-items: center;

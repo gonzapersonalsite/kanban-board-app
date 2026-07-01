@@ -2,6 +2,16 @@
   "app": {
     "title": "Tablero Kanban"
   },
+  "nav": {
+    "board": "Tablero",
+    "calendar": "Calendario"
+  },
+  "calendar": {
+    "today": "Hoy",
+    "prev_month": "Mes anterior",
+    "next_month": "Mes siguiente",
+    "more": "más"
+  },
   "board": {
     "empty_column": "Sin tareas aún"
   },

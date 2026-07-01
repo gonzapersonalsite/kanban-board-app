@@ -5,6 +5,9 @@ import styles from './RouteErrorBoundary.module.css'
 const HomePage = lazy(() =>
   import('@/pages/home').then((m) => ({ default: m.HomePage })),
 )
+const CalendarPage = lazy(() =>
+  import('@/pages/calendar').then((m) => ({ default: m.CalendarPage })),
+)
 const NotFoundPage = lazy(() =>
   import('@/pages/not-found').then((m) => ({ default: m.NotFoundPage })),
 )
@@ -30,6 +33,15 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={null}>
         <HomePage />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/calendar',
+    errorElement: <RouteErrorBoundary />,
+    element: (
+      <Suspense fallback={null}>
+        <CalendarPage />
       </Suspense>
     ),
   },
