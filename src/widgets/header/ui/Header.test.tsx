@@ -115,10 +115,26 @@ describe('Header', () => {
     )
 
     fireEvent.click(
-      screen.getByRole('button', { name: /header settings/i }),
+      screen.getByRole('button', { name: /settings/i }),
     )
 
     expect(screen.getByText('Theme')).toBeInTheDocument()
     expect(screen.getByText('Language')).toBeInTheDocument()
+  })
+
+  it('shows_a_tooltip_for_the_mobile_settings_button', () => {
+    resetPersistedKanbanStore(useKanbanStore.setState)
+
+    render(
+      <MemoryRouter initialEntries={[`/board/${BOARD_MAIN_ID}`]}>
+        <Header />
+      </MemoryRouter>,
+    )
+
+    fireEvent.mouseEnter(
+      screen.getByRole('button', { name: /settings/i }),
+    )
+
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Settings')
   })
 })
