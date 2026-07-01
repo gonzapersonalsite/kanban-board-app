@@ -1,0 +1,56 @@
+{
+  "app": {
+    "title": "Kanban-Board"
+  },
+  "board": {
+    "empty_column": "Noch keine Aufgaben"
+  },
+  "column": {
+    "add": "Spalte hinzufügen",
+    "rename": "Spalte umbenennen",
+    "save_title": "Titel speichern",
+    "cancel_edit": "Bearbeiten abbrechen",
+    "delete": "Spalte \"{{title}}\" löschen",
+    "title_placeholder": "Neuer Spaltentitel...",
+    "title_aria": "Spaltentitel"
+  },
+  "task": {
+    "add": "Karte hinzufügen",
+    "edit": "Aufgabe \"{{title}}\" bearbeiten",
+    "delete": "Aufgabe \"{{title}}\" löschen",
+    "title_placeholder": "Neuer Aufgabentitel...",
+    "title_aria": "Aufgabentitel"
+  },
+  "task_dialog": {
+    "title": "Aufgabe bearbeiten",
+    "title_label": "Titel",
+    "title_placeholder": "Aufgabentitel",
+    "description_label": "Beschreibung",
+    "description_placeholder": "Aufgabenbeschreibung (optional)",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
+  },
+  "dialog": {
+    "close": "Dialog schließen"
+  },
+  "seed": {
+    "column_todo": "Offen",
+    "column_in_progress": "In Bearbeitung",
+    "column_done": "Erledigt"
+  },
+  "validation": {
+    "title_required": "Titel darf nicht leer sein",
+    "task_not_found": "Aufgabe nicht gefunden",
+    "invalid_position": "Ungültige Position"
+  },
+  "storage": {
+    "save_error": "Fehler beim Speichern. Bitte verfügbaren Speicherplatz prüfen.",
+    "load_error": "Fehler beim Laden. Starte mit Standard-Board."
+  },
+  "feedback": {
+    "task_created": "Aufgabe erstellt",
+    "task_deleted": "Aufgabe gelöscht",
+    "column_created": "Spalte erstellt",
+    "column_deleted": "Spalte gelöscht"
+  }
+}

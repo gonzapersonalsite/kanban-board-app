@@ -4,6 +4,7 @@ import styles from './LanguageSwitcher.module.css'
 const LABELS: Record<string, string> = {
   en: 'EN',
   es: 'ES',
+  de: 'DE',
 }
 
 export function LanguageSwitcher() {
