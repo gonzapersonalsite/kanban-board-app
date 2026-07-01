@@ -1,3 +1,9 @@
+export {
+  KanbanRestoreError,
+  normalizePortableKanbanState,
+  restoreKanbanState,
+  restoreKanbanStateInStore,
+} from './restore'
 export { useKanbanStore } from './store'
 export type {
   BoardId,
@@ -9,4 +15,5 @@ export type {
   TasksByBoard,
   TasksByColumn,
   KanbanState,
+  PortableKanbanState,
 } from './slices/types'

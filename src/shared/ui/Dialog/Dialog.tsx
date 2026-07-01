@@ -29,9 +29,6 @@ export function Dialog({ open, onClose, title, children, closeLabel = 'Close dia
     const dialog = dialogRef.current
     if (!dialog) return
 
-    const supportsClosedBy = 'closedBy' in HTMLDialogElement.prototype
-    if (supportsClosedBy) return
-
     const handleBackdropClick = (event: MouseEvent) => {
       if (event.target !== dialog) return
 
@@ -58,7 +55,6 @@ export function Dialog({ open, onClose, title, children, closeLabel = 'Close dia
       ref={dialogRef}
       className={styles.dialog}
       onClose={onClose}
-      closedby="any"
     >
       <div className={styles.header}>
         <h2 className={styles.title}>{title}</h2>

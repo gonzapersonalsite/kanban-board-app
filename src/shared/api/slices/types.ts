@@ -66,3 +66,8 @@ export interface DndSlice {
 }
 
 export type KanbanState = BoardSlice & ColumnSlice & TaskSlice & DndSlice
+
+export type PortableKanbanState = Pick<
+  KanbanState,
+  'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'
+>

@@ -68,31 +68,26 @@
   border-bottom-color: #6366f1;
 }
 
-.actions {
+.settingsAction {
   display: flex;
   align-items: center;
-  gap: 6px;
   flex-shrink: 0;
 }
 
-.mobileActions {
-  display: none;
-}
-
-.mobileSettingsPanel {
+.settingsPanel {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.mobileSettingGroup {
+.settingGroup {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.mobileSettingLabel {
+.settingLabel {
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-text);
@@ -157,15 +152,6 @@
     padding: 6px 10px;
   }
 
-  .actions {
-    display: none;
-  }
-
-  .mobileActions {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
 }
 
 @media (max-width: 479px) {

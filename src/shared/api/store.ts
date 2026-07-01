@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import type { PersistStorage, StorageValue } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 import type { KanbanState } from './slices/types'
 import type { Column, TasksByColumn } from './slices/types'
 import { getDefaultBoardTitle, normalizeTaskMap, normalizeTasksByColumn } from './slices/helpers'
@@ -8,24 +9,35 @@ import { useToastStore } from '@/shared/ui'
 import { useI18nStore } from '@/shared/i18n'
 import { nanoid } from 'nanoid'
 
-function createSafeStorage() {
-  return createJSONStorage(() => ({
+export const KANBAN_STORAGE_KEY = 'kanban-board-storage'
+
+export function createSafeStorage(): PersistStorage<KanbanState> {
+  return {
     getItem: (name: string) => {
       try {
-        return localStorage.getItem(name)
+        const storedValue = localStorage.getItem(name)
+        if (!storedValue) {
+          return null
+        }
+
+        return JSON.parse(storedValue) as StorageValue<KanbanState>
       } catch {
+        notifyStorageError('load_error')
+
+        try {
+          localStorage.removeItem(name)
+        } catch {
+          // Best-effort cleanup only.
+        }
+
         return null
       }
     },
-    setItem: (name: string, value: string) => {
+    setItem: (name: string, value: StorageValue<KanbanState>) => {
       try {
-        localStorage.setItem(name, value)
+        localStorage.setItem(name, JSON.stringify(value))
       } catch {
-        const t = useI18nStore.getState().t
-        useToastStore.getState().addNotification(
-          'error',
-          t('storage.save_error'),
-        )
+        notifyStorageError('save_error')
       }
     },
     removeItem: (name: string) => {
@@ -35,12 +47,17 @@ function createSafeStorage() {
         // Non-critical — silently ignore
       }
     },
-  }))
+  }
+}
+
+function notifyStorageError(key: 'load_error' | 'save_error') {
+  const t = useI18nStore.getState().t
+  useToastStore.getState().addNotification('error', t(`storage.${key}`))
 }
 
 export const useKanbanStore = create<KanbanState>()(
   persist(kanbanStoreCreator, {
-    name: 'kanban-board-storage',
+    name: KANBAN_STORAGE_KEY,
     version: 1,
     storage: createSafeStorage(),
     migrate: (persistedState, version) => migrateKanbanState(persistedState, version),

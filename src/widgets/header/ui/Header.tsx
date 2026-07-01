@@ -8,6 +8,7 @@ import {
   useBoards,
 } from '@/entities/board'
 import { BoardManagement } from '@/features/board-management'
+import { DataExportSection, DataImportSection } from '@/features/data-portability'
 import { LanguageSwitcher } from '@/features/language-switcher'
 import { ThemeSwitcher } from '@/features/theme-switcher'
 import { AppIcon, Dialog, IconButton, Tooltip } from '@/shared/ui'
@@ -18,7 +19,7 @@ export function Header() {
   const navigate = useNavigate()
   const location = useLocation()
   const { boards, activeBoardId } = useBoards()
-  const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   const currentView = location.pathname.startsWith('/calendar') ? 'calendar' : 'board'
   const currentBoardId = resolveFallbackBoardId(boards, activeBoardId)
@@ -32,6 +33,15 @@ export function Header() {
 
   const handleBoardChange = (boardId: string) => {
     navigate(buildBoardPath(currentView, boardId))
+  }
+
+  const handleImportComplete = (activeBoardId: string | null) => {
+    if (!activeBoardId) {
+      return
+    }
+
+    navigate(buildBoardPath(currentView, activeBoardId), { replace: true })
+    setIsSettingsOpen(false)
   }
 
   return (
@@ -56,36 +66,34 @@ export function Header() {
             </NavLink>
           ))}
         </nav>
-        <div className={styles.actions}>
-          <ThemeSwitcher />
-          <LanguageSwitcher />
-        </div>
-        <div className={styles.mobileActions}>
-          <Tooltip text={t('header.mobile_settings')}>
+        <div className={styles.settingsAction}>
+          <Tooltip text={t('header.settings')}>
             <IconButton
               icon={<Settings2 size={16} />}
-              label={t('header.mobile_settings')}
-              onClick={() => setIsMobileSettingsOpen(true)}
+              label={t('header.settings')}
+              onClick={() => setIsSettingsOpen(true)}
             />
           </Tooltip>
         </div>
       </div>
-      {isMobileSettingsOpen && (
+      {isSettingsOpen && (
         <Dialog
           open={true}
-          onClose={() => setIsMobileSettingsOpen(false)}
-          title={t('header.mobile_settings')}
+          onClose={() => setIsSettingsOpen(false)}
+          title={t('header.settings')}
           closeLabel={t('dialog.close')}
         >
-          <div className={styles.mobileSettingsPanel}>
-            <div className={styles.mobileSettingGroup}>
-              <span className={styles.mobileSettingLabel}>{t('header.theme')}</span>
+          <div className={styles.settingsPanel}>
+            <div className={styles.settingGroup}>
+              <span className={styles.settingLabel}>{t('header.theme')}</span>
               <ThemeSwitcher />
             </div>
-            <div className={styles.mobileSettingGroup}>
-              <span className={styles.mobileSettingLabel}>{t('header.language')}</span>
+            <div className={styles.settingGroup}>
+              <span className={styles.settingLabel}>{t('header.language')}</span>
               <LanguageSwitcher />
             </div>
+            <DataExportSection />
+            <DataImportSection onImportComplete={(state) => handleImportComplete(state.activeBoardId)} />
           </div>
         </Dialog>
       )}

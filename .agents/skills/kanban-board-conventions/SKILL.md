@@ -120,6 +120,20 @@
 - Slice functions: `createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice` in separate files under `shared/api/slices/`.
 - Persisted schema migration from the legacy flat state is handled via `version` + `migrate` in `shared/api/store.ts`. Keep the storage key as `kanban-board-storage`.
 
+## Data Portability
+
+- Public backup/import contracts live in `features/data-portability/`. Do NOT couple them to Zustand `persist` internals.
+- The portable format is a versioned snapshot contract (`schemaVersion`, `exportedAt`, `boards`, `activeBoardId`, `columnsByBoard`, `tasksByBoard`).
+- Never export or import the raw `localStorage` blob from `kanban-board-storage` as the public backup format.
+- Snapshot validation and normalization must happen inside `features/data-portability/model/` before any restore flow touches the domain store.
+- Domain restore enters ONLY through `shared/api/restore.ts`. Do NOT restore data by mutating `localStorage` directly or by patching state from UI components.
+- Restore must be atomic: validate and normalize first, write to the store once, and leave the current state untouched on failure.
+- Export UI lives in the Header settings dialog, never inside `board-management`.
+- Export always offers file download first. `navigator.share` is progressive enhancement only and must never replace the download path.
+- Import UI also lives in the Header settings dialog and follows a two-step flow: select file → review summary → confirm destructive replace.
+- After a successful import, navigate to the restored `activeBoardId` while preserving the current view (`board` or `calendar`).
+- Data portability is strictly local-file based. Do NOT introduce URL payload sharing, remote sync, or backend-backed transfer flows unless the user explicitly changes this project decision in a later session.
+
 ## Domain Types
 
 All domain types live alongside the store in `shared/api/slices/types.ts` and are re-exported via `shared/api/index.ts`. Consumers import from `@/shared/api`:
