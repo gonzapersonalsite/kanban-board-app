@@ -21,6 +21,23 @@ import {
 import type { Column } from '@/shared/api'
 import styles from './BoardDndContext.module.css'
 
+function ensureColumnTaskEntries(
+  tasks: TasksByColumn,
+  columns: Column[],
+): TasksByColumn {
+  const entries = { ...tasks }
+  let missing = false
+
+  for (const col of columns) {
+    if (!(col.id in entries)) {
+      entries[col.id] = []
+      missing = true
+    }
+  }
+
+  return missing ? entries : tasks
+}
+
 interface BoardDndContextProps {
   children: ReactNode
 }
@@ -88,7 +105,10 @@ export function BoardDndContext({ children }: BoardDndContextProps) {
 
     if (source.type === 'task') {
       useKanbanStore.setState((state) => ({
-        tasks: applyTaskDragOver(state.tasks, event),
+        tasks: applyTaskDragOver(
+          ensureColumnTaskEntries(state.tasks, state.columns),
+          event,
+        ),
       }))
     } else if (source.type === 'column') {
       useKanbanStore.setState((state) => ({
