@@ -1,5 +1,13 @@
 import { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider, useRouteError } from 'react-router-dom'
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+  useRouteError,
+} from 'react-router-dom'
+import { useKanbanStore } from '@/shared/api'
+import { buildBoardPath, resolveFallbackBoardId, type BoardViewRoute } from '@/entities/board'
+import { useSyncBoardRoute } from '../model/useSyncBoardRoute'
 import styles from './RouteErrorBoundary.module.css'
 
 const HomePage = lazy(() =>
@@ -26,24 +34,66 @@ function RouteErrorBoundary() {
   )
 }
 
+function ActiveBoardRedirect({ view }: { view: BoardViewRoute }) {
+  const boards = useKanbanStore((state) => state.boards)
+  const activeBoardId = useKanbanStore((state) => state.activeBoardId)
+  const targetBoardId = resolveFallbackBoardId(boards, activeBoardId)
+
+  if (!targetBoardId) {
+    return null
+  }
+
+  return <Navigate to={buildBoardPath(view, targetBoardId)} replace />
+}
+
+function BoardPageRoute() {
+  const isReady = useSyncBoardRoute('board')
+
+  if (!isReady) {
+    return null
+  }
+
+  return (
+    <Suspense fallback={null}>
+      <HomePage />
+    </Suspense>
+  )
+}
+
+function CalendarPageRoute() {
+  const isReady = useSyncBoardRoute('calendar')
+
+  if (!isReady) {
+    return null
+  }
+
+  return (
+    <Suspense fallback={null}>
+      <CalendarPage />
+    </Suspense>
+  )
+}
+
 const router = createBrowserRouter([
   {
     path: '/',
     errorElement: <RouteErrorBoundary />,
-    element: (
-      <Suspense fallback={null}>
-        <HomePage />
-      </Suspense>
-    ),
+    element: <ActiveBoardRedirect view="board" />,
+  },
+  {
+    path: '/board/:boardId',
+    errorElement: <RouteErrorBoundary />,
+    element: <BoardPageRoute />,
   },
   {
     path: '/calendar',
     errorElement: <RouteErrorBoundary />,
-    element: (
-      <Suspense fallback={null}>
-        <CalendarPage />
-      </Suspense>
-    ),
+    element: <ActiveBoardRedirect view="calendar" />,
+  },
+  {
+    path: '/calendar/:boardId',
+    errorElement: <RouteErrorBoundary />,
+    element: <CalendarPageRoute />,
   },
   {
     path: '*',

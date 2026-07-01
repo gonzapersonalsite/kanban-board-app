@@ -1,38 +1,92 @@
-import { NavLink } from 'react-router-dom'
+import { useState } from 'react'
+import { Settings2 } from 'lucide-react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from '@/shared/i18n'
+import {
+  BoardSelector,
+  buildBoardPath,
+  resolveFallbackBoardId,
+  useBoards,
+} from '@/entities/board'
 import { LanguageSwitcher } from '@/features/language-switcher'
 import { ThemeSwitcher } from '@/features/theme-switcher'
-import { AppIcon } from '@/shared/ui'
+import { AppIcon, Dialog, IconButton } from '@/shared/ui'
 import styles from './Header.module.css'
-
-const NAV_ITEMS = [
-  { to: '/', label: 'nav.board', end: true },
-  { to: '/calendar', label: 'nav.calendar', end: false },
-] as const
 
 export function Header() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { boards, activeBoardId } = useBoards()
+  const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false)
+
+  const currentView = location.pathname.startsWith('/calendar') ? 'calendar' : 'board'
+  const currentBoardId = resolveFallbackBoardId(boards, activeBoardId)
+
+  const navItems = currentBoardId
+    ? [
+        { to: buildBoardPath('board', currentBoardId), label: 'nav.board', end: false },
+        { to: buildBoardPath('calendar', currentBoardId), label: 'nav.calendar', end: false },
+      ]
+    : []
+
+  const handleBoardChange = (boardId: string) => {
+    navigate(buildBoardPath(currentView, boardId))
+  }
 
   return (
     <header className={styles.header}>
-      <AppIcon />
-      <h1 className={styles.title}>{t('app.title')}</h1>
-      <nav className={styles.nav}>
-        {NAV_ITEMS.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={styles.navLink}
-          >
-            {t(item.label)}
-          </NavLink>
-        ))}
-      </nav>
-      <div className={styles.actions}>
-        <ThemeSwitcher />
-        <LanguageSwitcher />
+      <div className={styles.primary}>
+        <AppIcon />
+        <BoardSelector
+          className={styles.boardSelector}
+          onBoardChange={handleBoardChange}
+        />
       </div>
+      <div className={styles.secondary}>
+        <nav className={styles.nav}>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={styles.navLink}
+            >
+              {t(item.label)}
+            </NavLink>
+          ))}
+        </nav>
+        <div className={styles.actions}>
+          <ThemeSwitcher />
+          <LanguageSwitcher />
+        </div>
+        <div className={styles.mobileActions}>
+          <IconButton
+            icon={<Settings2 size={16} />}
+            label={t('header.mobile_settings')}
+            onClick={() => setIsMobileSettingsOpen(true)}
+          />
+        </div>
+      </div>
+      {isMobileSettingsOpen && (
+        <Dialog
+          open={true}
+          onClose={() => setIsMobileSettingsOpen(false)}
+          title={t('header.mobile_settings')}
+          closeLabel={t('dialog.close')}
+        >
+          <div className={styles.mobileSettingsPanel}>
+            <div className={styles.mobileSettingGroup}>
+              <span className={styles.mobileSettingLabel}>{t('header.theme')}</span>
+              <ThemeSwitcher />
+            </div>
+            <div className={styles.mobileSettingGroup}>
+              <span className={styles.mobileSettingLabel}>{t('header.language')}</span>
+              <LanguageSwitcher />
+            </div>
+          </div>
+        </Dialog>
+      )}
     </header>
   )
 }

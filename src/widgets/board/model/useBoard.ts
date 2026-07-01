@@ -1,11 +1,12 @@
 import { useKanbanStore } from '@/shared/api'
+import { selectActiveBoardColumns, selectActiveBoardTasks } from '@/entities/board'
 import { useColumnActions } from '@/features/column-management'
 import { useTaskDialog } from '@/features/task-management'
 import type { ColumnId, Task } from '@/shared/api'
 
 export function useBoard() {
-  const columns = useKanbanStore((state) => state.columns)
-  const tasks = useKanbanStore((state) => state.tasks)
+  const columns = useKanbanStore(selectActiveBoardColumns)
+  const tasks = useKanbanStore(selectActiveBoardTasks)
   const columnActions = useColumnActions()
   const taskDialog = useTaskDialog()
 

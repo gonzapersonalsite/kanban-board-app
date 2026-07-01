@@ -5,7 +5,7 @@
 - **Zustand** is the ONLY state library. Do NOT introduce Redux, Jotai, Context API, or any other state tool for cross-component state.
 - **Domain store** (kanban board data): lives at `shared/api/store.ts`. This is a single store with `persist` middleware.
 - **Infrastructure stores** (i18n, theme): live in their own `shared/<slice>/model/store.ts` files. Each is a separate Zustand store with its own `persist` middleware. This pattern is distinct from the domain store — infrastructure stores manage cross-cutting concerns, not business entities.
-- Use the **slices pattern** to organize domain store logic: create separate slice functions per domain (`createBoardSlice`, `createColumnSlice`, `createTaskSlice`) and compose them into one bound store.
+- Use the **slices pattern** to organize domain store logic: create separate slice functions per domain (`createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice`) and compose them into one bound store.
 - Apply the `persist` middleware ONLY at the composed store level for the domain store, never inside individual slices.
 - Storage engine: `localStorage` via `createJSONStorage(() => localStorage)` (Zustand built-in). No IndexedDB unless explicitly required.
 - Domain store key name: `kanban-board-storage`. Infrastructure stores use their own keys (`i18n-locale`, `theme-preference`).
@@ -78,7 +78,14 @@
 - Pages MUST be lazy-loaded via `React.lazy()` at the route level for code splitting.
 - Route components are wrapped in `<Suspense>` — the fallback is currently `null` (add a shared `<LoadingFallback />` from `shared/ui/` when non-trivial).
 - Error boundaries are handled per-route in the future via `errorElement` on route definitions. For now, the app-level `<ErrorBoundary>` in `app/providers/` catches all errors.
-- New routes are added by appending to the `createBrowserRouter` array in `AppRouter.tsx`. No other file needs modification.
+- Routing is board-scoped. Final routes are:
+  - `/` → redirects to `/board/:activeBoardId`
+  - `/board/:boardId` → board view
+  - `/calendar` → redirects to `/calendar/:activeBoardId`
+  - `/calendar/:boardId` → calendar view
+  - `*` → `NotFoundPage`
+- URL is the source of truth during navigation. Synchronize route params and store state in `app/router/model/useSyncBoardRoute.ts`, not inside `pages/` or `entities/`.
+- Header navigation and board switching MUST preserve the current view while swapping only `:boardId`.
 
 ## Store Architecture
 
@@ -86,9 +93,18 @@
 - Store state shape:
   ```ts
   interface KanbanState {
-    columns: Column[]
-    tasks: Record<ColumnId, Task[]>
-    // actions
+    boards: Board[]
+    activeBoardId: BoardId | null
+    columnsByBoard: Record<BoardId, Column[]>
+    tasksByBoard: Record<BoardId, Record<ColumnId, Task[]>>
+
+    // board actions
+    addBoard(title?: string): void
+    updateBoard(id: BoardId, title: string): void
+    deleteBoard(id: BoardId): void
+    setActiveBoard(id: BoardId): void
+
+    // active-board-scoped actions
     addColumn(title: string): void
     updateColumn(id: ColumnId, title: string): void
     deleteColumn(id: ColumnId): void
@@ -100,7 +116,9 @@
     reorderTask(columnId: ColumnId, fromIndex: number, toIndex: number): void
   }
   ```
-- Slice functions: `createBoardSlice`, `createColumnSlice`, `createTaskSlice` in separate files under `shared/api/slices/`.
+- The persisted domain state MUST always contain at least one board.
+- Slice functions: `createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice` in separate files under `shared/api/slices/`.
+- Persisted schema migration from the legacy flat state is handled via `version` + `migrate` in `shared/api/store.ts`. Keep the storage key as `kanban-board-storage`.
 
 ## Domain Types
 
@@ -110,10 +128,12 @@ type BoardId = string
 type ColumnId = string
 type TaskId = string
 
-interface Board { id: BoardId; title: string; columnOrder: ColumnId[] }
+interface Board { id: BoardId; title: string }
 interface Column { id: ColumnId; title: string }
 interface Task { id: TaskId; title: string; description: string }
 ```
+
+- Board-scoped selector helpers and routing helpers live in `entities/board/model/` and are re-exported via `entities/board/index.ts`.
 
 ## Data Flow
 
@@ -157,7 +177,7 @@ pnpm preview    # Preview production build
 - **Interpolation syntax**: `{{param}}` — e.g., `t('task.edit', { title })`.
 - **Type safety**: Keys are strings (dot notation from JSON nesting). No auto-generated type — consumer knows keys from the English JSON.
 - **Browser detection**: On first visit (no persisted locale), `navigator.language` is checked and matched against available locales.
-- **Seed data**: `columnSlice.ts` calls `useI18nStore.getState().t()` lazily inside the `StateCreator` to resolve seed column titles from the current locale.
+- Seed data: store helpers call `useI18nStore.getState().t()` lazily to resolve localized seed column titles and the default board title from the current locale.
 - **Dialog close label**: `Dialog` accepts optional `closeLabel` prop (defaults to `'Close dialog'`). Consumers pass `t('dialog.close')`.
 - **Import pattern**:
   ```ts
@@ -176,7 +196,8 @@ Keys are organised in namespaces that mirror feature/entity boundaries:
 
 ```
 app/          → app.title
-board/        → board.empty_column
+ board/        → board.add, board.rename, board.delete, board.default_title
+ board_view/   → board_view.empty_column
 column/       → column.add, column.rename, column.title_placeholder, column.title_aria, ...
 task/         → task.add, task.edit, task.delete, task.title_placeholder, task.title_aria
 task_dialog/  → task_dialog.title, task_dialog.title_label, task_dialog.cancel, task_dialog.save, ...
@@ -186,6 +207,7 @@ seed/         → seed.column_todo, seed.column_in_progress, seed.column_done
 
 Guidelines:
 - Namespace per domain (`task`), not per UI location. `cancel` and `save` buttons belong to `task_dialog.*`, not a generic namespace — this prevents collisions when other dialogs are added.
+- Reserve `board.*` for board-management UI and `board_view.*` for board-view-only presentation text.
 - Placeholders and aria-labels live with their entity (`column.title_placeholder`, `task.title_aria`), not mixed with action keys.
 - New features create their own top-level namespace (e.g., `auth.*`, `settings.*`, `confirm_dialog.*`).
 

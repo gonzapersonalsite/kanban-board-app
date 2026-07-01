@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
-  COLUMN_DONE_ID,
-  COLUMN_TODO_ID,
-  TASK_ALPHA_ID,
-  TASK_BETA_ID,
+  BOARD_MAIN_ID,
   createKanbanFixture,
 } from '@/test/fixtures/kanbanFixtures'
 import {
@@ -18,52 +15,85 @@ describe('boardSlice', () => {
     resetKanbanStore(store)
   })
 
-  describe('reorderColumns', () => {
-    it('moves_a_column_to_a_new_position', () => {
-      const initial = store.getState().columns.map((column) => column.id)
+  describe('addBoard', () => {
+    it('creates_a_new_board_and_makes_it_active', () => {
+      const before = store.getState().boards.length
 
-      store.getState().reorderColumns(0, 2)
+      store.getState().addBoard('  Product Roadmap  ')
 
-      const next = store.getState().columns.map((column) => column.id)
-      expect(next).toEqual([initial[1], initial[2], initial[0]])
-    })
+      const state = store.getState()
+      const created = state.boards.at(-1)
 
-    it('ignores_reorder_when_source_index_is_out_of_bounds', () => {
-      const initial = store.getState().columns
-
-      store.getState().reorderColumns(-1, 1)
-
-      expect(store.getState().columns).toEqual(initial)
+      expect(state.boards).toHaveLength(before + 1)
+      expect(created?.title).toBe('Product Roadmap')
+      expect(state.activeBoardId).toBe(created?.id)
+      expect(created?.id ? state.columnsByBoard[created.id] : undefined).toHaveLength(3)
+      expect(created?.id ? state.tasksByBoard[created.id] : undefined).toBeTruthy()
     })
   })
 
-  describe('moveTask', () => {
-    it('moves_a_task_to_another_column_at_the_requested_index', () => {
-      store.getState().moveTask(COLUMN_TODO_ID, COLUMN_DONE_ID, TASK_ALPHA_ID, 0)
+  describe('updateBoard', () => {
+    it('updates_the_matching_board_title', () => {
+      store.getState().updateBoard(BOARD_MAIN_ID, '  Backlog Board  ')
 
-      const tasks = store.getState().tasks
-      expect(tasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual([
-        TASK_BETA_ID,
-      ])
-      expect(tasks[COLUMN_DONE_ID].map((task) => task.id)).toEqual([
-        TASK_ALPHA_ID,
-      ])
-    })
-
-    it('reorders_a_task_within_the_same_column', () => {
-      store.getState().moveTask(COLUMN_TODO_ID, COLUMN_TODO_ID, TASK_BETA_ID, 0)
-
-      expect(store.getState().tasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual(
-        [TASK_BETA_ID, TASK_ALPHA_ID],
+      expect(store.getState().boards.find((board) => board.id === BOARD_MAIN_ID)?.title).toBe(
+        'Backlog Board',
       )
     })
 
-    it('does_not_mutate_state_when_task_id_is_missing', () => {
-      const before = createKanbanFixture().tasks
+    it('ignores_blank_titles', () => {
+      const before = createKanbanFixture().boards
 
-      store.getState().moveTask(COLUMN_TODO_ID, COLUMN_DONE_ID, 'missing-task', 0)
+      store.getState().updateBoard(BOARD_MAIN_ID, '   ')
 
-      expect(store.getState().tasks).toEqual(before)
+      expect(store.getState().boards).toEqual(before)
+    })
+  })
+
+  describe('deleteBoard', () => {
+    it('removes_a_non_active_board_and_keeps_the_active_one', () => {
+      store.getState().addBoard('Secondary')
+      const secondaryBoardId = store.getState().activeBoardId!
+      store.getState().setActiveBoard(BOARD_MAIN_ID)
+
+      store.getState().deleteBoard(secondaryBoardId)
+
+      const state = store.getState()
+      expect(state.boards.some((board) => board.id === secondaryBoardId)).toBe(false)
+      expect(state.columnsByBoard[secondaryBoardId]).toBeUndefined()
+      expect(state.tasksByBoard[secondaryBoardId]).toBeUndefined()
+      expect(state.activeBoardId).toBe(BOARD_MAIN_ID)
+    })
+
+    it('selects_another_board_when_deleting_the_active_one', () => {
+      store.getState().addBoard('Secondary')
+      const secondaryBoardId = store.getState().activeBoardId!
+
+      store.getState().deleteBoard(secondaryBoardId)
+
+      expect(store.getState().activeBoardId).toBe(BOARD_MAIN_ID)
+    })
+
+    it('does_not_delete_the_last_remaining_board', () => {
+      const before = createKanbanFixture()
+
+      store.getState().deleteBoard(BOARD_MAIN_ID)
+
+      expect(store.getState().boards).toEqual(before.boards)
+      expect(store.getState().activeBoardId).toBe(before.activeBoardId)
+    })
+  })
+
+  describe('setActiveBoard', () => {
+    it('changes_the_active_board_when_it_exists', () => {
+      store.getState().addBoard('Secondary')
+      const secondaryBoardId = store.getState().activeBoardId!
+
+      store.getState().setActiveBoard(BOARD_MAIN_ID)
+      expect(store.getState().activeBoardId).toBe(BOARD_MAIN_ID)
+
+      store.getState().setActiveBoard(secondaryBoardId)
+      expect(store.getState().activeBoardId).toBe(secondaryBoardId)
     })
   })
 })

@@ -1,36 +1,31 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { describe, expect, it, vi, afterEach } from 'vitest'
-import { CalendarPage } from './CalendarPage'
+import { describe, expect, it } from 'vitest'
+import { HomePage } from './HomePage'
 import { useKanbanStore } from '@/shared/api'
 import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
 import { BOARD_MAIN_ID } from '@/test/fixtures/kanbanFixtures'
 
-describe('CalendarPage', () => {
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
-  it('renders_header_and_calendar_grid', () => {
-    vi.useFakeTimers({ shouldAdvanceTime: false })
-    vi.setSystemTime(new Date(2026, 6, 1))
+describe('HomePage', () => {
+  it('renders_header_and_board_on_a_board_route', () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
 
     render(
-      <MemoryRouter initialEntries={[`/calendar/${BOARD_MAIN_ID}`]}>
+      <MemoryRouter initialEntries={[`/board/${BOARD_MAIN_ID}`]}>
         <Routes>
-          <Route path="/calendar/:boardId" element={<CalendarPage />} />
+          <Route path="/board/:boardId" element={<HomePage />} />
         </Routes>
       </MemoryRouter>,
     )
 
-    expect(screen.getByText('July 2026')).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: /switch board/i })).toBeInTheDocument()
-    expect(screen.getByText('Board')).toBeInTheDocument()
-    expect(screen.getByText('Calendar')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /board/i })).toHaveAttribute(
       'href',
       `/board/${BOARD_MAIN_ID}`,
+    )
+    expect(screen.getByRole('link', { name: /calendar/i })).toHaveAttribute(
+      'href',
+      `/calendar/${BOARD_MAIN_ID}`,
     )
   })
 })

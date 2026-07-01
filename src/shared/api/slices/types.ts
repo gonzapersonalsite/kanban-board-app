@@ -1,5 +1,11 @@
+export type BoardId = string
 export type ColumnId = string
 export type TaskId = string
+
+export interface Board {
+  id: BoardId
+  title: string
+}
 
 export interface Column {
   id: ColumnId
@@ -13,15 +19,28 @@ export interface Task {
   dueDate?: string
 }
 
+export type TasksByColumn = Record<ColumnId, Task[]>
+export type ColumnsByBoard = Record<BoardId, Column[]>
+export type TasksByBoard = Record<BoardId, TasksByColumn>
+
+export interface BoardSlice {
+  boards: Board[]
+  activeBoardId: BoardId | null
+  addBoard: (title?: string) => void
+  updateBoard: (id: BoardId, title: string) => void
+  deleteBoard: (id: BoardId) => void
+  setActiveBoard: (id: BoardId) => void
+}
+
 export interface ColumnSlice {
-  columns: Column[]
+  columnsByBoard: ColumnsByBoard
   addColumn: (title: string) => void
   updateColumn: (id: ColumnId, title: string) => void
   deleteColumn: (id: ColumnId) => void
 }
 
 export interface TaskSlice {
-  tasks: Record<ColumnId, Task[]>
+  tasksByBoard: TasksByBoard
   addTask: (columnId: ColumnId, title: string, description?: string, dueDate?: string) => void
   updateTask: (
     columnId: ColumnId,
@@ -36,7 +55,7 @@ export interface TaskSlice {
   ) => void
 }
 
-export interface BoardSlice {
+export interface DndSlice {
   reorderColumns: (fromIndex: number, toIndex: number) => void
   moveTask: (
     sourceColId: ColumnId,
@@ -46,4 +65,4 @@ export interface BoardSlice {
   ) => void
 }
 
-export type KanbanState = ColumnSlice & TaskSlice & BoardSlice
+export type KanbanState = BoardSlice & ColumnSlice & TaskSlice & DndSlice

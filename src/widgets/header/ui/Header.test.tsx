@@ -1,12 +1,19 @@
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { act, fireEvent, render, screen } from '@testing-library/react'
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { Header } from './Header'
 import { useKanbanStore } from '@/shared/api'
 import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
+import { BOARD_MAIN_ID } from '@/test/fixtures/kanbanFixtures'
+
+function LocationDisplay() {
+  const location = useLocation()
+
+  return <div>{location.pathname}</div>
+}
 
 describe('Header', () => {
-  it('renders_app_title', () => {
+  it('renders_board_selector_as_the_primary_header_element', () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
 
     render(
@@ -15,32 +22,33 @@ describe('Header', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByText('Kanban Board')).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: /switch board/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /new board/i })).toBeInTheDocument()
   })
 
   it('renders_nav_links_for_board_and_calendar', () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
 
     render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={[`/board/${BOARD_MAIN_ID}`]}>
         <Header />
       </MemoryRouter>,
     )
 
     const boardLink = screen.getByRole('link', { name: /board/i })
     expect(boardLink).toBeInTheDocument()
-    expect(boardLink).toHaveAttribute('href', '/')
+    expect(boardLink).toHaveAttribute('href', `/board/${BOARD_MAIN_ID}`)
 
     const calendarLink = screen.getByRole('link', { name: /calendar/i })
     expect(calendarLink).toBeInTheDocument()
-    expect(calendarLink).toHaveAttribute('href', '/calendar')
+    expect(calendarLink).toHaveAttribute('href', `/calendar/${BOARD_MAIN_ID}`)
   })
 
-  it('highlights_board_link_when_on_root_route', () => {
+  it('highlights_board_link_when_on_board_route', () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
 
     render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={[`/board/${BOARD_MAIN_ID}`]}>
         <Header />
       </MemoryRouter>,
     )
@@ -53,12 +61,64 @@ describe('Header', () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
 
     render(
-      <MemoryRouter initialEntries={['/calendar']}>
+      <MemoryRouter initialEntries={[`/calendar/${BOARD_MAIN_ID}`]}>
         <Header />
       </MemoryRouter>,
     )
 
     const calendarLink = screen.getByRole('link', { name: /calendar/i })
     expect(calendarLink.getAttribute('aria-current')).toBe('page')
+  })
+
+  it('updates_the_url_when_switching_boards_from_the_selector', () => {
+    resetPersistedKanbanStore(useKanbanStore.setState)
+
+    act(() => {
+      useKanbanStore.getState().addBoard('Secondary')
+      useKanbanStore.getState().setActiveBoard(BOARD_MAIN_ID)
+    })
+
+    const secondaryBoardId = useKanbanStore
+      .getState()
+      .boards.find((board) => board.title === 'Secondary')!.id
+
+    render(
+      <MemoryRouter initialEntries={[`/calendar/${BOARD_MAIN_ID}`]}>
+        <Routes>
+          <Route
+            path="/calendar/:boardId"
+            element={
+              <>
+                <Header />
+                <LocationDisplay />
+              </>
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.change(screen.getByRole('combobox', { name: /switch board/i }), {
+      target: { value: secondaryBoardId },
+    })
+
+    expect(screen.getByText(`/calendar/${secondaryBoardId}`)).toBeInTheDocument()
+  })
+
+  it('opens_the_mobile_settings_dialog', () => {
+    resetPersistedKanbanStore(useKanbanStore.setState)
+
+    render(
+      <MemoryRouter initialEntries={[`/board/${BOARD_MAIN_ID}`]}>
+        <Header />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /header settings/i }),
+    )
+
+    expect(screen.getByText('Theme')).toBeInTheDocument()
+    expect(screen.getByText('Language')).toBeInTheDocument()
   })
 })

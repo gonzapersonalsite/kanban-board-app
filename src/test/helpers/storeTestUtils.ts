@@ -12,17 +12,26 @@ export function resetKanbanStore(
 ) {
   const fixture = createKanbanFixture()
   store.setState({
-    columns: fixture.columns,
-    tasks: fixture.tasks,
+    boards: fixture.boards,
+    activeBoardId: fixture.activeBoardId,
+    columnsByBoard: fixture.columnsByBoard,
+    tasksByBoard: fixture.tasksByBoard,
   })
 }
 
 export function resetPersistedKanbanStore(
-  setState: (partial: Pick<KanbanState, 'columns' | 'tasks'>) => void,
+  setState: (
+    partial: Pick<
+      KanbanState,
+      'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'
+    >,
+  ) => void,
 ) {
   const fixture = createKanbanFixture()
   setState({
-    columns: fixture.columns,
-    tasks: fixture.tasks,
+    boards: fixture.boards,
+    activeBoardId: fixture.activeBoardId,
+    columnsByBoard: fixture.columnsByBoard,
+    tasksByBoard: fixture.tasksByBoard,
   })
 }

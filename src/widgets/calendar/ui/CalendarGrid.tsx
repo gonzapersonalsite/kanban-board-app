@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useKanbanStore } from '@/shared/api'
+import { selectActiveBoardTasks } from '@/entities/board'
 import { useTranslation } from '@/shared/i18n'
 import { Dialog } from '@/shared/ui'
 import type { Task, ColumnId } from '@/shared/api'
@@ -21,7 +22,7 @@ interface CalendarGridProps {
 export function CalendarGrid({ onTaskClick }: CalendarGridProps) {
   const { t, locale } = useTranslation()
   const { year, month, goNext, goPrev, goToday } = useCalendar()
-  const tasks = useKanbanStore((s) => s.tasks)
+  const tasks = useKanbanStore(selectActiveBoardTasks)
   const MAX_VISIBLE = 2
 
   const [dayOverflow, setDayOverflow] = useState<{

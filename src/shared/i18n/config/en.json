@@ -6,6 +6,11 @@
     "board": "Board",
     "calendar": "Calendar"
   },
+  "header": {
+    "mobile_settings": "Header settings",
+    "theme": "Theme",
+    "language": "Language"
+  },
   "calendar": {
     "today": "Today",
     "prev_month": "Previous month",
@@ -13,6 +18,20 @@
     "more": "more"
   },
   "board": {
+    "add": "New Board",
+    "rename": "Rename board",
+    "delete": "Delete board",
+    "confirm_delete_title": "Delete board",
+    "confirm_delete_message": "All columns and tasks in this board will be deleted.",
+    "title_placeholder": "Board name...",
+    "switch_board": "Switch board",
+    "default_title": "My Board",
+    "create_action": "Create",
+    "save_action": "Save",
+    "cancel_action": "Cancel",
+    "confirm_delete_action": "Delete"
+  },
+  "board_view": {
     "empty_column": "No tasks yet"
   },
   "column": {

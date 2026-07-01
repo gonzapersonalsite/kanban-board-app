@@ -43,7 +43,7 @@ describe('useI18nStore', () => {
 
   describe('t', () => {
     it('returns_translation_for_existing_key', () => {
-      expect(useI18nStore.getState().t('board.empty_column')).toBe(
+      expect(useI18nStore.getState().t('board_view.empty_column')).toBe(
         'No tasks yet',
       )
     })

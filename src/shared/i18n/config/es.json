@@ -6,6 +6,11 @@
     "board": "Tablero",
     "calendar": "Calendario"
   },
+  "header": {
+    "mobile_settings": "Ajustes del encabezado",
+    "theme": "Tema",
+    "language": "Idioma"
+  },
   "calendar": {
     "today": "Hoy",
     "prev_month": "Mes anterior",
@@ -13,6 +18,20 @@
     "more": "más"
   },
   "board": {
+    "add": "Nuevo tablero",
+    "rename": "Renombrar tablero",
+    "delete": "Eliminar tablero",
+    "confirm_delete_title": "Eliminar tablero",
+    "confirm_delete_message": "Todas las columnas y tareas de este tablero se eliminarán.",
+    "title_placeholder": "Nombre del tablero...",
+    "switch_board": "Cambiar tablero",
+    "default_title": "Mi tablero",
+    "create_action": "Crear",
+    "save_action": "Guardar",
+    "cancel_action": "Cancelar",
+    "confirm_delete_action": "Eliminar"
+  },
+  "board_view": {
     "empty_column": "Sin tareas aún"
   },
   "column": {

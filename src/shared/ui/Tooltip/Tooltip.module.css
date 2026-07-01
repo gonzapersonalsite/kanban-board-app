@@ -19,3 +19,7 @@
   white-space: nowrap;
   pointer-events: none;
 }
+
+.tooltip[data-placement='bottom'] {
+  translate: -50% 0;
+}

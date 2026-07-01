@@ -1,4 +1,6 @@
-import type { Column, ColumnId, Task } from '@/shared/api'
+import type { Board, BoardId, Column, ColumnId, Task, TasksByBoard } from '@/shared/api'
+
+export const BOARD_MAIN_ID = 'board-main' as BoardId
 
 export const COLUMN_TODO_ID = 'col-todo' as ColumnId
 export const COLUMN_PROGRESS_ID = 'col-progress' as ColumnId
@@ -25,9 +27,23 @@ export const fixtureTasks: Record<ColumnId, Task[]> = {
   [COLUMN_DONE_ID]: [],
 }
 
+export const fixtureBoards: Board[] = [
+  { id: BOARD_MAIN_ID, title: 'My Board' },
+]
+
+export const fixtureColumnsByBoard: Record<BoardId, Column[]> = {
+  [BOARD_MAIN_ID]: fixtureColumns,
+}
+
+export const fixtureTasksByBoard: TasksByBoard = {
+  [BOARD_MAIN_ID]: fixtureTasks,
+}
+
 export function createKanbanFixture() {
   return {
-    columns: structuredClone(fixtureColumns),
-    tasks: structuredClone(fixtureTasks),
+    boards: structuredClone(fixtureBoards),
+    activeBoardId: BOARD_MAIN_ID,
+    columnsByBoard: structuredClone(fixtureColumnsByBoard),
+    tasksByBoard: structuredClone(fixtureTasksByBoard),
   }
 }

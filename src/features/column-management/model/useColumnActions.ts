@@ -1,8 +1,9 @@
 import { useKanbanStore } from '@/shared/api'
+import { selectActiveBoardTasks } from '@/entities/board'
 import type { ColumnId } from '@/shared/api'
 
 export function useColumnActions() {
-  const tasks = useKanbanStore((state) => state.tasks)
+  const tasks = useKanbanStore(selectActiveBoardTasks)
   const updateColumn = useKanbanStore((state) => state.updateColumn)
   const deleteColumn = useKanbanStore((state) => state.deleteColumn)
 

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { BoardDndContext } from '@/features/drag-and-drop/ui/BoardDndContext'
 import type { DragOverEvent, DragEndEvent } from '@dnd-kit/react'
 import {
+  BOARD_MAIN_ID,
   COLUMN_PROGRESS_ID,
   COLUMN_TODO_ID,
   TASK_ALPHA_ID,
@@ -61,11 +62,14 @@ describe('BoardDndContext', () => {
     dragHandlers.onDragStart?.()
     dragHandlers.onDragOver?.(dragFixtures.moveAlphaToProgress())
 
-    expect(useKanbanStore.getState().tasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual(
-      [TASK_BETA_ID],
-    )
     expect(
-      useKanbanStore.getState().tasks[COLUMN_PROGRESS_ID].map((task) => task.id),
+      useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id),
+    ).toEqual([TASK_BETA_ID])
+    expect(
+      useKanbanStore
+        .getState()
+        .tasksByBoard[BOARD_MAIN_ID][COLUMN_PROGRESS_ID]
+        .map((task) => task.id),
     ).toContain(TASK_ALPHA_ID)
   })
 
@@ -76,7 +80,7 @@ describe('BoardDndContext', () => {
       </BoardDndContext>,
     )
 
-    const before = structuredClone(useKanbanStore.getState().tasks)
+    const before = structuredClone(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID])
 
     dragHandlers.onDragStart?.()
     dragHandlers.onDragOver?.(dragFixtures.moveAlphaToProgress())
@@ -84,7 +88,7 @@ describe('BoardDndContext', () => {
       operation: { source: { type: 'task' }, canceled: true },
     } as unknown as DragEndEvent)
 
-    expect(useKanbanStore.getState().tasks).toEqual(before)
+    expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID]).toEqual(before)
   })
 
   it('renders_children_inside_drag_provider', () => {

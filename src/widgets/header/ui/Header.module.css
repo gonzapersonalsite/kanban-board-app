@@ -1,6 +1,7 @@
 .header {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
   /* Safe-area: respects notch/island at the top and lateral bars in landscape */
   padding-top: max(10px, var(--safe-top));
@@ -15,22 +16,32 @@
   flex-shrink: 0;
 }
 
-.title {
-  margin: 0;
-  font-family: 'Plus Jakarta Sans', var(--font-family);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-  /* Prevent orphaned single words on narrow screens */
-  text-wrap: balance;
-  flex: 1;
+.primary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.boardSelector {
+  min-width: 0;
+}
+
+.secondary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .nav {
   display: flex;
   align-items: center;
   gap: 2px;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .navLink {
@@ -61,18 +72,111 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
+}
+
+.mobileActions {
+  display: none;
+}
+
+.mobileSettingsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mobileSettingGroup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mobileSettingLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 @media (min-width: 768px) {
   .header {
+    flex-wrap: nowrap;
     padding-top: max(12px, var(--safe-top));
     padding-bottom: 12px;
     padding-left: max(20px, var(--safe-left));
     padding-right: max(20px, var(--safe-right));
   }
 
-  .title {
-    font-size: 1.125rem;
+  .primary {
+    flex: 1 1 auto;
+  }
+
+  .secondary {
+    flex: 0 0 auto;
   }
 }
 
+@media (max-width: 1023px) {
+  .header {
+    align-items: flex-start;
+  }
+
+  .primary {
+    flex: 1 1 100%;
+  }
+
+  .secondary {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 767px) {
+  .primary {
+    order: 1;
+  }
+
+  .secondary {
+    order: 2;
+    gap: 8px;
+    align-items: start;
+  }
+
+  .nav {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .navLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 6px 10px;
+  }
+
+  .actions {
+    display: none;
+  }
+
+  .mobileActions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .secondary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: start;
+  }
+
+  .nav {
+    width: auto;
+  }
+}

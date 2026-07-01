@@ -38,7 +38,7 @@ export function EmptyColumnMessage() {
           strokeLinecap="round"
         />
       </svg>
-      <p className={styles.message}>{t('board.empty_column')}</p>
+      <p className={styles.message}>{t('board_view.empty_column')}</p>
     </div>
   )
 }

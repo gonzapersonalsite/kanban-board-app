@@ -1,67 +1,116 @@
-import { nanoid } from 'nanoid'
 import type { StateCreator } from 'zustand'
-import type { Column } from './types'
+import { nanoid } from 'nanoid'
 import type { ColumnSlice, KanbanState } from './types'
+import {
+  getActiveBoardColumns,
+  getActiveBoardId,
+  getActiveBoardTasks,
+  removeBoardTasksByColumns,
+  setActiveBoardColumns,
+  setActiveBoardTasks,
+} from './helpers'
 import { useI18nStore } from '@/shared/i18n'
 import { useToastStore } from '@/shared/ui'
 
-function getSeedColumns(): Column[] {
-  const t = useI18nStore.getState().t
-  return [
-    { id: nanoid(), title: t('seed.column_todo') },
-    { id: nanoid(), title: t('seed.column_in_progress') },
-    { id: nanoid(), title: t('seed.column_done') },
-  ]
-}
+export function createColumnSlice(
+  initialState: Pick<KanbanState, 'columnsByBoard'>,
+): StateCreator<KanbanState, [], [], ColumnSlice> {
+  return (set) => ({
+    columnsByBoard: initialState.columnsByBoard,
 
-export const createColumnSlice: StateCreator<
-  KanbanState,
-  [],
-  [],
-  ColumnSlice
-> = (set) => ({
-  columns: getSeedColumns(),
-
-  addColumn: (title) => {
-    const trimmed = title.trim()
-    if (!trimmed) {
-      const t = useI18nStore.getState().t
-      useToastStore.getState().addNotification('error', t('validation.title_required'))
-      return
-    }
-    const id = nanoid()
-    set((state) => ({
-      columns: [...state.columns, { id, title: trimmed }],
-      tasks: { ...state.tasks, [id]: [] },
-    }))
-    const t = useI18nStore.getState().t
-    useToastStore.getState().addNotification('success', t('feedback.column_created'))
-  },
-
-  updateColumn: (id, title) => {
-    const trimmed = title.trim()
-    if (!trimmed) {
-      const t = useI18nStore.getState().t
-      useToastStore.getState().addNotification('error', t('validation.title_required'))
-      return
-    }
-    set((state) => ({
-      columns: state.columns.map((col) =>
-        col.id === id ? { ...col, title: trimmed } : col,
-      ),
-    }))
-  },
-
-  deleteColumn: (id) => {
-    set((state) => {
-      const remainingTasks = { ...state.tasks }
-      delete remainingTasks[id]
-      return {
-        columns: state.columns.filter((col) => col.id !== id),
-        tasks: remainingTasks,
+    addColumn: (title) => {
+      const trimmed = title.trim()
+      if (!trimmed) {
+        const t = useI18nStore.getState().t
+        useToastStore.getState().addNotification('error', t('validation.title_required'))
+        return
       }
-    })
-    const t = useI18nStore.getState().t
-    useToastStore.getState().addNotification('info', t('feedback.column_deleted'))
-  },
-})
+
+      const id = nanoid()
+
+      set((state) => {
+        const boardId = getActiveBoardId(state)
+        if (!boardId) {
+          return state
+        }
+
+        const columns = getActiveBoardColumns(state)
+        const tasks = getActiveBoardTasks(state)
+
+        return {
+          columnsByBoard: setActiveBoardColumns(state.columnsByBoard, boardId, [
+            ...columns,
+            { id, title: trimmed },
+          ]),
+          tasksByBoard: setActiveBoardTasks(state.tasksByBoard, boardId, {
+            ...tasks,
+            [id]: [],
+          }),
+        }
+      })
+
+      const t = useI18nStore.getState().t
+      useToastStore.getState().addNotification('success', t('feedback.column_created'))
+    },
+
+    updateColumn: (id, title) => {
+      const trimmed = title.trim()
+      if (!trimmed) {
+        const t = useI18nStore.getState().t
+        useToastStore.getState().addNotification('error', t('validation.title_required'))
+        return
+      }
+
+      set((state) => {
+        const boardId = getActiveBoardId(state)
+        if (!boardId) {
+          return state
+        }
+
+        return {
+          columnsByBoard: setActiveBoardColumns(
+            state.columnsByBoard,
+            boardId,
+            getActiveBoardColumns(state).map((col) =>
+              col.id === id ? { ...col, title: trimmed } : col,
+            ),
+          ),
+        }
+      })
+    },
+
+    deleteColumn: (id) => {
+      set((state) => {
+        const boardId = getActiveBoardId(state)
+        if (!boardId) {
+          return state
+        }
+
+        const columns = getActiveBoardColumns(state)
+        const remainingColumns = columns.filter((col) => col.id !== id)
+
+        if (remainingColumns.length === columns.length) {
+          return state
+        }
+
+        const remainingTasks = removeBoardTasksByColumns(getActiveBoardTasks(state), [id])
+
+        return {
+          columnsByBoard: setActiveBoardColumns(
+            state.columnsByBoard,
+            boardId,
+            remainingColumns,
+          ),
+          tasksByBoard: setActiveBoardTasks(
+            state.tasksByBoard,
+            boardId,
+            remainingTasks,
+          ),
+        }
+      })
+
+      const t = useI18nStore.getState().t
+      useToastStore.getState().addNotification('info', t('feedback.column_deleted'))
+    },
+  })
+}

@@ -1,59 +1,103 @@
 import type { StateCreator } from 'zustand'
-import type { BoardSlice, KanbanState } from './types'
+import type { BoardSlice, BoardId, KanbanState } from './types'
+import { createBoardData } from './helpers'
 import { useI18nStore } from '@/shared/i18n'
 import { useToastStore } from '@/shared/ui'
 
-export const createBoardSlice: StateCreator<
-  KanbanState,
-  [],
-  [],
-  BoardSlice
-> = (set) => ({
-  reorderColumns: (fromIndex, toIndex) =>
-    set((state) => {
-      if (fromIndex < 0 || fromIndex >= state.columns.length) {
+export function createBoardSlice(
+  initialState: Pick<KanbanState, 'boards' | 'activeBoardId'>,
+): StateCreator<KanbanState, [], [], BoardSlice> {
+  return (set) => ({
+    boards: initialState.boards,
+    activeBoardId: initialState.activeBoardId,
+
+    addBoard: (title) =>
+      set((state) => {
+        const { board, columns, tasks } = createBoardData(title)
+
+        return {
+          boards: [...state.boards, board],
+          activeBoardId: board.id,
+          columnsByBoard: {
+            ...state.columnsByBoard,
+            [board.id]: columns,
+          },
+          tasksByBoard: {
+            ...state.tasksByBoard,
+            [board.id]: tasks,
+          },
+        }
+      }),
+
+    updateBoard: (id, title) => {
+      const trimmed = title.trim()
+
+      if (!trimmed) {
         const t = useI18nStore.getState().t
-        useToastStore.getState().addNotification('error', t('validation.invalid_position'))
-        return state
-      }
-      const columns = [...state.columns]
-      const [moved] = columns.splice(fromIndex, 1)
-      if (!moved) {
-        const t = useI18nStore.getState().t
-        useToastStore.getState().addNotification('error', t('validation.invalid_position'))
-        return state
-      }
-      const clamped = Math.max(0, Math.min(toIndex, columns.length))
-      columns.splice(clamped, 0, moved)
-      return { columns }
-    }),
-
-  moveTask: (sourceColId, destColId, taskId, newIndex) =>
-    set((state) => {
-      const sourceTasks = [...(state.tasks[sourceColId] ?? [])]
-      const taskIndex = sourceTasks.findIndex((t) => t.id === taskId)
-
-      if (taskIndex === -1) {
-        const t = useI18nStore.getState().t
-        useToastStore.getState().addNotification('error', t('validation.task_not_found'))
-        return state
+        useToastStore.getState().addNotification('error', t('validation.title_required'))
+        return
       }
 
-      const [task] = sourceTasks.splice(taskIndex, 1)
+      set((state) => ({
+        boards: state.boards.map((board) =>
+          board.id === id ? { ...board, title: trimmed } : board,
+        ),
+      }))
+    },
 
-      const destTasks =
-        sourceColId === destColId
-          ? sourceTasks
-          : [...(state.tasks[destColId] ?? [])]
+    deleteBoard: (id) =>
+      set((state) => {
+        if (state.boards.length <= 1) {
+          return state
+        }
 
-      destTasks.splice(newIndex, 0, task)
+        const boardExists = state.boards.some((board) => board.id === id)
+        if (!boardExists) {
+          return state
+        }
 
-      return {
-        tasks: {
-          ...state.tasks,
-          [sourceColId]: sourceTasks,
-          [destColId]: destTasks,
-        },
-      }
-    }),
-})
+        const remainingBoards = state.boards.filter((board) => board.id !== id)
+        const nextColumnsByBoard = { ...state.columnsByBoard }
+        const nextTasksByBoard = { ...state.tasksByBoard }
+
+        delete nextColumnsByBoard[id]
+        delete nextTasksByBoard[id]
+
+        const nextActiveBoardId = resolveNextActiveBoardId(
+          remainingBoards.map((board) => board.id),
+          state.activeBoardId,
+          id,
+        )
+
+        return {
+          boards: remainingBoards,
+          activeBoardId: nextActiveBoardId,
+          columnsByBoard: nextColumnsByBoard,
+          tasksByBoard: nextTasksByBoard,
+        }
+      }),
+
+    setActiveBoard: (id) =>
+      set((state) => {
+        if (!state.boards.some((board) => board.id === id)) {
+          return state
+        }
+
+        return {
+          activeBoardId: id,
+        }
+      }),
+  })
+}
+
+function resolveNextActiveBoardId(
+  boardIds: BoardId[],
+  activeBoardId: BoardId | null,
+  deletedBoardId: BoardId,
+): BoardId | null {
+  if (activeBoardId && activeBoardId !== deletedBoardId) {
+    return activeBoardId
+  }
+
+  return boardIds[0] ?? null
+}

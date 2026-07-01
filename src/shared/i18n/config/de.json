@@ -6,6 +6,11 @@
     "board": "Board",
     "calendar": "Kalender"
   },
+  "header": {
+    "mobile_settings": "Header-Einstellungen",
+    "theme": "Design",
+    "language": "Sprache"
+  },
   "calendar": {
     "today": "Heute",
     "prev_month": "Vorheriger Monat",
@@ -13,6 +18,20 @@
     "more": "mehr"
   },
   "board": {
+    "add": "Neues Board",
+    "rename": "Board umbenennen",
+    "delete": "Board löschen",
+    "confirm_delete_title": "Board löschen",
+    "confirm_delete_message": "Alle Spalten und Aufgaben in diesem Board werden gelöscht.",
+    "title_placeholder": "Board-Name...",
+    "switch_board": "Board wechseln",
+    "default_title": "Mein Board",
+    "create_action": "Erstellen",
+    "save_action": "Speichern",
+    "cancel_action": "Abbrechen",
+    "confirm_delete_action": "Löschen"
+  },
+  "board_view": {
     "empty_column": "Noch keine Aufgaben"
   },
   "column": {

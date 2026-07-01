@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { useTaskDialog } from '@/features/task-management/model/useTaskDialog'
 import {
+  BOARD_MAIN_ID,
   COLUMN_TODO_ID,
   TASK_ALPHA_ID,
   fixtureTasks,
@@ -42,7 +43,7 @@ describe('useTaskDialog', () => {
 
       const updated = useKanbanStore
         .getState()
-        .tasks[COLUMN_TODO_ID]
+        .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]
         .find((item) => item.id === TASK_ALPHA_ID)
 
       expect(updated).toMatchObject({
@@ -65,7 +66,7 @@ describe('useTaskDialog', () => {
       expect(
         useKanbanStore
           .getState()
-          .tasks[COLUMN_TODO_ID]
+          .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]
           .some((task) => task.id === TASK_ALPHA_ID),
       ).toBe(false)
     })
