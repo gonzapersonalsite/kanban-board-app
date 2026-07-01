@@ -1,13 +1,9 @@
-import { lazy, Suspense } from 'react'
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-  useRouteError,
-} from 'react-router-dom'
+import { lazy } from 'react'
+import { createBrowserRouter, Navigate, RouterProvider, useRouteError } from 'react-router-dom'
 import { useKanbanStore } from '@/shared/api'
 import { buildBoardPath, resolveFallbackBoardId, type BoardViewRoute } from '@/entities/board'
 import { useSyncBoardRoute } from '../model/useSyncBoardRoute'
+import { AppShellRoute, RouteContentFallback } from './AppShellRoute'
 import styles from './RouteErrorBoundary.module.css'
 
 const HomePage = lazy(() =>
@@ -50,59 +46,49 @@ function BoardPageRoute() {
   const isReady = useSyncBoardRoute('board')
 
   if (!isReady) {
-    return null
+    return <RouteContentFallback />
   }
 
-  return (
-    <Suspense fallback={null}>
-      <HomePage />
-    </Suspense>
-  )
+  return <HomePage />
 }
 
 function CalendarPageRoute() {
   const isReady = useSyncBoardRoute('calendar')
 
   if (!isReady) {
-    return null
+    return <RouteContentFallback />
   }
 
-  return (
-    <Suspense fallback={null}>
-      <CalendarPage />
-    </Suspense>
-  )
+  return <CalendarPage />
 }
 
 const router = createBrowserRouter([
   {
     path: '/',
     errorElement: <RouteErrorBoundary />,
-    element: <ActiveBoardRedirect view="board" />,
-  },
-  {
-    path: '/board/:boardId',
-    errorElement: <RouteErrorBoundary />,
-    element: <BoardPageRoute />,
-  },
-  {
-    path: '/calendar',
-    errorElement: <RouteErrorBoundary />,
-    element: <ActiveBoardRedirect view="calendar" />,
-  },
-  {
-    path: '/calendar/:boardId',
-    errorElement: <RouteErrorBoundary />,
-    element: <CalendarPageRoute />,
-  },
-  {
-    path: '*',
-    errorElement: <RouteErrorBoundary />,
-    element: (
-      <Suspense fallback={null}>
-        <NotFoundPage />
-      </Suspense>
-    ),
+    element: <AppShellRoute />,
+    children: [
+      {
+        index: true,
+        element: <ActiveBoardRedirect view="board" />,
+      },
+      {
+        path: 'board/:boardId',
+        element: <BoardPageRoute />,
+      },
+      {
+        path: 'calendar',
+        element: <ActiveBoardRedirect view="calendar" />,
+      },
+      {
+        path: 'calendar/:boardId',
+        element: <CalendarPageRoute />,
+      },
+      {
+        path: '*',
+        element: <NotFoundPage />,
+      },
+    ],
   },
 ])
 

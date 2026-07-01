@@ -48,6 +48,10 @@ vi.mock('@/pages/not-found', () => ({
   NotFoundPage: () => <div>Not Found Page</div>,
 }))
 
+vi.mock('@/widgets/header', () => ({
+  Header: () => <div>Persistent Header</div>,
+}))
+
 describe('AppRouter', () => {
   it('redirects_root_to_the_active_board_route', async () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
@@ -58,6 +62,7 @@ describe('AppRouter', () => {
     render(<AppRouter />)
 
     await waitFor(() => {
+      expect(screen.getByText('Persistent Header')).toBeInTheDocument()
       expect(
         screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`),
       ).toBeInTheDocument()
@@ -73,6 +78,7 @@ describe('AppRouter', () => {
     render(<AppRouter />)
 
     await waitFor(() => {
+      expect(screen.getByText('Persistent Header')).toBeInTheDocument()
       expect(
         screen.getByText(`Calendar Page:/calendar/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`),
       ).toBeInTheDocument()

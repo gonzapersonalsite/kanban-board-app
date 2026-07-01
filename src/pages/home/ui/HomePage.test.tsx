@@ -7,7 +7,7 @@ import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
 import { BOARD_MAIN_ID } from '@/test/fixtures/kanbanFixtures'
 
 describe('HomePage', () => {
-  it('renders_header_and_board_on_a_board_route', () => {
+  it('renders_board_content_on_a_board_route', () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
 
     render(
@@ -18,14 +18,8 @@ describe('HomePage', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('combobox', { name: /switch board/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /board/i })).toHaveAttribute(
-      'href',
-      `/board/${BOARD_MAIN_ID}`,
-    )
-    expect(screen.getByRole('link', { name: /calendar/i })).toHaveAttribute(
-      'href',
-      `/calendar/${BOARD_MAIN_ID}`,
-    )
+    expect(screen.getByText('To Do')).toBeInTheDocument()
+    expect(screen.getByText('In Progress')).toBeInTheDocument()
+    expect(screen.getByText('Done')).toBeInTheDocument()
   })
 })

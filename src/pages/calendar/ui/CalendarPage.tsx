@@ -1,4 +1,3 @@
-import { Header } from '@/widgets/header'
 import { CalendarGrid } from '@/widgets/calendar'
 import { useTaskDialog, TaskDialog } from '@/features/task-management'
 import type { Task, ColumnId } from '@/shared/api'
@@ -13,7 +12,6 @@ export function CalendarPage() {
 
   return (
     <div className={styles.page}>
-      <Header />
       <CalendarGrid onTaskClick={handleTaskClick} />
       {dialog.isOpen && (
         <TaskDialog

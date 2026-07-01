@@ -95,6 +95,7 @@
 - The public API is exported from `app/router/index.tsx` as `AppRouter`.
 - Pages MUST be lazy-loaded via `React.lazy()` at the route level for code splitting.
 - Route components are wrapped in `<Suspense>` — the fallback is currently `null` (add a shared `<LoadingFallback />` from `shared/ui/` when non-trivial).
+- Shared route chrome (`Header`, future persistent navigation, and other app-shell UI) MUST live in an `app/router` layout route with `<Outlet />`, never inside individual page components. Pages render only route-specific content.
 - Error boundaries are handled per-route in the future via `errorElement` on route definitions. For now, the app-level `<ErrorBoundary>` in `app/providers/` catches all errors.
 - Routing is board-scoped. Final routes are:
   - `/` → redirects to `/board/:activeBoardId`

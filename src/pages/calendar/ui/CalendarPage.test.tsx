@@ -11,7 +11,7 @@ describe('CalendarPage', () => {
     vi.useRealTimers()
   })
 
-  it('renders_header_and_calendar_grid', () => {
+  it('renders_calendar_grid', () => {
     vi.useFakeTimers({ shouldAdvanceTime: false })
     vi.setSystemTime(new Date(2026, 6, 1))
     resetPersistedKanbanStore(useKanbanStore.setState)
@@ -25,12 +25,8 @@ describe('CalendarPage', () => {
     )
 
     expect(screen.getByText('July 2026')).toBeInTheDocument()
-    expect(screen.getByRole('combobox', { name: /switch board/i })).toBeInTheDocument()
-    expect(screen.getByText('Board')).toBeInTheDocument()
-    expect(screen.getByText('Calendar')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /board/i })).toHaveAttribute(
-      'href',
-      `/board/${BOARD_MAIN_ID}`,
-    )
+    expect(screen.getByRole('button', { name: /previous month/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /next month/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /today/i })).toBeInTheDocument()
   })
 })
