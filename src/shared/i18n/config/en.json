@@ -37,5 +37,20 @@
     "column_todo": "To Do",
     "column_in_progress": "In Progress",
     "column_done": "Done"
+  },
+  "validation": {
+    "title_required": "Title cannot be empty",
+    "task_not_found": "Task not found",
+    "invalid_position": "Invalid position"
+  },
+  "storage": {
+    "save_error": "Failed to save data. Check available storage space.",
+    "load_error": "Failed to load saved data. Starting with default board."
+  },
+  "feedback": {
+    "task_created": "Task created",
+    "task_deleted": "Task deleted",
+    "column_created": "Column created",
+    "column_deleted": "Column deleted"
   }
 }

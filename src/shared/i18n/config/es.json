@@ -37,5 +37,20 @@
     "column_todo": "Por Hacer",
     "column_in_progress": "En Progreso",
     "column_done": "Terminado"
+  },
+  "validation": {
+    "title_required": "El título no puede estar vacío",
+    "task_not_found": "Tarea no encontrada",
+    "invalid_position": "Posición inválida"
+  },
+  "storage": {
+    "save_error": "Error al guardar los datos. Revisa el espacio de almacenamiento disponible.",
+    "load_error": "Error al cargar los datos guardados. Se inicia con el tablero por defecto."
+  },
+  "feedback": {
+    "task_created": "Tarea creada",
+    "task_deleted": "Tarea eliminada",
+    "column_created": "Columna creada",
+    "column_deleted": "Columna eliminada"
   }
 }
