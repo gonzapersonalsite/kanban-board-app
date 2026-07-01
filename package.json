@@ -10,8 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "preview": "vite preview",
-    "prepare": "husky || true"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@dnd-kit/helpers": "^0.5.0",
