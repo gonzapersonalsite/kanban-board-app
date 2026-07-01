@@ -6,6 +6,7 @@
   border: none;
   padding: 0;
   background: var(--color-surface);
+  color: var(--color-text);
   box-shadow: var(--shadow-lg);
 
   /* Full-width bottom-anchored sheet on mobile */
@@ -42,6 +43,7 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
+  color: var(--color-text);
 }
 
 .body {
@@ -71,4 +73,3 @@
     padding-bottom: 20px;
   }
 }
-
