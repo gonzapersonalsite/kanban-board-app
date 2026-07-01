@@ -24,6 +24,12 @@
   min-width: 0;
 }
 
+.brandMark {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .boardSelector {
   min-width: 0;
 }
@@ -130,6 +136,10 @@
 @media (max-width: 1119px) {
   .header {
     align-items: flex-start;
+  }
+
+  .brandMark {
+    display: none;
   }
 
   .primary {

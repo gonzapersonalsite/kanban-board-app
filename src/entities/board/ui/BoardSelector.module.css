@@ -49,9 +49,19 @@
   .selector {
     flex: 1 1 100%;
     width: 100%;
+    flex-wrap: wrap;
+    align-items: stretch;
   }
 
   .select {
+    flex: 1 1 100%;
+    min-width: 0;
     max-width: none;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
   }
 }

@@ -47,7 +47,9 @@ export function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.primary}>
-        <AppIcon />
+        <div className={styles.brandMark}>
+          <AppIcon />
+        </div>
         <BoardManagement
           className={styles.boardSelector}
           onBoardChange={handleBoardChange}
