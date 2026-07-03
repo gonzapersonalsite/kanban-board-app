@@ -215,6 +215,9 @@
   transition: background 120ms ease;
   font-family: inherit;
   border-left: 3px solid transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dayOverflowItem:hover {

@@ -31,6 +31,8 @@
   font-family: var(--font-family);
   font-size: var(--font-size-body);
   font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .select:focus-visible {
@@ -56,7 +58,7 @@
   .select {
     flex: 1 1 100%;
     min-width: 0;
-    max-width: none;
+    max-width: 100%;
   }
 
   .actions {

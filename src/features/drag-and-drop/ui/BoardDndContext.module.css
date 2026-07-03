@@ -34,6 +34,9 @@
   box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (min-width: 768px) {

@@ -11,6 +11,16 @@
   gap: 6px;
 }
 
+.displayRow > :first-child {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.displayRow > :first-child > :first-child {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .titleButton {
   display: flex;
   align-items: center;
