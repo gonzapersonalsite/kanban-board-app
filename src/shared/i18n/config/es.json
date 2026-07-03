@@ -125,6 +125,20 @@
     "backup_import_error": "No se pudo importar el backup.",
     "backup_import_cancelled": "Importación cancelada"
   },
+  "seo": {
+    "board": {
+      "title": "Tablero — Tablero Kanban",
+      "description": "Gestiona las tareas de tu proyecto con un tablero kanban intuitivo de arrastrar y soltar."
+    },
+    "calendar": {
+      "title": "Calendario — Tablero Kanban",
+      "description": "Visualiza y gestiona tus tareas por fecha de vencimiento en un calendario mensual."
+    },
+    "not_found": {
+      "title": "Página no encontrada — Tablero Kanban",
+      "description": "La página que buscas no existe."
+    }
+  },
   "not_found": {
     "message": "La página que buscas no existe.",
     "back_home": "Volver al inicio"

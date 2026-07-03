@@ -125,6 +125,20 @@
     "backup_import_error": "Could not import the backup.",
     "backup_import_cancelled": "Import cancelled"
   },
+  "seo": {
+    "board": {
+      "title": "Board — Kanban Board",
+      "description": "Manage your project tasks with an intuitive drag-and-drop kanban board."
+    },
+    "calendar": {
+      "title": "Calendar — Kanban Board",
+      "description": "View and manage your tasks by due date on a monthly calendar."
+    },
+    "not_found": {
+      "title": "Page Not Found — Kanban Board",
+      "description": "The page you are looking for does not exist."
+    }
+  },
   "not_found": {
     "message": "The page you are looking for does not exist.",
     "back_home": "Back to Home"

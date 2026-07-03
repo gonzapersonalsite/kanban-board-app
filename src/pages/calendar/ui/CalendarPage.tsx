@@ -1,9 +1,16 @@
+import { usePageMeta } from '@/shared/lib'
+import { useTranslation } from '@/shared/i18n'
 import { CalendarGrid } from '@/widgets/calendar'
 import { useTaskDialog, TaskDialog } from '@/features/task-management'
 import type { Task, ColumnId } from '@/shared/api'
 import styles from './CalendarPage.module.css'
 
 export function CalendarPage() {
+  const { t } = useTranslation()
+  usePageMeta({
+    title: t('seo.calendar.title'),
+    description: t('seo.calendar.description'),
+  })
   const dialog = useTaskDialog()
 
   const handleTaskClick = (task: Task, columnId: ColumnId) => {

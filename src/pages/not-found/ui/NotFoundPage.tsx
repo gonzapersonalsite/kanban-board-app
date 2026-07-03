@@ -1,11 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import { resolveFallbackBoardId, useBoards } from '@/entities/board'
+import { usePageMeta } from '@/shared/lib'
 import { useTranslation } from '@/shared/i18n'
 import { Button } from '@/shared/ui'
 import styles from './NotFoundPage.module.css'
 
 export function NotFoundPage() {
   const { t } = useTranslation()
+  usePageMeta({
+    title: t('seo.not_found.title'),
+    description: t('seo.not_found.description'),
+  })
   const navigate = useNavigate()
   const { boards, activeBoardId } = useBoards()
 

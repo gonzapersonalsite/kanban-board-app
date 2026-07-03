@@ -125,8 +125,22 @@
     "backup_import_error": "Das Backup konnte nicht importiert werden.",
     "backup_import_cancelled": "Import abgebrochen"
   },
+  "seo": {
+    "board": {
+      "title": "Board — Kanban-Board",
+      "description": "Verwalte deine Projektaufgaben mit einem intuitiven Drag-and-Drop-Kanban-Board."
+    },
+    "calendar": {
+      "title": "Kalender — Kanban-Board",
+      "description": "Zeige und verwalte deine Aufgaben nach Fälligkeitsdatum in einem monatlichen Kalender."
+    },
+    "not_found": {
+      "title": "Seite nicht gefunden — Kanban-Board",
+      "description": "Die von Ihnen gesuchte Seite existiert nicht."
+    }
+  },
   "not_found": {
-    "message": "Die gesuchte Seite existiert nicht.",
+    "message": "Die von Ihnen gesuchte Seite existiert nicht.",
     "back_home": "Zurück zur Startseite"
   }
 }
