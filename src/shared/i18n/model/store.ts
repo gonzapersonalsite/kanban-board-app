@@ -65,9 +65,11 @@ export const useI18nStore = create<I18nStore>()(
       name: 'i18n-locale',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ locale: state.locale }),
+      // zustand calls merge with undefined when nothing is stored yet (a first visit).
       merge: (persisted, current) => {
         const locale =
-          (persisted as { locale: Locale }).locale ?? current.locale
+          (persisted as { locale?: Locale } | undefined)?.locale ??
+          current.locale
         return {
           ...current,
           locale,

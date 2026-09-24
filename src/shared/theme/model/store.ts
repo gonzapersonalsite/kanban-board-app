@@ -27,8 +27,9 @@ export const useThemeStore = create<ThemeStore>()(
       name: 'theme-preference',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ theme: state.theme }),
+      // zustand calls merge with undefined when nothing is stored yet (a first visit).
       merge: (persisted, current) => {
-        const stored = (persisted as { theme: Theme }).theme
+        const stored = (persisted as { theme?: Theme } | undefined)?.theme
         if (stored) {
           applyTheme(stored)
           return { ...current, theme: stored }

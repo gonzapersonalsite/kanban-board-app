@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useI18nStore } from '@/shared/i18n'
 
 describe('useI18nStore', () => {
@@ -64,6 +64,37 @@ describe('useI18nStore', () => {
       const { useI18nStore: freshStore } = await import('./store')
 
       expect(freshStore.getState().locale).toBe('de')
+      expect(document.documentElement.lang).toBe('de')
+    })
+  })
+
+  describe('first visit', () => {
+    beforeEach(() => {
+      // The outer setLocale('en') has already stored a locale.
+      localStorage.clear()
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('finishes_hydration_when_nothing_is_stored', async () => {
+      vi.resetModules()
+
+      const { useI18nStore: freshStore } = await import('./store')
+
+      expect(freshStore.persist.hasHydrated()).toBe(true)
+    })
+
+    it('detects_the_browser_language_when_nothing_is_stored', async () => {
+      vi.spyOn(navigator, 'language', 'get').mockReturnValue('de-DE')
+      document.documentElement.lang = 'en'
+      vi.resetModules()
+
+      const { useI18nStore: freshStore } = await import('./store')
+
+      expect(freshStore.getState().locale).toBe('de')
+      expect(freshStore.getState().t('app.title')).toBe('Kanban-Board')
       expect(document.documentElement.lang).toBe('de')
     })
   })

@@ -266,7 +266,8 @@ Guidelines:
 
 - **Infrastructure slice**: `shared/theme/` — store + types, zero UI. Follows the same pattern as `shared/i18n/`.
 - **State**: Zustand store at `shared/theme/model/store.ts` with `persist` middleware (storage key: `theme-preference`). Persists only `theme` value (`'light' | 'dark'`).
-- **Initialization**: On rehydration, the store applies `data-theme` attribute on `document.documentElement`. If no persisted value, it falls back to `prefers-color-scheme` media query.
+- **Initialization**: On rehydration, the store applies `data-theme` attribute on `document.documentElement`. If no persisted value, it falls back to `prefers-color-scheme` media query without storing it, so the theme keeps following the system until the visitor toggles it.
+- zustand calls `merge` with `undefined` when nothing is stored (a first visit), and `persist` silently swallows anything `merge` throws. The `merge` of both infrastructure stores (theme and i18n) MUST handle a missing persisted state; `shared/theme/model/store.test.ts` proves a first visit follows a dark and a light system preference.
 - **UI feature**: `features/theme-switcher/` — renders a sun/moon toggle button (lucide-react `Sun`/`Moon` icons). Imports `useThemeStore` from `@/shared/theme`.
 - **Import pattern**:
   ```ts
