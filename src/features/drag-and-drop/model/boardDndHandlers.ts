@@ -4,14 +4,8 @@ import type { Column, ColumnId, Task } from '@/shared/api'
 
 export type TasksByColumn = Record<ColumnId, Task[]>
 
-export function cloneTasksSnapshot(tasks: TasksByColumn): TasksByColumn {
-  return structuredClone(tasks)
-}
-
-export function cloneColumnsSnapshot(columns: Column[]): Column[] {
-  return [...columns]
-}
-
+// Both appliers return the very same collection when the drag moves nothing (move() from
+// @dnd-kit/helpers does so); useBoardDndLifecycle relies on that to skip store writes.
 export function applyTaskDragOver(
   tasks: TasksByColumn,
   event: DragOverEvent,

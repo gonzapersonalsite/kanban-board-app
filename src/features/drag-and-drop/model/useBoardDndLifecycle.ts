@@ -11,8 +11,6 @@ import {
 import {
   applyColumnDragOver,
   applyTaskDragOver,
-  cloneColumnsSnapshot,
-  cloneTasksSnapshot,
   resolveColumnsAfterDragEnd,
   resolveTasksAfterDragEnd,
   type TasksByColumn,
@@ -39,54 +37,51 @@ export function useBoardDndLifecycle() {
   const previousTasksRef = useRef<TasksByColumn | null>(null)
   const previousColumnsRef = useRef<Column[] | null>(null)
 
+  // Store actions and move() never mutate collections in place, so the references held at
+  // drag start are an exact snapshot. Restoring them after a cancel that moved nothing is a
+  // no-op, which keeps an untouched sample board unsaved.
   const handleDragStart = () => {
     const state = useKanbanStore.getState()
-    const tasks = selectActiveBoardTasks(state)
-    const columns = selectActiveBoardColumns(state)
 
-    previousTasksRef.current = cloneTasksSnapshot(tasks)
-    previousColumnsRef.current = cloneColumnsSnapshot(columns)
+    previousTasksRef.current = selectActiveBoardTasks(state)
+    previousColumnsRef.current = selectActiveBoardColumns(state)
   }
 
+  // dnd-kit fires a dragover with the source over itself as soon as a drag starts; move()
+  // then returns the same collection. Skipping setState in that case avoids a pointless
+  // write and keeps the untouched sample board from being persisted by a mere pick-up.
   const handleDragOver = (event: DragOverEvent) => {
     const { source } = event.operation
     if (!source) return
 
-    if (source.type === 'task') {
-      useKanbanStore.setState((state) => {
-        const { board, tasks, columns } = selectActiveBoardState(state)
-        const boardId = board?.id ?? null
-        if (!boardId) {
-          return state
-        }
+    const state = useKanbanStore.getState()
+    const { board, tasks, columns } = selectActiveBoardState(state)
+    const boardId = board?.id ?? null
+    if (!boardId) return
 
-        return {
-          tasksByBoard: {
-            ...state.tasksByBoard,
-            [boardId]: applyTaskDragOver(
-              ensureColumnTaskEntries(tasks, columns),
-              event,
-            ),
-          },
-        }
+    if (source.type === 'task') {
+      const currentTasks = ensureColumnTaskEntries(tasks, columns)
+      const nextTasks = applyTaskDragOver(currentTasks, event)
+      if (nextTasks === currentTasks) return
+
+      useKanbanStore.setState({
+        tasksByBoard: {
+          ...state.tasksByBoard,
+          [boardId]: nextTasks,
+        },
       })
       return
     }
 
     if (source.type === 'column') {
-      useKanbanStore.setState((state) => {
-        const board = selectActiveBoard(state)
-        const boardId = board?.id ?? null
-        if (!boardId) {
-          return state
-        }
+      const nextColumns = applyColumnDragOver(columns, event)
+      if (nextColumns === columns) return
 
-        return {
-          columnsByBoard: {
-            ...state.columnsByBoard,
-            [boardId]: applyColumnDragOver(selectActiveBoardColumns(state), event),
-          },
-        }
+      useKanbanStore.setState({
+        columnsByBoard: {
+          ...state.columnsByBoard,
+          [boardId]: nextColumns,
+        },
       })
     }
   }

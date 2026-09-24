@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { BoardDndContext } from '@/features/drag-and-drop/ui/BoardDndContext'
 import type { DragOverEvent, DragEndEvent } from '@dnd-kit/react'
 import {
@@ -9,7 +9,11 @@ import {
   TASK_ALPHA_ID,
   TASK_BETA_ID,
 } from '@/test/fixtures/kanbanFixtures'
-import { dragFixtures } from '@/test/helpers/dndEventFactory'
+import {
+  createCanceledTaskDragEndEvent,
+  createCompletedTaskDragEndEvent,
+  dragFixtures,
+} from '@/test/helpers/dndEventFactory'
 import { setupKanbanStore } from '@/test/setup/kanbanStoreSetup'
 import { useKanbanStore } from '@/shared/api'
 
@@ -52,6 +56,10 @@ describe('BoardDndContext', () => {
     dragHandlers.onDragEnd = undefined
   })
 
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('updates_store_tasks_during_drag_over', () => {
     render(
       <BoardDndContext>
@@ -89,6 +97,55 @@ describe('BoardDndContext', () => {
     } as unknown as DragEndEvent)
 
     expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID]).toEqual(before)
+  })
+
+  it('leaves_the_store_and_storage_untouched_when_a_task_is_over_itself', () => {
+    render(
+      <BoardDndContext>
+        <div>board</div>
+      </BoardDndContext>,
+    )
+    const before = useKanbanStore.getState().tasksByBoard
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem')
+
+    dragHandlers.onDragStart?.()
+    dragHandlers.onDragOver?.(dragFixtures.alphaOverItself())
+    dragHandlers.onDragEnd?.(createCompletedTaskDragEndEvent())
+
+    expect(useKanbanStore.getState().tasksByBoard).toBe(before)
+    expect(setItemSpy).not.toHaveBeenCalled()
+  })
+
+  it('leaves_the_store_and_storage_untouched_when_a_column_is_over_itself', () => {
+    render(
+      <BoardDndContext>
+        <div>board</div>
+      </BoardDndContext>,
+    )
+    const before = useKanbanStore.getState().columnsByBoard
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem')
+
+    dragHandlers.onDragStart?.()
+    dragHandlers.onDragOver?.(dragFixtures.todoColumnOverItself())
+
+    expect(useKanbanStore.getState().columnsByBoard).toBe(before)
+    expect(setItemSpy).not.toHaveBeenCalled()
+  })
+
+  it('does_not_write_when_a_drag_is_canceled_without_moving', () => {
+    render(
+      <BoardDndContext>
+        <div>board</div>
+      </BoardDndContext>,
+    )
+    const before = useKanbanStore.getState().tasksByBoard
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem')
+
+    dragHandlers.onDragStart?.()
+    dragHandlers.onDragEnd?.(createCanceledTaskDragEndEvent())
+
+    expect(useKanbanStore.getState().tasksByBoard).toBe(before)
+    expect(setItemSpy).not.toHaveBeenCalled()
   })
 
   it('renders_children_inside_drag_provider', () => {

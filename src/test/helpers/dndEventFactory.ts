@@ -101,6 +101,44 @@ function createTaskToColumnDragOverEvent({
   } as unknown as DragOverEvent
 }
 
+// dnd-kit fires this right after a drag starts, before the pointer or the keyboard moves.
+function createTaskOverItselfEvent(
+  taskId: string,
+  columnId: ColumnId,
+  index: number,
+): DragOverEvent {
+  return createTaskToTaskDragOverEvent({
+    taskId,
+    sourceColumnId: columnId,
+    targetColumnId: columnId,
+    sourceIndex: index,
+    targetIndex: index,
+    targetTaskId: taskId,
+  })
+}
+
+function createColumnOverItselfEvent(columnId: ColumnId, index: number): DragOverEvent {
+  return {
+    operation: {
+      source: {
+        id: columnId,
+        type: 'column',
+        index,
+        initialIndex: index,
+      },
+      target: {
+        id: columnId,
+        type: 'column',
+      },
+      canceled: false,
+      activatorEvent: null,
+      position: { x: 0, y: 0 },
+      transform: { x: 0, y: 0 },
+      status: { idle: false, dragging: true, dropping: false },
+    },
+  } as unknown as DragOverEvent
+}
+
 export function createCanceledTaskDragEndEvent(): DragEndEvent {
   return {
     operation: {
@@ -162,4 +200,6 @@ export const dragFixtures = {
       sourceIndex: 0,
       targetIndex: 0,
     }),
+  alphaOverItself: () => createTaskOverItselfEvent(TASK_ALPHA_ID, COLUMN_TODO_ID, 0),
+  todoColumnOverItself: () => createColumnOverItselfEvent(COLUMN_TODO_ID, 0),
 }

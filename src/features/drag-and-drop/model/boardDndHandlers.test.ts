@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
+  applyColumnDragOver,
   applyTaskDragOver,
-  cloneTasksSnapshot,
   resolveTasksAfterDragEnd,
 } from '@/features/drag-and-drop/model/boardDndHandlers'
 import {
@@ -11,6 +11,7 @@ import {
   TASK_ALPHA_ID,
   TASK_BETA_ID,
   TASK_GAMMA_ID,
+  fixtureColumns,
   fixtureTasks,
 } from '@/test/fixtures/kanbanFixtures'
 import {
@@ -20,17 +21,21 @@ import {
 } from '@/test/helpers/dndEventFactory'
 
 describe('boardDndHandlers', () => {
-  describe('cloneTasksSnapshot', () => {
-    it('creates_a_deep_copy_of_tasks', () => {
-      const snapshot = cloneTasksSnapshot(fixtureTasks)
-
-      snapshot[COLUMN_TODO_ID][0].title = 'Changed'
-
-      expect(fixtureTasks[COLUMN_TODO_ID][0].title).toBe('Alpha')
-    })
-  })
-
   describe('applyTaskDragOver', () => {
+    it('leaves_the_input_tasks_untouched_when_moving_a_task', () => {
+      const before = structuredClone(fixtureTasks)
+
+      applyTaskDragOver(fixtureTasks, dragFixtures.moveAlphaToProgress())
+
+      expect(fixtureTasks).toEqual(before)
+    })
+
+    it('returns_the_same_tasks_when_a_task_is_over_itself', () => {
+      const nextTasks = applyTaskDragOver(fixtureTasks, dragFixtures.alphaOverItself())
+
+      expect(nextTasks).toBe(fixtureTasks)
+    })
+
     it('moves_a_task_to_another_column', () => {
       const nextTasks = applyTaskDragOver(
         fixtureTasks,
@@ -71,9 +76,17 @@ describe('boardDndHandlers', () => {
     })
   })
 
+  describe('applyColumnDragOver', () => {
+    it('returns_the_same_columns_when_a_column_is_over_itself', () => {
+      const nextColumns = applyColumnDragOver(fixtureColumns, dragFixtures.todoColumnOverItself())
+
+      expect(nextColumns).toBe(fixtureColumns)
+    })
+  })
+
   describe('resolveTasksAfterDragEnd', () => {
     it('restores_snapshot_when_drag_is_canceled', () => {
-      const snapshot = cloneTasksSnapshot(fixtureTasks)
+      const snapshot = fixtureTasks
       const mutated = applyTaskDragOver(fixtureTasks, dragFixtures.moveAlphaToProgress())
 
       const resolved = resolveTasksAfterDragEnd(
@@ -82,11 +95,11 @@ describe('boardDndHandlers', () => {
         mutated,
       )
 
-      expect(resolved).toEqual(snapshot)
+      expect(resolved).toBe(snapshot)
     })
 
     it('keeps_current_tasks_when_drag_completes_successfully', () => {
-      const snapshot = cloneTasksSnapshot(fixtureTasks)
+      const snapshot = fixtureTasks
       const mutated = applyTaskDragOver(fixtureTasks, dragFixtures.moveAlphaToProgress())
 
       const resolved = resolveTasksAfterDragEnd(
