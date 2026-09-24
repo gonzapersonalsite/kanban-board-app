@@ -1,7 +1,53 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useToastStore } from '@/shared/ui'
+import { createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
+import { createInitialKanbanState } from './slices/helpers'
+import type { KanbanState, PortableKanbanState } from './slices/types'
 import { useKanbanStore } from './store'
-import { createSafeStorage, migrateKanbanState } from './store'
+import { createSafeStorage, KANBAN_STORAGE_KEY, migrateKanbanState } from './store'
+
+function pickPortableState(state: KanbanState): PortableKanbanState {
+  const { boards, activeBoardId, columnsByBoard, tasksByBoard } = state
+
+  return { boards, activeBoardId, columnsByBoard, tasksByBoard }
+}
+
+describe('first-visit sample board', () => {
+  beforeEach(() => {
+    useKanbanStore.setState(createInitialKanbanState())
+    localStorage.clear()
+  })
+
+  it('keeps_the_sample_board_when_nothing_is_persisted', async () => {
+    const sampleState = pickPortableState(useKanbanStore.getState())
+
+    await useKanbanStore.persist.rehydrate()
+
+    expect(pickPortableState(useKanbanStore.getState())).toEqual(sampleState)
+  })
+
+  it('restores_persisted_user_data_instead_of_the_sample_board', async () => {
+    const userData = createKanbanFixture()
+    localStorage.setItem(KANBAN_STORAGE_KEY, JSON.stringify({ state: userData, version: 1 }))
+
+    await useKanbanStore.persist.rehydrate()
+
+    expect(pickPortableState(useKanbanStore.getState())).toEqual(userData)
+  })
+
+  it('never_adds_sample_tasks_to_a_persisted_empty_board', async () => {
+    const userData = createKanbanFixture()
+    const emptyTasks = Object.fromEntries(
+      userData.columnsByBoard[userData.activeBoardId].map((column) => [column.id, []]),
+    )
+    userData.tasksByBoard[userData.activeBoardId] = emptyTasks
+    localStorage.setItem(KANBAN_STORAGE_KEY, JSON.stringify({ state: userData, version: 1 }))
+
+    await useKanbanStore.persist.rehydrate()
+
+    expect(useKanbanStore.getState().tasksByBoard).toEqual({ [userData.activeBoardId]: emptyTasks })
+  })
+})
 
 describe('store migration', () => {
   beforeEach(() => {

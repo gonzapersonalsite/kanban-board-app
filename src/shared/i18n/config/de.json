@@ -99,7 +99,37 @@
   "seed": {
     "column_todo": "Offen",
     "column_in_progress": "In Bearbeitung",
-    "column_done": "Erledigt"
+    "column_done": "Erledigt",
+    "tasks": {
+      "plan_sprint": {
+        "title": "Nächsten Sprint planen",
+        "description": "Die wichtigsten Backlog-Einträge auswählen, schätzen und das Sprintziel festlegen."
+      },
+      "onboarding_emails": {
+        "title": "Onboarding-E-Mails schreiben",
+        "description": "Willkommens-E-Mail und zwei Folge-E-Mails für neue Registrierungen entwerfen."
+      },
+      "accessibility_audit": {
+        "title": "Barrierefreiheit prüfen",
+        "description": "Tastaturnavigation, Fokusreihenfolge und Farbkontraste der wichtigsten Ansichten prüfen."
+      },
+      "landing_redesign": {
+        "title": "Landingpage neu gestalten",
+        "description": "Neuer Hero-Bereich, ein klarerer Call-to-Action und ein schlankeres mobiles Layout."
+      },
+      "safari_login_fix": {
+        "title": "Safari-Login-Weiterleitung beheben",
+        "description": "Nach der Anmeldung erscheint eine leere Seite. Fehler nachstellen und einen Regressionstest ergänzen."
+      },
+      "ci_pipeline": {
+        "title": "CI-Pipeline einrichten",
+        "description": "Lint, Tests und Build bei jedem Push auf main."
+      },
+      "design_tokens": {
+        "title": "Design-Tokens definieren",
+        "description": "Farben, Abstände und Typografie für alle Komponenten."
+      }
+    }
   },
   "validation": {
     "title_required": "Titel darf nicht leer sein",

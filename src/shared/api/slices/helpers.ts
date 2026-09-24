@@ -53,11 +53,57 @@ export function createBoardData(title?: string): {
   }
 }
 
-export function createInitialKanbanState(): Pick<
+interface SampleTaskSeed {
+  key: string
+  dueInDays?: number
+}
+
+// One list per seed column, in getSeedColumns() order. Due dates are relative to the
+// first visit so the calendar view always shows overdue, today and upcoming cards.
+const SAMPLE_TASKS_BY_SEED_COLUMN: SampleTaskSeed[][] = [
+  [
+    { key: 'plan_sprint', dueInDays: 3 },
+    { key: 'onboarding_emails', dueInDays: 8 },
+    { key: 'accessibility_audit' },
+  ],
+  [
+    { key: 'landing_redesign', dueInDays: 0 },
+    { key: 'safari_login_fix', dueInDays: -1 },
+  ],
+  [{ key: 'ci_pipeline' }, { key: 'design_tokens' }],
+]
+
+function toLocalDateString(base: Date, offsetDays: number): string {
+  const date = new Date(base.getFullYear(), base.getMonth(), base.getDate() + offsetDays)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
+function createSampleTasks(columns: Column[], today: Date): TasksByColumn {
+  const t = useI18nStore.getState().t
+
+  return Object.fromEntries(
+    columns.map((column, index) => [
+      column.id,
+      (SAMPLE_TASKS_BY_SEED_COLUMN[index] ?? []).map(({ key, dueInDays }): Task => ({
+        id: nanoid(),
+        title: t(`seed.tasks.${key}.title`),
+        description: t(`seed.tasks.${key}.description`),
+        ...(dueInDays === undefined ? {} : { dueDate: toLocalDateString(today, dueInDays) }),
+      })),
+    ]),
+  )
+}
+
+// Only visible when nothing is persisted yet (first visit), so the demo never opens empty.
+// Persisted data always replaces it on hydration; boards created through addBoard start empty.
+export function createInitialKanbanState(today: Date = new Date()): Pick<
   KanbanState,
   'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'
 > {
-  const { board, columns, tasks } = createBoardData()
+  const { board, columns } = createBoardData()
 
   return {
     boards: [board],
@@ -66,7 +112,7 @@ export function createInitialKanbanState(): Pick<
       [board.id]: columns,
     },
     tasksByBoard: {
-      [board.id]: tasks,
+      [board.id]: createSampleTasks(columns, today),
     },
   }
 }

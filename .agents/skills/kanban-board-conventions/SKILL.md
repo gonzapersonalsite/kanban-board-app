@@ -136,6 +136,7 @@
   }
   ```
 - The persisted domain state MUST always contain at least one board.
+- First-visit sample board: `createInitialKanbanState()` in `shared/api/slices/helpers.ts` is the pre-hydration state, so it is only visible when nothing is persisted under `kanban-board-storage`. It seeds the localized default board with sample tasks (`seed.tasks.*`) whose due dates are relative to the visit day. Persisted data MUST always replace it on hydration — never merge sample tasks into stored data and never re-add them. Boards created through `addBoard` start empty (`createBoardData`).
 - Slice functions: `createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice` in separate files under `shared/api/slices/`.
 - Persisted schema migration from the legacy flat state is handled via `version` + `migrate` in `shared/api/store.ts`. Keep the storage key as `kanban-board-storage`.
 
@@ -210,7 +211,7 @@ pnpm preview    # Preview production build
 - **Interpolation syntax**: `{{param}}` — e.g., `t('task.edit', { title })`.
 - **Type safety**: Keys are strings (dot notation from JSON nesting). No auto-generated type — consumer knows keys from the English JSON.
 - **Browser detection**: On first visit (no persisted locale), `navigator.language` is checked and matched against available locales.
-- Seed data: store helpers call `useI18nStore.getState().t()` lazily to resolve localized seed column titles and the default board title from the current locale.
+- Seed data: store helpers call `useI18nStore.getState().t()` lazily to resolve localized seed column titles, the default board title and the first-visit sample tasks from the current locale.
 - **Dialog close label**: `Dialog` accepts optional `closeLabel` prop (defaults to `'Close dialog'`). Consumers pass `t('dialog.close')`.
 - **Import pattern**:
   ```ts
@@ -235,7 +236,7 @@ column/       → column.add, column.rename, column.title_placeholder, column.ti
 task/         → task.add, task.edit, task.delete, task.title_placeholder, task.title_aria
 task_dialog/  → task_dialog.title, task_dialog.title_label, task_dialog.cancel, task_dialog.save, ...
 dialog/       → dialog.close
-seed/         → seed.column_todo, seed.column_in_progress, seed.column_done
+seed/         → seed.column_todo, seed.column_in_progress, seed.column_done, seed.tasks.<id>.title|description
 ```
 
 Guidelines:

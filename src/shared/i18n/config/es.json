@@ -99,7 +99,37 @@
   "seed": {
     "column_todo": "Por Hacer",
     "column_in_progress": "En Progreso",
-    "column_done": "Terminado"
+    "column_done": "Terminado",
+    "tasks": {
+      "plan_sprint": {
+        "title": "Planificar el próximo sprint",
+        "description": "Elegir las tareas prioritarias del backlog, estimarlas y acordar el objetivo del sprint."
+      },
+      "onboarding_emails": {
+        "title": "Redactar los correos de bienvenida",
+        "description": "Preparar el correo de bienvenida y dos correos de seguimiento para los nuevos registros."
+      },
+      "accessibility_audit": {
+        "title": "Revisar la accesibilidad",
+        "description": "Comprobar la navegación por teclado, el orden del foco y el contraste de color en las pantallas principales."
+      },
+      "landing_redesign": {
+        "title": "Rediseñar la página de inicio",
+        "description": "Nueva sección principal, una llamada a la acción más clara y un diseño móvil más ligero."
+      },
+      "safari_login_fix": {
+        "title": "Corregir el inicio de sesión en Safari",
+        "description": "Tras iniciar sesión aparece una página en blanco. Reproducirlo y añadir un test de regresión."
+      },
+      "ci_pipeline": {
+        "title": "Configurar el pipeline de CI",
+        "description": "Lint, tests y build en cada push a main."
+      },
+      "design_tokens": {
+        "title": "Definir los tokens de diseño",
+        "description": "Colores, espaciado y tipografía compartidos por todos los componentes."
+      }
+    }
   },
   "validation": {
     "title_required": "El título no puede estar vacío",

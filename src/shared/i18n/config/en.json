@@ -99,7 +99,37 @@
   "seed": {
     "column_todo": "To Do",
     "column_in_progress": "In Progress",
-    "column_done": "Done"
+    "column_done": "Done",
+    "tasks": {
+      "plan_sprint": {
+        "title": "Plan the next sprint",
+        "description": "Pick the top backlog items, estimate them and agree on the sprint goal."
+      },
+      "onboarding_emails": {
+        "title": "Write onboarding emails",
+        "description": "Draft the welcome email and two follow-ups for new sign-ups."
+      },
+      "accessibility_audit": {
+        "title": "Run an accessibility audit",
+        "description": "Check keyboard navigation, focus order and color contrast on the main screens."
+      },
+      "landing_redesign": {
+        "title": "Redesign the landing page",
+        "description": "New hero section, a clearer call to action and a lighter mobile layout."
+      },
+      "safari_login_fix": {
+        "title": "Fix Safari login redirect",
+        "description": "Users see a blank page after signing in. Reproduce it and add a regression test."
+      },
+      "ci_pipeline": {
+        "title": "Set up the CI pipeline",
+        "description": "Lint, test and build on every push to main."
+      },
+      "design_tokens": {
+        "title": "Define design tokens",
+        "description": "Colors, spacing and typography shared by every component."
+      }
+    }
   },
   "validation": {
     "title_required": "Title cannot be empty",
