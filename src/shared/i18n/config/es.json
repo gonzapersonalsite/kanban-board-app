@@ -96,6 +96,21 @@
   "dialog": {
     "close": "Cerrar ventana"
   },
+  "dnd": {
+    "role_description": "arrastrable",
+    "instructions": "Para coger una tarjeta o una columna, pulsa Espacio o Intro. Muévela con las flechas y vuelve a pulsar Espacio o Intro para soltarla, o pulsa Escape para cancelar.",
+    "task": {
+      "picked_up": "Has cogido la tarea \"{{title}}\".",
+      "over_column": "La tarea \"{{title}}\" está sobre la columna \"{{column}}\".",
+      "dropped": "Has soltado la tarea \"{{title}}\" en la columna \"{{column}}\"."
+    },
+    "column": {
+      "picked_up": "Has cogido la columna \"{{title}}\".",
+      "over_column": "La columna \"{{title}}\" está sobre la columna \"{{column}}\".",
+      "dropped": "Has soltado la columna \"{{title}}\" en la posición {{position}} de {{total}}."
+    },
+    "cancelled": "Movimiento cancelado. \"{{title}}\" vuelve a su posición original."
+  },
   "seed": {
     "column_todo": "Por hacer",
     "column_in_progress": "En curso",

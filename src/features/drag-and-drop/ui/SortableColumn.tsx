@@ -3,6 +3,8 @@ import { useSortable } from '@dnd-kit/react/sortable'
 import { useDragOperation } from '@dnd-kit/react'
 import type { ColumnId } from '@/shared/api'
 import { ColumnShell } from '@/entities/column'
+import { useTranslation } from '@/shared/i18n'
+import { BOARD_DND_INSTRUCTIONS_ID } from '../model/boardDndAccessibility'
 
 interface SortableColumnProps {
   columnId: ColumnId
@@ -12,6 +14,7 @@ interface SortableColumnProps {
 }
 
 export function SortableColumn({ columnId, index, children, accentColor }: SortableColumnProps) {
+  const { t } = useTranslation()
   const { ref, isDragging } = useSortable({
     id: columnId,
     index,
@@ -32,6 +35,10 @@ export function SortableColumn({ columnId, index, children, accentColor }: Sorta
       isHighlighted={isTaskDropTarget}
       isDragging={isDragging}
       contentRef={ref}
+      contentAriaProps={{
+        'aria-roledescription': t('dnd.role_description'),
+        'aria-describedby': BOARD_DND_INSTRUCTIONS_ID,
+      }}
       accentColor={accentColor}
     >
       {children}

@@ -96,6 +96,21 @@
   "dialog": {
     "close": "Close dialog"
   },
+  "dnd": {
+    "role_description": "draggable",
+    "instructions": "To pick up a card or column, press Space or Enter. Move it with the arrow keys, press Space or Enter again to drop it, or press Escape to cancel.",
+    "task": {
+      "picked_up": "Picked up task \"{{title}}\".",
+      "over_column": "Task \"{{title}}\" is over column \"{{column}}\".",
+      "dropped": "Task \"{{title}}\" was dropped in column \"{{column}}\"."
+    },
+    "column": {
+      "picked_up": "Picked up column \"{{title}}\".",
+      "over_column": "Column \"{{title}}\" is over column \"{{column}}\".",
+      "dropped": "Column \"{{title}}\" was dropped at position {{position}} of {{total}}."
+    },
+    "cancelled": "Move cancelled. \"{{title}}\" is back in its original position."
+  },
   "seed": {
     "column_todo": "To Do",
     "column_in_progress": "In Progress",

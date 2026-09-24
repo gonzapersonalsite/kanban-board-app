@@ -1,6 +1,8 @@
 import { useSortable } from '@dnd-kit/react/sortable'
 import type { ColumnId, Task } from '@/shared/api'
 import { TaskCard } from '@/entities/task'
+import { useTranslation } from '@/shared/i18n'
+import { BOARD_DND_INSTRUCTIONS_ID } from '../model/boardDndAccessibility'
 import styles from './DraggableTaskCard.module.css'
 
 interface DraggableTaskCardProps {
@@ -20,6 +22,7 @@ export function DraggableTaskCard({
   onDelete,
   accentColor,
 }: DraggableTaskCardProps) {
+  const { t } = useTranslation()
   const { ref, isDragging } = useSortable({
     id: task.id,
     index,
@@ -30,7 +33,12 @@ export function DraggableTaskCard({
   })
 
   return (
-    <div ref={ref} className={styles.wrapper}>
+    <div
+      ref={ref}
+      className={styles.wrapper}
+      aria-roledescription={t('dnd.role_description')}
+      aria-describedby={BOARD_DND_INSTRUCTIONS_ID}
+    >
       <TaskCard
         task={task}
         onEdit={onEdit}

@@ -96,6 +96,21 @@
   "dialog": {
     "close": "Dialog schließen"
   },
+  "dnd": {
+    "role_description": "ziehbar",
+    "instructions": "Drücke die Leertaste oder die Eingabetaste, um eine Karte oder Spalte aufzunehmen. Verschiebe sie mit den Pfeiltasten, lege sie mit der Leertaste oder der Eingabetaste ab oder brich mit Escape ab.",
+    "task": {
+      "picked_up": "Aufgabe \"{{title}}\" aufgenommen.",
+      "over_column": "Aufgabe \"{{title}}\" ist über der Spalte \"{{column}}\".",
+      "dropped": "Aufgabe \"{{title}}\" in der Spalte \"{{column}}\" abgelegt."
+    },
+    "column": {
+      "picked_up": "Spalte \"{{title}}\" aufgenommen.",
+      "over_column": "Spalte \"{{title}}\" ist über der Spalte \"{{column}}\".",
+      "dropped": "Spalte \"{{title}}\" an Position {{position}} von {{total}} abgelegt."
+    },
+    "cancelled": "Verschieben abgebrochen. \"{{title}}\" ist wieder an der ursprünglichen Position."
+  },
   "seed": {
     "column_todo": "Offen",
     "column_in_progress": "In Bearbeitung",

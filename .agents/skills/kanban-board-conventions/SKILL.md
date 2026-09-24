@@ -18,6 +18,8 @@
 - Use `move` helper from `@dnd-kit/helpers` for array mutations.
 - Drag feedback is rendered via `<DragOverlay>` from `@dnd-kit/react`.
 - Sensors: default pointer sensor (mouse + touch), keyboard sensor for accessibility.
+- Screen reader output MUST be localized. Every draggable activator (card wrapper in `DraggableTaskCard`, column content in `ColumnShell` via `SortableColumn`) sets `aria-roledescription={t('dnd.role_description')}` and `aria-describedby={BOARD_DND_INSTRUCTIONS_ID}`, which points to the hidden `dnd.instructions` paragraph rendered by `BoardDndContext`; the dnd-kit Accessibility plugin leaves both attributes alone when they already exist. Live announcements come from `boardDndAnnouncements` (`features/drag-and-drop/model/boardDndAccessibility.ts`), which resolves titles from the store and texts from `dnd.*` when each event fires.
+- `@dnd-kit/react` does not export the Accessibility plugin class and `@dnd-kit/dom` is not a direct dependency, so `withBoardDndAnnouncements` passes the announcements to every default plugin (only Accessibility reads them). `BoardDndContext.accessibility.test.tsx` renders the real provider and MUST keep proving that a keyboard pick-up is announced in the current locale; re-check it on every dnd-kit upgrade.
 
 ## Styling
 
@@ -241,6 +243,7 @@ task/         → task.add, task.edit, task.delete, task.title_placeholder, task
 task_dialog/  → task_dialog.title, task_dialog.title_label, task_dialog.cancel, task_dialog.save, ...
 dialog/       → dialog.close
 seed/         → seed.column_todo, seed.column_in_progress, seed.column_done, seed.tasks.<id>.title|description
+dnd/          → dnd.role_description, dnd.instructions, dnd.cancelled, dnd.task|column.picked_up|over_column|dropped
 ```
 
 Guidelines:
