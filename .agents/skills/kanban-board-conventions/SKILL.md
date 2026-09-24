@@ -136,7 +136,8 @@
   }
   ```
 - The persisted domain state MUST always contain at least one board.
-- First-visit sample board: `createInitialKanbanState()` in `shared/api/slices/helpers.ts` is the pre-hydration state, so it is only visible when nothing is persisted under `kanban-board-storage`. It seeds the localized default board with sample tasks (`seed.tasks.*`) whose due dates are relative to the visit day. Persisted data MUST always replace it on hydration — never merge sample tasks into stored data and never re-add them. Boards created through `addBoard` start empty (`createBoardData`).
+- First-visit sample board: `createInitialKanbanState()` in `shared/api/slices/helpers.ts` is the pre-hydration state, so it is only visible when nothing is persisted under `kanban-board-storage`. It seeds the localized default board with sample tasks (`seed.tasks.*`) whose due dates are relative to the current visit. Persisted data MUST always replace it on hydration — never merge sample tasks into stored data and never re-add them. Boards created through `addBoard` start empty (`createBoardData`).
+- Sample board lifecycle (`createSampleBoardLifecycle()` in `shared/api/sampleBoard.ts`, wired once in `shared/api/store.ts`): while the sample is untouched it is never written to storage, and a locale change re-localizes it in place with `localizeSampleBoard()` (same ids and due dates, so routes and React keys stay valid). "Untouched" is decided by reference identity of `boards`, `activeBoardId`, `columnsByBoard` and `tasksByBoard`, so every store action MUST keep replacing the collections it changes instead of mutating them. The first change is persisted as usual and, from then on, locale changes never touch the board. Never relocalize or rewrite persisted data.
 - Slice functions: `createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice` in separate files under `shared/api/slices/`.
 - Persisted schema migration from the legacy flat state is handled via `version` + `migrate` in `shared/api/store.ts`. Keep the storage key as `kanban-board-storage`.
 
@@ -211,7 +212,7 @@ pnpm preview    # Preview production build
 - **Interpolation syntax**: `{{param}}` — e.g., `t('task.edit', { title })`.
 - **Type safety**: Keys are strings (dot notation from JSON nesting). No auto-generated type — consumer knows keys from the English JSON.
 - **Browser detection**: On first visit (no persisted locale), `navigator.language` is checked and matched against available locales.
-- Seed data: store helpers call `useI18nStore.getState().t()` lazily to resolve localized seed column titles, the default board title and the first-visit sample tasks from the current locale.
+- Seed data: store helpers call `useI18nStore.getState().t()` lazily to resolve localized seed column titles, the default board title and the first-visit sample tasks from the current locale. The untouched sample board also follows later locale changes (see Store Architecture); columns and boards the visitor already changed or created keep the language they were created in.
 - **Dialog close label**: `Dialog` accepts optional `closeLabel` prop (defaults to `'Close dialog'`). Consumers pass `t('dialog.close')`.
 - **Import pattern**:
   ```ts

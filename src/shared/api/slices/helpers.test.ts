@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { useI18nStore } from '@/shared/i18n'
-import { createBoardData, createInitialKanbanState } from './helpers'
+import { createBoardData, createInitialKanbanState, localizeSampleBoard } from './helpers'
 
 describe('createInitialKanbanState', () => {
   afterEach(() => {
@@ -26,7 +26,7 @@ describe('createInitialKanbanState', () => {
     })
   })
 
-  it('sets_sample_due_dates_relative_to_the_first_visit_day', () => {
+  it('sets_sample_due_dates_relative_to_the_current_visit_day', () => {
     const state = createInitialKanbanState(new Date(2026, 0, 31))
 
     const boardId = state.activeBoardId!
@@ -59,6 +59,38 @@ describe('createInitialKanbanState', () => {
     expect(state.tasksByBoard[boardId][firstColumn.id][0].title).toBe(
       'Planificar el próximo sprint',
     )
+  })
+})
+
+describe('localizeSampleBoard', () => {
+  afterEach(() => {
+    useI18nStore.getState().setLocale('en')
+  })
+
+  it('translates_the_sample_board_into_the_current_locale_keeping_ids_and_due_dates', () => {
+    const sample = createInitialKanbanState(new Date(2026, 0, 15))
+    useI18nStore.getState().setLocale('de')
+
+    const localized = localizeSampleBoard(sample)
+
+    const boardId = sample.activeBoardId!
+    const sampleColumns = sample.columnsByBoard[boardId]
+    const localizedColumns = localized.columnsByBoard[boardId]
+    const firstTask = localized.tasksByBoard[boardId][localizedColumns[0].id][0]
+    const stripTexts = (tasks: typeof sample.tasksByBoard) =>
+      Object.values(tasks[boardId]).flat().map(({ id, dueDate }) => ({ id, dueDate }))
+    expect(localized.boards).toEqual([{ id: boardId, title: 'Mein Board' }])
+    expect(localized.activeBoardId).toBe(boardId)
+    expect(localizedColumns.map((column) => column.id)).toEqual(
+      sampleColumns.map((column) => column.id),
+    )
+    expect(localizedColumns.map((column) => column.title)).toEqual([
+      'Offen',
+      'In Bearbeitung',
+      'Erledigt',
+    ])
+    expect(firstTask.title).toBe('Nächsten Sprint planen')
+    expect(stripTexts(localized.tasksByBoard)).toEqual(stripTexts(sample.tasksByBoard))
   })
 })
 

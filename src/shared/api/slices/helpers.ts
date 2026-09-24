@@ -4,12 +4,20 @@ import type {
   BoardId,
   Column,
   ColumnId,
+  ColumnsByBoard,
   KanbanState,
+  PortableKanbanState,
   Task,
   TasksByBoard,
   TasksByColumn,
 } from './types'
 import { useI18nStore } from '@/shared/i18n'
+
+const SEED_COLUMN_TITLE_KEYS = [
+  'seed.column_todo',
+  'seed.column_in_progress',
+  'seed.column_done',
+] as const
 
 export function getDefaultBoardTitle(): string {
   return useI18nStore.getState().t('board.default_title')
@@ -18,11 +26,7 @@ export function getDefaultBoardTitle(): string {
 export function getSeedColumns(): Column[] {
   const t = useI18nStore.getState().t
 
-  return [
-    { id: nanoid(), title: t('seed.column_todo') },
-    { id: nanoid(), title: t('seed.column_in_progress') },
-    { id: nanoid(), title: t('seed.column_done') },
-  ]
+  return SEED_COLUMN_TITLE_KEYS.map((key) => ({ id: nanoid(), title: t(key) }))
 }
 
 export function normalizeTasksByColumn(
@@ -59,7 +63,8 @@ interface SampleTaskSeed {
 }
 
 // One list per seed column, in getSeedColumns() order. Due dates are relative to the
-// first visit so the calendar view always shows overdue, today and upcoming cards.
+// current visit while nothing is persisted, so the calendar usually shows overdue, today
+// and upcoming cards (a card can fall outside the grid near a month boundary).
 const SAMPLE_TASKS_BY_SEED_COLUMN: SampleTaskSeed[][] = [
   [
     { key: 'plan_sprint', dueInDays: 3 },
@@ -81,28 +86,31 @@ function toLocalDateString(base: Date, offsetDays: number): string {
   return `${date.getFullYear()}-${month}-${day}`
 }
 
-function createSampleTasks(columns: Column[], today: Date): TasksByColumn {
+function translateSampleTask(key: string): Pick<Task, 'title' | 'description'> {
   const t = useI18nStore.getState().t
 
+  return {
+    title: t(`seed.tasks.${key}.title`),
+    description: t(`seed.tasks.${key}.description`),
+  }
+}
+
+function createSampleTasks(columns: Column[], today: Date): TasksByColumn {
   return Object.fromEntries(
     columns.map((column, index) => [
       column.id,
       (SAMPLE_TASKS_BY_SEED_COLUMN[index] ?? []).map(({ key, dueInDays }): Task => ({
         id: nanoid(),
-        title: t(`seed.tasks.${key}.title`),
-        description: t(`seed.tasks.${key}.description`),
+        ...translateSampleTask(key),
         ...(dueInDays === undefined ? {} : { dueDate: toLocalDateString(today, dueInDays) }),
       })),
     ]),
   )
 }
 
-// Only visible when nothing is persisted yet (first visit), so the demo never opens empty.
+// Only visible while nothing is persisted, so the demo never opens empty.
 // Persisted data always replaces it on hydration; boards created through addBoard start empty.
-export function createInitialKanbanState(today: Date = new Date()): Pick<
-  KanbanState,
-  'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'
-> {
+export function createInitialKanbanState(today: Date = new Date()): PortableKanbanState {
   const { board, columns } = createBoardData()
 
   return {
@@ -114,6 +122,38 @@ export function createInitialKanbanState(today: Date = new Date()): Pick<
     tasksByBoard: {
       [board.id]: createSampleTasks(columns, today),
     },
+  }
+}
+
+// Translates an untouched sample board into the current locale. Texts are matched by
+// position, which is only valid for a board exactly as createInitialKanbanState built it;
+// ids and due dates are kept so routes and React keys stay stable.
+export function localizeSampleBoard(sample: PortableKanbanState): PortableKanbanState {
+  const t = useI18nStore.getState().t
+  const columnsByBoard: ColumnsByBoard = {}
+  const tasksByBoard: TasksByBoard = {}
+
+  for (const [boardId, columns] of Object.entries(sample.columnsByBoard)) {
+    columnsByBoard[boardId] = columns.map((column, index) => ({
+      ...column,
+      title: t(SEED_COLUMN_TITLE_KEYS[index]),
+    }))
+    tasksByBoard[boardId] = Object.fromEntries(
+      columns.map((column, index) => [
+        column.id,
+        (sample.tasksByBoard[boardId]?.[column.id] ?? []).map((task, taskIndex) => ({
+          ...task,
+          ...translateSampleTask(SAMPLE_TASKS_BY_SEED_COLUMN[index][taskIndex].key),
+        })),
+      ]),
+    )
+  }
+
+  return {
+    boards: sample.boards.map((board) => ({ ...board, title: getDefaultBoardTitle() })),
+    activeBoardId: sample.activeBoardId,
+    columnsByBoard,
+    tasksByBoard,
   }
 }
 

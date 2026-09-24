@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useToastStore } from '@/shared/ui'
 import { createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
+import { createTestKanbanStore } from '@/test/helpers/storeTestUtils'
 import { createInitialKanbanState } from './slices/helpers'
 import type { KanbanState, PortableKanbanState } from './slices/types'
 import { useKanbanStore } from './store'
@@ -11,6 +12,111 @@ function pickPortableState(state: KanbanState): PortableKanbanState {
 
   return { boards, activeBoardId, columnsByBoard, tasksByBoard }
 }
+
+// A fresh module graph gives a fresh kanban store wired to a fresh i18n store, exactly as
+// the app creates them on page load.
+async function loadFreshStores() {
+  vi.resetModules()
+  const { useKanbanStore: freshKanbanStore } = await import('./store')
+  const { useI18nStore: freshI18nStore } = await import('@/shared/i18n')
+
+  return { useKanbanStore: freshKanbanStore, useI18nStore: freshI18nStore }
+}
+
+function getSampleTexts(state: PortableKanbanState) {
+  const boardId = state.activeBoardId!
+  const [firstColumn] = state.columnsByBoard[boardId]
+
+  return {
+    board: state.boards[0].title,
+    firstColumn: firstColumn.title,
+    firstTask: state.tasksByBoard[boardId][firstColumn.id][0].title,
+  }
+}
+
+describe('store creator', () => {
+  it('starts_with_the_sample_board_and_tasks_in_every_column', () => {
+    const state = createTestKanbanStore().getState()
+
+    const boardId = state.activeBoardId!
+    const columns = state.columnsByBoard[boardId]
+    expect(state.boards).toHaveLength(1)
+    expect(columns).toHaveLength(3)
+    for (const column of columns) {
+      expect(state.tasksByBoard[boardId][column.id].length).toBeGreaterThan(0)
+    }
+  })
+})
+
+describe('sample board lifecycle', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('starts_with_the_sample_board_and_persists_nothing_when_storage_is_empty', async () => {
+    const { useKanbanStore: store } = await loadFreshStores()
+
+    const state = store.getState()
+    expect(getSampleTexts(state)).toEqual({
+      board: 'My Board',
+      firstColumn: 'To Do',
+      firstTask: 'Plan the next sprint',
+    })
+    expect(localStorage.getItem(KANBAN_STORAGE_KEY)).toBeNull()
+  })
+
+  it('follows_the_locale_without_persisting_while_the_sample_is_untouched', async () => {
+    const { useKanbanStore: store, useI18nStore: i18n } = await loadFreshStores()
+    const before = store.getState()
+
+    i18n.getState().setLocale('es')
+
+    const after = store.getState()
+    expect(getSampleTexts(after)).toEqual({
+      board: 'Mi tablero',
+      firstColumn: 'Por hacer',
+      firstTask: 'Planificar el próximo sprint',
+    })
+    expect(after.activeBoardId).toBe(before.activeBoardId)
+    expect(after.columnsByBoard[after.activeBoardId!].map((column) => column.id)).toEqual(
+      before.columnsByBoard[before.activeBoardId!].map((column) => column.id),
+    )
+    expect(localStorage.getItem(KANBAN_STORAGE_KEY)).toBeNull()
+  })
+
+  it('persists_the_first_change_and_stops_following_the_locale', async () => {
+    const { useKanbanStore: store, useI18nStore: i18n } = await loadFreshStores()
+    const state = store.getState()
+    const firstColumnId = state.columnsByBoard[state.activeBoardId!][0].id
+
+    store.getState().addTask(firstColumnId, 'My own task')
+    i18n.getState().setLocale('de')
+
+    const after = store.getState()
+    const persisted = JSON.parse(localStorage.getItem(KANBAN_STORAGE_KEY)!)
+    expect(getSampleTexts(after)).toEqual({
+      board: 'My Board',
+      firstColumn: 'To Do',
+      firstTask: 'Plan the next sprint',
+    })
+    expect(after.tasksByBoard[after.activeBoardId!][firstColumnId].at(-1)?.title).toBe(
+      'My own task',
+    )
+    expect(persisted.state.tasksByBoard).toEqual(after.tasksByBoard)
+  })
+
+  it('never_changes_persisted_user_data_when_the_locale_changes', async () => {
+    const userData = createKanbanFixture()
+    const storedValue = JSON.stringify({ state: userData, version: 1 })
+    localStorage.setItem(KANBAN_STORAGE_KEY, storedValue)
+    const { useKanbanStore: store, useI18nStore: i18n } = await loadFreshStores()
+
+    i18n.getState().setLocale('es')
+
+    expect(pickPortableState(store.getState())).toEqual(userData)
+    expect(localStorage.getItem(KANBAN_STORAGE_KEY)).toBe(storedValue)
+  })
+})
 
 describe('first-visit sample board', () => {
   beforeEach(() => {

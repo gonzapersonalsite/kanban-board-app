@@ -6,7 +6,7 @@ A Trello-style Kanban board built with React, TypeScript and Feature-Sliced Desi
 
 ## Features
 
-- **Sample board on first visit**: a fresh browser opens a localized demo board with realistic cards and due dates. Existing saved data is never replaced by it.
+- **Sample board on first visit**: a fresh browser opens a localized demo board with realistic cards and due dates. It follows the language switcher and is not saved until you change something; existing saved data is never replaced by it.
 - **Multiple boards**: create, rename, switch and delete boards; each board keeps its own columns and cards.
 - **Drag and drop**: reorder columns and move cards within or across columns with mouse, touch or keyboard.
 - **Cards**: title, description and optional due date, with overdue / due today / upcoming badges.

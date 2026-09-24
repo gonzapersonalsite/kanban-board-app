@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware'
 import type { KanbanState } from './slices/types'
 import type { Column, TasksByColumn } from './slices/types'
 import { getDefaultBoardTitle, normalizeTaskMap, normalizeTasksByColumn } from './slices/helpers'
+import { createSampleBoardLifecycle } from './sampleBoard'
 import { kanbanStoreCreator } from './storeCreator'
 import { useToastStore } from '@/shared/ui'
 import { useI18nStore } from '@/shared/i18n'
@@ -55,14 +56,18 @@ function notifyStorageError(key: 'load_error' | 'save_error') {
   useToastStore.getState().addNotification('error', t(`storage.${key}`))
 }
 
+const sampleBoard = createSampleBoardLifecycle()
+
 export const useKanbanStore = create<KanbanState>()(
   persist(kanbanStoreCreator, {
     name: KANBAN_STORAGE_KEY,
     version: 1,
-    storage: createSafeStorage(),
+    storage: sampleBoard.skipUntouchedSampleWrites(createSafeStorage()),
     migrate: (persistedState, version) => migrateKanbanState(persistedState, version),
   }),
 )
+
+sampleBoard.followLocale(useKanbanStore)
 
 type LegacyKanbanState = {
   columns: Column[]
