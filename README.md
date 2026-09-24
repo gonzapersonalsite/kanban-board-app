@@ -1,5 +1,7 @@
 # Kanban Board App
 
+[![License: Evaluation Only](https://img.shields.io/badge/License-Evaluation--Only-red)](LICENSE)
+
 A Trello-style Kanban board built with React, TypeScript and Feature-Sliced Design. It runs fully in the browser: no backend, no account, data stays in `localStorage`.
 
 **Live demo:** https://kanban-board-app-kappa.vercel.app/
@@ -50,3 +52,12 @@ Git hooks (husky): `pre-commit` lints staged files, `pre-push` runs the producti
 ## Architecture
 
 Feature-Sliced Design: see `AGENTS.md` and `.agents/skills/` for the full architectural contract and project conventions.
+
+## License
+
+**© 2026 Gonzalo Martínez García. All rights reserved.**
+
+This software is **proprietary** and is provided for **evaluation purposes only**.
+- **Unauthorized copying**, modification, distribution, or use of this software, via any medium, is strictly prohibited.
+- **Personal use for other portfolios is not allowed.**
+- See the [LICENSE](LICENSE) file for full terms and conditions.
