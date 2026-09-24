@@ -71,7 +71,7 @@ describe('BoardDndContext with the untouched sample board', () => {
     fireEvent.keyDown(activator, { code: 'Space', key: ' ' })
     await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(/^Picked up task/))
     fireEvent.keyDown(activator, { code: 'Escape', key: 'Escape' })
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(/^Move cancelled/))
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(/^Move canceled/))
 
     expect(localStorage.getItem(KANBAN_STORAGE_KEY)).toBeNull()
   })

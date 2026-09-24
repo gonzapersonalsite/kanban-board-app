@@ -74,7 +74,7 @@ describe('boardDndAnnouncements', () => {
     const event = dragEvent<DragEndEvent>({ id: COLUMN_PROGRESS_ID, type: 'column' }, null, true)
 
     expect(boardDndAnnouncements.dragend(event)).toBe(
-      'Move cancelled. "In Progress" is back in its original position.',
+      'Move canceled. "In Progress" is back in its original position.',
     )
   })
 

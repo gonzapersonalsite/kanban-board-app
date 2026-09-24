@@ -18,7 +18,7 @@ describe('BoardSelector', () => {
     )
 
     expect(screen.getByRole('combobox', { name: /switch board/i })).toBeInTheDocument()
-    expect(screen.getByDisplayValue('My Board')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('My board')).toBeInTheDocument()
   })
 
   it('switches_the_active_board_when_a_different_option_is_selected', () => {

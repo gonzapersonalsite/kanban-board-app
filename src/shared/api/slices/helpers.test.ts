@@ -15,7 +15,7 @@ describe('createInitialKanbanState', () => {
     const tasks = state.tasksByBoard[boardId]
 
     expect(state.boards).toHaveLength(1)
-    expect(columns.map((column) => column.title)).toEqual(['To Do', 'In Progress', 'Done'])
+    expect(columns.map((column) => column.title)).toEqual(['To do', 'In progress', 'Done'])
     expect(Object.keys(tasks)).toEqual(columns.map((column) => column.id))
     for (const column of columns) {
       expect(tasks[column.id].length).toBeGreaterThan(0)

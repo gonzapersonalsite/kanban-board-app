@@ -48,14 +48,14 @@
     "more": "more"
   },
   "board": {
-    "add": "New Board",
+    "add": "New board",
     "rename": "Rename board",
     "delete": "Delete board",
     "confirm_delete_title": "Delete board",
     "confirm_delete_message": "All columns and tasks in this board will be deleted.",
     "title_placeholder": "Board name...",
     "switch_board": "Switch board",
-    "default_title": "My Board",
+    "default_title": "My board",
     "create_action": "Create",
     "save_action": "Save",
     "cancel_action": "Cancel",
@@ -65,7 +65,7 @@
     "empty_column": "No tasks yet"
   },
   "column": {
-    "add": "Add Column",
+    "add": "Add column",
     "rename": "Rename column",
     "save_title": "Save title",
     "cancel_edit": "Cancel edit",
@@ -74,7 +74,7 @@
     "title_aria": "Column title"
   },
   "task": {
-    "add": "Add Card",
+    "add": "Add card",
     "edit": "Edit task \"{{title}}\"",
     "delete": "Delete task \"{{title}}\"",
     "title_placeholder": "New task title...",
@@ -84,7 +84,7 @@
     "due": "Due"
   },
   "task_dialog": {
-    "title": "Edit Task",
+    "title": "Edit task",
     "title_label": "Title",
     "title_placeholder": "Task title",
     "description_label": "Description",
@@ -109,11 +109,11 @@
       "over_column": "Column \"{{title}}\" is over column \"{{column}}\".",
       "dropped": "Column \"{{title}}\" was dropped at position {{position}} of {{total}}."
     },
-    "cancelled": "Move cancelled. \"{{title}}\" is back in its original position."
+    "cancelled": "Move canceled. \"{{title}}\" is back in its original position."
   },
   "seed": {
-    "column_todo": "To Do",
-    "column_in_progress": "In Progress",
+    "column_todo": "To do",
+    "column_in_progress": "In progress",
     "column_done": "Done",
     "tasks": {
       "plan_sprint": {
@@ -168,24 +168,24 @@
     "backup_review_ready": "Backup reviewed. Confirm to replace current data.",
     "backup_imported": "Backup imported",
     "backup_import_error": "Could not import the backup.",
-    "backup_import_cancelled": "Import cancelled"
+    "backup_import_cancelled": "Import canceled"
   },
   "seo": {
     "board": {
       "title": "Board — Kanban Board",
-      "description": "Manage your project tasks with an intuitive drag-and-drop kanban board."
+      "description": "Manage your project tasks with an intuitive drag-and-drop Kanban board."
     },
     "calendar": {
       "title": "Calendar — Kanban Board",
       "description": "View and manage your tasks by due date on a monthly calendar."
     },
     "not_found": {
-      "title": "Page Not Found — Kanban Board",
+      "title": "Page not found — Kanban Board",
       "description": "The page you are looking for does not exist."
     }
   },
   "not_found": {
     "message": "The page you are looking for does not exist.",
-    "back_home": "Back to Home"
+    "back_home": "Back to home"
   }
 }

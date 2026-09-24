@@ -133,8 +133,8 @@
         "description": "Nueva cabecera, CTA más clara y versión móvil más ligera."
       },
       "safari_login_fix": {
-        "title": "Corregir el inicio de sesión en Safari",
-        "description": "Página en blanco al entrar. Reproducirlo y añadir un test."
+        "title": "Corregir la redirección del login en Safari",
+        "description": "Página en blanco al entrar. Reproducir y añadir un test."
       },
       "ci_pipeline": {
         "title": "Configurar el pipeline de CI",
@@ -173,7 +173,7 @@
   "seo": {
     "board": {
       "title": "Tablero — Tablero Kanban",
-      "description": "Gestiona las tareas de tu proyecto con un tablero kanban intuitivo de arrastrar y soltar."
+      "description": "Gestiona las tareas de tu proyecto con un tablero Kanban intuitivo de arrastrar y soltar."
     },
     "calendar": {
       "title": "Calendario — Tablero Kanban",

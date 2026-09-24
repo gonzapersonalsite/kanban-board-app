@@ -142,7 +142,7 @@ describe('DataImportSection', () => {
       columnsByBoard: useKanbanStore.getState().columnsByBoard,
       tasksByBoard: useKanbanStore.getState().tasksByBoard,
     }).toEqual(previousState)
-    expect(useToastStore.getState().notifications.at(-1)?.message).toBe('Import cancelled')
+    expect(useToastStore.getState().notifications.at(-1)?.message).toBe('Import canceled')
   })
 
   it('rejects_backup_files_that_are_too_large_before_reading_them', async () => {

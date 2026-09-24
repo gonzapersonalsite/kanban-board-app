@@ -58,8 +58,8 @@ describe('sample board lifecycle', () => {
 
     const state = store.getState()
     expect(getSampleTexts(state)).toEqual({
-      board: 'My Board',
-      firstColumn: 'To Do',
+      board: 'My board',
+      firstColumn: 'To do',
       firstTask: 'Plan the next sprint',
     })
     expect(localStorage.getItem(KANBAN_STORAGE_KEY)).toBeNull()
@@ -95,8 +95,8 @@ describe('sample board lifecycle', () => {
     const after = store.getState()
     const persisted = JSON.parse(localStorage.getItem(KANBAN_STORAGE_KEY)!)
     expect(getSampleTexts(after)).toEqual({
-      board: 'My Board',
-      firstColumn: 'To Do',
+      board: 'My board',
+      firstColumn: 'To do',
       firstTask: 'Plan the next sprint',
     })
     expect(after.tasksByBoard[after.activeBoardId!][firstColumnId].at(-1)?.title).toBe(
@@ -178,7 +178,7 @@ describe('store migration', () => {
 
     const boardId = migrated.activeBoardId!
 
-    expect(migrated.boards?.[0]?.title).toBe('My Board')
+    expect(migrated.boards?.[0]?.title).toBe('My board')
     expect(migrated.columnsByBoard?.[boardId]).toEqual(legacyState.columns)
     expect(migrated.tasksByBoard?.[boardId]?.['col-1']).toEqual(legacyState.tasks['col-1'])
     expect(migrated.tasksByBoard?.[boardId]?.['col-2']).toEqual([])
