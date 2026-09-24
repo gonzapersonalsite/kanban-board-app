@@ -223,6 +223,9 @@ pnpm preview    # Preview production build
   }
   ```
 - **Adding a locale**: Copy `en.json` → `fr.json`, translate all values. No code changes needed — `import.meta.glob` picks it up automatically.
+- **Locale parity**: `shared/i18n/config/locales.test.ts` enforces that every locale has exactly the English flattened keys, the same `{{placeholders}}` in each message and no empty messages. Never add a key to one locale only.
+- **Copy style**: Spanish copy is Spain Spanish in sentence case (only the first word and proper nouns capitalised): `Añadir`, `Ajustes`, `copia de seguridad`; never Latin American variants such as `Agregar`. German copy uses the informal `du`. Keep the meaning of EN, ES and DE aligned.
+- **Sample task descriptions** (`seed.tasks.*.description`) MUST fit the card's two-line clamp in the narrowest desktop column (about 230px wide at a ~1250px viewport, roughly 55 characters in Inter) in every locale. Measure them in the browser after any change.
 
 ### Translation key structure
 

@@ -103,23 +103,23 @@
     "tasks": {
       "plan_sprint": {
         "title": "Nächsten Sprint planen",
-        "description": "Die wichtigsten Backlog-Einträge auswählen, schätzen und das Sprintziel festlegen."
+        "description": "Backlog priorisieren, schätzen und Sprintziel festlegen."
       },
       "onboarding_emails": {
         "title": "Onboarding-E-Mails schreiben",
-        "description": "Willkommens-E-Mail und zwei Folge-E-Mails für neue Registrierungen entwerfen."
+        "description": "Willkommens-E-Mail und zwei Folge-Mails für neue Nutzer."
       },
       "accessibility_audit": {
         "title": "Barrierefreiheit prüfen",
-        "description": "Tastaturnavigation, Fokusreihenfolge und Farbkontraste der wichtigsten Ansichten prüfen."
+        "description": "Tastaturnavigation, Fokus und Farbkontraste prüfen."
       },
       "landing_redesign": {
         "title": "Landingpage neu gestalten",
-        "description": "Neuer Hero-Bereich, ein klarerer Call-to-Action und ein schlankeres mobiles Layout."
+        "description": "Neuer Hero-Bereich, klarerer CTA, schlankeres Mobil-Layout."
       },
       "safari_login_fix": {
         "title": "Safari-Login-Weiterleitung beheben",
-        "description": "Nach der Anmeldung erscheint eine leere Seite. Fehler nachstellen und einen Regressionstest ergänzen."
+        "description": "Leere Seite nach dem Login. Nachstellen und Test ergänzen."
       },
       "ci_pipeline": {
         "title": "CI-Pipeline einrichten",
@@ -127,7 +127,7 @@
       },
       "design_tokens": {
         "title": "Design-Tokens definieren",
-        "description": "Farben, Abstände und Typografie für alle Komponenten."
+        "description": "Farben, Abstände und Schrift für alle Komponenten."
       }
     }
   },
@@ -138,7 +138,7 @@
   },
   "storage": {
     "save_error": "Fehler beim Speichern. Bitte verfügbaren Speicherplatz prüfen.",
-    "load_error": "Fehler beim Laden. Starte mit Standard-Board."
+    "load_error": "Fehler beim Laden. Das Standard-Board wird verwendet."
   },
   "feedback": {
     "task_created": "Aufgabe erstellt",
@@ -166,11 +166,11 @@
     },
     "not_found": {
       "title": "Seite nicht gefunden — Kanban-Board",
-      "description": "Die von Ihnen gesuchte Seite existiert nicht."
+      "description": "Die gesuchte Seite existiert nicht."
     }
   },
   "not_found": {
-    "message": "Die von Ihnen gesuchte Seite existiert nicht.",
+    "message": "Die gesuchte Seite existiert nicht.",
     "back_home": "Zurück zur Startseite"
   }
 }

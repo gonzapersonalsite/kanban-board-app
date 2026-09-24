@@ -22,7 +22,7 @@ describe('createInitialKanbanState', () => {
     }
     expect(tasks[columns[0].id][0]).toMatchObject({
       title: 'Plan the next sprint',
-      description: 'Pick the top backlog items, estimate them and agree on the sprint goal.',
+      description: 'Prioritize and estimate the backlog, then set the goal.',
     })
   })
 

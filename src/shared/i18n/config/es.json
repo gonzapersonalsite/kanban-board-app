@@ -14,32 +14,32 @@
   },
   "data_portability": {
     "title": "Copia de seguridad",
-    "description": "Descarga un backup completo de tus tableros, columnas y tareas. Podrás llevártelo después a otro navegador o dispositivo.",
-    "download": "Descargar backup",
-    "share": "Compartir backup",
-    "share_title": "Backup del tablero Kanban",
+    "description": "Descarga una copia de seguridad completa de tus tableros, columnas y tareas. Después podrás llevarla a otro navegador o dispositivo.",
+    "download": "Descargar copia",
+    "share": "Compartir copia",
+    "share_title": "Copia de seguridad del tablero Kanban",
     "share_text": "Archivo de copia de seguridad del tablero Kanban",
     "import_title": "Restaurar datos",
-    "import_description": "Elige un archivo de backup, revisa su contenido y confirma antes de reemplazar tus datos actuales.",
-    "select_file": "Seleccionar archivo de backup",
+    "import_description": "Elige un archivo de copia de seguridad, revisa su contenido y confirma antes de reemplazar tus datos actuales.",
+    "select_file": "Seleccionar copia de seguridad",
     "selected_file": "Archivo seleccionado: {{fileName}}",
-    "clear_selection": "Limpiar",
-    "review": "Revisar backup",
-    "review_loading": "Revisando backup...",
-    "preview_title": "Resumen del backup",
-    "summary_exported_at": "Fecha del backup",
+    "clear_selection": "Quitar",
+    "review": "Revisar copia",
+    "review_loading": "Revisando la copia...",
+    "preview_title": "Resumen de la copia",
+    "summary_exported_at": "Fecha de exportación",
     "summary_boards": "Tableros",
     "summary_columns": "Columnas",
     "summary_tasks": "Tareas",
-    "import_warning": "Importar este backup reemplazará todos los tableros, columnas y tareas actuales.",
+    "import_warning": "Al importar esta copia se reemplazarán todos los tableros, columnas y tareas actuales.",
     "cancel_import": "Cancelar",
     "confirm_import": "Importar y reemplazar",
-    "import_loading": "Importando backup...",
+    "import_loading": "Importando la copia...",
     "import_error_invalid_json": "El archivo seleccionado no es un JSON válido.",
-    "import_error_unsupported_version": "Esta versión del backup no es compatible.",
-    "import_error_invalid_snapshot": "El archivo seleccionado no contiene un backup válido.",
-    "import_error_file_too_large": "El archivo de backup seleccionado es demasiado grande.",
-    "import_error_read_failed": "No se pudo leer el archivo de backup seleccionado."
+    "import_error_unsupported_version": "Esta versión de copia de seguridad no es compatible.",
+    "import_error_invalid_snapshot": "El archivo seleccionado no contiene una copia de seguridad válida.",
+    "import_error_file_too_large": "El archivo seleccionado es demasiado grande.",
+    "import_error_read_failed": "No se ha podido leer el archivo seleccionado."
   },
   "calendar": {
     "today": "Hoy",
@@ -52,9 +52,9 @@
     "rename": "Renombrar tablero",
     "delete": "Eliminar tablero",
     "confirm_delete_title": "Eliminar tablero",
-    "confirm_delete_message": "Todas las columnas y tareas de este tablero se eliminarán.",
+    "confirm_delete_message": "Se eliminarán todas las columnas y tareas de este tablero.",
     "title_placeholder": "Nombre del tablero...",
-    "switch_board": "Cambiar tablero",
+    "switch_board": "Cambiar de tablero",
     "default_title": "Mi tablero",
     "create_action": "Crear",
     "save_action": "Guardar",
@@ -62,29 +62,29 @@
     "confirm_delete_action": "Eliminar"
   },
   "board_view": {
-    "empty_column": "Sin tareas aún"
+    "empty_column": "Aún no hay tareas"
   },
   "column": {
-    "add": "Agregar Columna",
+    "add": "Añadir columna",
     "rename": "Renombrar columna",
     "save_title": "Guardar título",
     "cancel_edit": "Cancelar edición",
     "delete": "Eliminar columna \"{{title}}\"",
-    "title_placeholder": "Nuevo título de columna...",
-    "title_aria": "Título de columna"
+    "title_placeholder": "Título de la nueva columna...",
+    "title_aria": "Título de la columna"
   },
   "task": {
-    "add": "Agregar Tarjeta",
+    "add": "Añadir tarjeta",
     "edit": "Editar tarea \"{{title}}\"",
     "delete": "Eliminar tarea \"{{title}}\"",
-    "title_placeholder": "Nuevo título de tarea...",
-    "title_aria": "Título de tarea",
+    "title_placeholder": "Título de la nueva tarea...",
+    "title_aria": "Título de la tarea",
     "overdue": "Vencida",
     "due_today": "Vence hoy",
     "due": "Vence"
   },
   "task_dialog": {
-    "title": "Editar Tarea",
+    "title": "Editar tarea",
     "title_label": "Título",
     "title_placeholder": "Título de la tarea",
     "description_label": "Descripción",
@@ -94,32 +94,32 @@
     "save": "Guardar"
   },
   "dialog": {
-    "close": "Cerrar diálogo"
+    "close": "Cerrar ventana"
   },
   "seed": {
-    "column_todo": "Por Hacer",
-    "column_in_progress": "En Progreso",
+    "column_todo": "Por hacer",
+    "column_in_progress": "En curso",
     "column_done": "Terminado",
     "tasks": {
       "plan_sprint": {
         "title": "Planificar el próximo sprint",
-        "description": "Elegir las tareas prioritarias del backlog, estimarlas y acordar el objetivo del sprint."
+        "description": "Priorizar el backlog, estimarlo y fijar el objetivo."
       },
       "onboarding_emails": {
-        "title": "Redactar los correos de bienvenida",
-        "description": "Preparar el correo de bienvenida y dos correos de seguimiento para los nuevos registros."
+        "title": "Redactar los correos de onboarding",
+        "description": "Bienvenida y dos correos de seguimiento para cada alta."
       },
       "accessibility_audit": {
         "title": "Revisar la accesibilidad",
-        "description": "Comprobar la navegación por teclado, el orden del foco y el contraste de color en las pantallas principales."
+        "description": "Probar la navegación por teclado, el foco y el contraste."
       },
       "landing_redesign": {
-        "title": "Rediseñar la página de inicio",
-        "description": "Nueva sección principal, una llamada a la acción más clara y un diseño móvil más ligero."
+        "title": "Rediseñar la landing page",
+        "description": "Nueva cabecera, CTA más clara y versión móvil más ligera."
       },
       "safari_login_fix": {
         "title": "Corregir el inicio de sesión en Safari",
-        "description": "Tras iniciar sesión aparece una página en blanco. Reproducirlo y añadir un test de regresión."
+        "description": "Página en blanco al entrar. Reproducirlo y añadir un test."
       },
       "ci_pipeline": {
         "title": "Configurar el pipeline de CI",
@@ -127,32 +127,32 @@
       },
       "design_tokens": {
         "title": "Definir los tokens de diseño",
-        "description": "Colores, espaciado y tipografía compartidos por todos los componentes."
+        "description": "Colores, espaciado y tipografía para todos los componentes."
       }
     }
   },
   "validation": {
     "title_required": "El título no puede estar vacío",
     "task_not_found": "Tarea no encontrada",
-    "invalid_position": "Posición inválida"
+    "invalid_position": "Posición no válida"
   },
   "storage": {
-    "save_error": "Error al guardar los datos. Revisa el espacio de almacenamiento disponible.",
-    "load_error": "Error al cargar los datos guardados. Se inicia con el tablero por defecto."
+    "save_error": "No se han podido guardar los datos. Comprueba el espacio de almacenamiento disponible.",
+    "load_error": "No se han podido cargar los datos guardados. Se usará el tablero predeterminado."
   },
   "feedback": {
     "task_created": "Tarea creada",
     "task_deleted": "Tarea eliminada",
     "column_created": "Columna creada",
     "column_deleted": "Columna eliminada",
-    "backup_downloaded": "Backup descargado",
-    "backup_shared": "Backup compartido",
-    "backup_export_error": "No se pudo exportar el backup.",
-    "backup_share_error": "No se pudo compartir el backup.",
-    "backup_share_fallback_downloaded": "Aquí no se puede compartir. El backup se descargó en su lugar.",
-    "backup_review_ready": "Backup revisado. Confirma para reemplazar los datos actuales.",
-    "backup_imported": "Backup importado",
-    "backup_import_error": "No se pudo importar el backup.",
+    "backup_downloaded": "Copia de seguridad descargada",
+    "backup_shared": "Copia de seguridad compartida",
+    "backup_export_error": "No se ha podido exportar la copia de seguridad.",
+    "backup_share_error": "No se ha podido compartir la copia de seguridad.",
+    "backup_share_fallback_downloaded": "Aquí no se puede compartir, así que se ha descargado la copia de seguridad.",
+    "backup_review_ready": "Copia de seguridad revisada. Confirma para reemplazar los datos actuales.",
+    "backup_imported": "Copia de seguridad importada",
+    "backup_import_error": "No se ha podido importar la copia de seguridad.",
     "backup_import_cancelled": "Importación cancelada"
   },
   "seo": {

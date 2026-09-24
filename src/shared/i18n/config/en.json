@@ -103,23 +103,23 @@
     "tasks": {
       "plan_sprint": {
         "title": "Plan the next sprint",
-        "description": "Pick the top backlog items, estimate them and agree on the sprint goal."
+        "description": "Prioritize and estimate the backlog, then set the goal."
       },
       "onboarding_emails": {
         "title": "Write onboarding emails",
-        "description": "Draft the welcome email and two follow-ups for new sign-ups."
+        "description": "A welcome email and two follow-ups for new sign-ups."
       },
       "accessibility_audit": {
         "title": "Run an accessibility audit",
-        "description": "Check keyboard navigation, focus order and color contrast on the main screens."
+        "description": "Check keyboard navigation, focus order and color contrast."
       },
       "landing_redesign": {
         "title": "Redesign the landing page",
-        "description": "New hero section, a clearer call to action and a lighter mobile layout."
+        "description": "New hero, clearer call to action, lighter mobile layout."
       },
       "safari_login_fix": {
         "title": "Fix Safari login redirect",
-        "description": "Users see a blank page after signing in. Reproduce it and add a regression test."
+        "description": "Blank page after sign-in. Reproduce it and add a test."
       },
       "ci_pipeline": {
         "title": "Set up the CI pipeline",
