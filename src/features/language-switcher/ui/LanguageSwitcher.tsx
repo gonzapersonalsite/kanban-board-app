@@ -1,4 +1,4 @@
-import { useI18nStore } from '@/shared/i18n'
+import { useTranslation } from '@/shared/i18n'
 import styles from './LanguageSwitcher.module.css'
 
 const LABELS: Record<string, string> = {
@@ -8,13 +8,12 @@ const LABELS: Record<string, string> = {
 }
 
 export function LanguageSwitcher() {
-  const locale = useI18nStore((state) => state.locale)
-  const setLocale = useI18nStore((state) => state.setLocale)
-  const availableLocales = useI18nStore((state) => state.availableLocales)
+  const { t, locale, setLocale, availableLocales } = useTranslation()
 
   return (
     <select
       className={styles.select}
+      aria-label={t('header.language')}
       value={locale}
       onChange={(e) => setLocale(e.target.value)}
     >

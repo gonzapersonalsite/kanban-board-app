@@ -257,9 +257,10 @@ Guidelines:
 ### Language switcher
 
 - **Slice**: `features/language-switcher/` — renders a `<select>` with available locales.
-- Calls `setLocale` on change; the component subscribes to `state.locale` so the select reflects the current value.
+- Reads `t`, `locale`, `setLocale` and `availableLocales` from `useTranslation()`; calls `setLocale` on change and reflects the current `locale`.
+- The select MUST carry `aria-label={t('header.language')}`: the visible "Language" text next to it is a plain `<span>`, so without it screen readers announce only "EN, combo box".
 - Display labels are defined in a `LABELS` constant within the component (not translated — locale codes like "EN", "ES" are language-independent abbreviations).
-- Embedded in `widgets/header/ui/Header.tsx` inside a `.actions` wrapper div that groups it with `ThemeSwitcher`. The header title has `flex: 1` to push `.actions` to the right.
+- Rendered in the Header settings dialog (`widgets/header/ui/Header.tsx`), next to `ThemeSwitcher` and the data portability sections.
 
 ## Theme System (Dark Mode)
 
