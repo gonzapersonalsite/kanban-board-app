@@ -86,3 +86,16 @@ if (!stored) {
     useI18nStore.getState().setLocale(browserLocale)
   }
 }
+
+// Screen readers choose pronunciation rules from the document language, so it must follow
+// the locale on screen. A locale without messages renders English, so it reports English.
+function applyDocumentLanguage(locale: Locale): void {
+  document.documentElement.lang = allTranslations[locale] ? locale : DEFAULT_LOCALE
+}
+
+applyDocumentLanguage(useI18nStore.getState().locale)
+useI18nStore.subscribe((state, previous) => {
+  if (state.locale !== previous.locale) {
+    applyDocumentLanguage(state.locale)
+  }
+})

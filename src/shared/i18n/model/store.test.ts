@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useI18nStore } from '@/shared/i18n'
 
 describe('useI18nStore', () => {
@@ -38,6 +38,33 @@ describe('useI18nStore', () => {
       const state = useI18nStore.getState()
       expect(state.locale).toBe('fr')
       expect(state.t('app.title')).toBe('Kanban Board')
+    })
+  })
+
+  describe('document language', () => {
+    it.each(['es', 'de', 'en'])('switches_the_document_language_to_%s_with_the_locale', (locale) => {
+      useI18nStore.getState().setLocale(locale === 'en' ? 'de' : 'en')
+
+      useI18nStore.getState().setLocale(locale)
+
+      expect(document.documentElement.lang).toBe(locale)
+    })
+
+    it('reports_english_for_a_locale_without_messages', () => {
+      useI18nStore.getState().setLocale('fr')
+
+      expect(document.documentElement.lang).toBe('en')
+    })
+
+    it('applies_the_persisted_locale_when_the_app_starts', async () => {
+      localStorage.setItem('i18n-locale', JSON.stringify({ state: { locale: 'de' }, version: 0 }))
+      document.documentElement.lang = 'en'
+      vi.resetModules()
+
+      const { useI18nStore: freshStore } = await import('./store')
+
+      expect(freshStore.getState().locale).toBe('de')
+      expect(document.documentElement.lang).toBe('de')
     })
   })
 

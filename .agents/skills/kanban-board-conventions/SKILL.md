@@ -215,6 +215,7 @@ pnpm preview    # Preview production build
 - **Interpolation syntax**: `{{param}}` — e.g., `t('task.edit', { title })`.
 - **Type safety**: Keys are strings (dot notation from JSON nesting). No auto-generated type — consumer knows keys from the English JSON.
 - **Browser detection**: On first visit (no persisted locale), `navigator.language` is checked and matched against available locales.
+- **Document language**: `shared/i18n/model/store.ts` keeps `document.documentElement.lang` equal to the active locale at startup and on every locale change (English for a locale without messages), so screen readers read the UI and the drag-and-drop announcements with the right pronunciation rules. `lang="en"` in `index.html` is only the default before the app starts; never set `lang` anywhere else.
 - Seed data: store helpers call `useI18nStore.getState().t()` lazily to resolve localized seed column titles, the default board title and the first-visit sample tasks from the current locale. The untouched sample board also follows later locale changes (see Store Architecture); columns and boards the visitor already changed or created keep the language they were created in.
 - **Dialog close label**: `Dialog` accepts optional `closeLabel` prop (defaults to `'Close dialog'`). Consumers pass `t('dialog.close')`.
 - **Import pattern**:
