@@ -48,7 +48,7 @@ function dynamicImportOf(modules, message) {
 }
 const NO_TEST_SUPPORT_IMPORT = TEST_SUPPORT_MODULES.map((regex) => ({ regex, message: NO_TEST_SUPPORT_IN_PRODUCTION }))
 const NO_TEST_SUPPORT_DYNAMIC_IMPORT = dynamicImportOf(TEST_SUPPORT_MODULES, NO_TEST_SUPPORT_IN_PRODUCTION)
-const NO_UI_DYNAMIC_IMPORT = dynamicImportOf(UI_MODULES, NO_UI_IN_LOGIC)
+const NO_UI_DYNAMIC_IMPORT = dynamicImportOf([...UI_MODULES, '^react$'], NO_UI_IN_LOGIC)
 
 export default defineConfig([
   globalIgnores(['dist', 'coverage']),

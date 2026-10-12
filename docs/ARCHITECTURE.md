@@ -106,8 +106,8 @@ that hold something:
 - **There is no UI in `model`, `api` and `lib`**: no `.tsx` files, and no
   import, static or dynamic, of a `ui` segment (the `shared/ui` kit included),
   of styles, of any entry of `react-dom` or of the JSX runtimes, nor
-  `createElement`, `cloneElement` or React as a whole (default or namespace
-  import): from React, what is logic, such as its hooks, is imported by name.
+  `createElement`, `cloneElement` or React as a whole (default, namespace or
+  dynamic import): from React, what is logic, such as its hooks, is imported by name.
   Enforced by `no-restricted-imports` and `no-restricted-syntax` on those
   segments. That no component arrives through the public API of another slice
   is convention: the lint sees paths, not what each one exports. Their tests

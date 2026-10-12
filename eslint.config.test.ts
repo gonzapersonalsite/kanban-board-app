@@ -229,6 +229,12 @@ describe('no UI in the model, api and lib segments', () => {
       "export const load = () => import('./theme.module.css')\n",
       'no-restricted-syntax',
     ],
+    [
+      'a_dynamic_import_of_react_which_brings_it_as_a_whole',
+      'src/entities/board/model/lazy.ts',
+      "export const load = () => import('react')\n",
+      'no-restricted-syntax',
+    ],
   ])('rejects_%s', async (_case, path, code, rule) => {
     const broken = await rulesBrokenBy(path, code)
 
