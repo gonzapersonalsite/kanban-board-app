@@ -87,9 +87,11 @@ description: Project conventions of kanban-board-app (state and store architectu
 
 - **Vitest** + **@testing-library/react** + **jsdom** + **@testing-library/jest-dom**.
 - Test files are co-located alongside source files: `<name>.test.tsx` or `<name>.test.ts`.
-- Shared test infrastructure lives in `src/test/` (fixtures, helpers, setup). Production code MUST NOT import from `src/test/`.
+- Shared test infrastructure lives in `src/test/` (fixtures, helpers, and the setup `src/test/setup/vitestSetup.ts` with the jsdom stubs and the cleanup after each test). Production code MUST NOT import from `src/test/`.
+- One Vitest configuration, in `vite.config.ts`: the tests of `src` run in jsdom with the setup.
+- Every test runs and asserts: Vitest rejects a committed `.only` (`allowOnly: false`) and a test without assertions (`expect.requireAssertions`).
 - Run: `pnpm test` (Vitest), `pnpm test:coverage` (with thresholds).
-- Coverage threshold: 70% branches/lines/functions/statements, enforced in `vite.config.ts`.
+- Coverage: 70% branches/lines/functions/statements; the measured scope and the thresholds live in `vite.config.ts` (`coverage`), checked by `pnpm test:coverage`.
 - AAA pattern mandatory: Arrange → blank line → Act → blank line → Assert.
 - Test naming: `does_expected_behavior_when_condition` (snake_case, behaviour-focused).
 - Mock only external boundaries (`@dnd-kit/*`, `HTMLDialogElement.showModal`). Never mock domain store slices or owned types.
