@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useToastStore } from '@/shared/ui'
+import { useToastStore } from '@/shared/toast'
 import { createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
 import { createTestKanbanStore } from '@/test/helpers/storeTestUtils'
 import { createInitialKanbanState } from './slices/helpers'

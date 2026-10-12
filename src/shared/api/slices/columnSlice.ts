@@ -10,7 +10,7 @@ import {
   setActiveBoardTasks,
 } from './helpers'
 import { useI18nStore } from '@/shared/i18n'
-import { useToastStore } from '@/shared/ui'
+import { useToastStore } from '@/shared/toast'
 
 export function createColumnSlice(
   initialState: Pick<KanbanState, 'columnsByBoard'>,

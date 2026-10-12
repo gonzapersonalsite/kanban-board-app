@@ -2,7 +2,7 @@ import type { StateCreator } from 'zustand'
 import type { BoardSlice, BoardId, KanbanState } from './types'
 import { createBoardData } from './helpers'
 import { useI18nStore } from '@/shared/i18n'
-import { useToastStore } from '@/shared/ui'
+import { useToastStore } from '@/shared/toast'
 
 export function createBoardSlice(
   initialState: Pick<KanbanState, 'boards' | 'activeBoardId'>,

@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import { CheckCircle, XCircle, Info, AlertTriangle, X } from 'lucide-react'
-import { useToastStore } from './model/toastStore'
+import { useToastStore, type AppNotification } from '@/shared/toast'
 import { IconButton } from '../IconButton'
-import type { AppNotification } from './model/types'
 import styles from './Toast.module.css'
 
 const ICON_MAP = {

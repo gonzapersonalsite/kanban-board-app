@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DataExportSection } from './DataExportSection'
 import { useKanbanStore } from '@/shared/api'
-import { useToastStore } from '@/shared/ui'
+import { useToastStore } from '@/shared/toast'
 import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
 
 describe('DataExportSection', () => {

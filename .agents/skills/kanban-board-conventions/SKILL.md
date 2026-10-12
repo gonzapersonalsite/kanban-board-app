@@ -9,7 +9,7 @@ description: Project conventions of kanban-board-app (state and store architectu
 
 - **Zustand** is the ONLY state library. Do NOT introduce Redux, Jotai, Context API, or any other state tool for cross-component state.
 - **Domain store** (kanban board data): lives at `shared/api/store.ts`. This is a single store with `persist` middleware.
-- **Infrastructure stores** (i18n, theme): live in their own `shared/<slice>/model/store.ts` files. Each is a separate Zustand store with its own `persist` middleware. This pattern is distinct from the domain store — infrastructure stores manage cross-cutting concerns, not business entities.
+- **Infrastructure stores** (i18n, theme, toast): live in their own `shared/<segment>/model/store.ts` files, each exported by its `shared/<segment>/index.ts`. Each is a separate Zustand store; i18n and theme have their own `persist` middleware, and the toast notifications stay in memory. This pattern is distinct from the domain store — infrastructure stores manage cross-cutting concerns, not business entities.
 - Use the **slices pattern** to organize domain store logic: create separate slice functions per domain (`createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice`) and compose them into one bound store.
 - Apply the `persist` middleware ONLY at the composed store level for the domain store, never inside individual slices.
 - Storage engine: `localStorage` via `createJSONStorage(() => localStorage)` (Zustand built-in). No IndexedDB unless explicitly required.
@@ -192,7 +192,7 @@ Component (ui/) → Store selector (model/) → Store (shared/api/) → localSto
 
 - Zustand actions validate state before mutation (fail-fast).
 - No silent catch blocks — every error path must have explicit handling.
-- User-facing errors surface via a shared `Toast` or inline validation.
+- User-facing errors surface via a shared `Toast` (`useToastStore` from `@/shared/toast`, rendered by `Toast` from `@/shared/ui` in `app/App.tsx`) or inline validation.
 - No `console.log` in production code — use `console.warn` / `console.error` only for development.
 
 ## Development Workflow
@@ -309,7 +309,7 @@ Guidelines:
 
 - Never install Tailwind CSS or any CSS-in-JS library.
 - Never use `react-beautiful-dnd` or `react-dnd`.
-- Never place domain store logic (Zustand `create` for kanban entities) outside `shared/api/store.ts`. Infrastructure stores (i18n, theme) are exceptions — see State Management.
+- Never place domain store logic (Zustand `create` for kanban entities) outside `shared/api/store.ts`. Infrastructure stores (i18n, theme, toast) are exceptions — see State Management.
 - Never import from internal files — always use the public API (`index.ts`).
 - Never create top-level directories under `src/` outside the 6 FSD layers.
 - Never modify `AGENTS.md` or `.agents/skills/react-fsd-maintainer/SKILL.md`.

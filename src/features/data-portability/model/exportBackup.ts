@@ -1,6 +1,6 @@
 import { useKanbanStore } from '@/shared/api'
 import { useTranslation } from '@/shared/i18n'
-import { useToastStore } from '@/shared/ui'
+import { useToastStore } from '@/shared/toast'
 import { createKanbanSnapshot, serializeKanbanSnapshot } from './snapshot'
 
 const BACKUP_FILE_PREFIX = 'kanban-board-backup'

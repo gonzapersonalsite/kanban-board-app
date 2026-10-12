@@ -4,7 +4,7 @@ import {
   restoreKanbanState,
 } from '@/shared/api'
 import { useTranslation } from '@/shared/i18n'
-import { useToastStore } from '@/shared/ui'
+import { useToastStore } from '@/shared/toast'
 import { deserializeKanbanSnapshot } from './snapshot'
 import type { KanbanSnapshot, KanbanSnapshotError } from './types'
 

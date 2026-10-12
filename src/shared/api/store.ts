@@ -6,7 +6,7 @@ import type { Column, TasksByColumn } from './slices/types'
 import { getDefaultBoardTitle, normalizeTaskMap, normalizeTasksByColumn } from './slices/helpers'
 import { createSampleBoardLifecycle } from './sampleBoard'
 import { kanbanStoreCreator } from './storeCreator'
-import { useToastStore } from '@/shared/ui'
+import { useToastStore } from '@/shared/toast'
 import { useI18nStore } from '@/shared/i18n'
 import { nanoid } from 'nanoid'
 

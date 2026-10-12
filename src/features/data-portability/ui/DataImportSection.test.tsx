@@ -7,7 +7,7 @@ import {
   serializeKanbanSnapshot,
 } from '@/features/data-portability'
 import { useKanbanStore } from '@/shared/api'
-import { useToastStore } from '@/shared/ui'
+import { useToastStore } from '@/shared/toast'
 import { createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
 import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
 import { DataImportSection } from './DataImportSection'
