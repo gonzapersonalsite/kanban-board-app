@@ -84,6 +84,24 @@ describe('the layers of Feature-Sliced Design', () => {
       "import { useTaskDialog } from '@/features/task-management/model/useTaskDialog'\nexport const dialog = useTaskDialog\n",
       'fsd-lint/no-public-api-sidestep',
     ],
+    [
+      'a_dynamic_import_of_a_sibling_of_its_own_layer',
+      'src/features/task-management/model/lazy.ts',
+      "export const load = () => import('@/features/column-management')\n",
+      'fsd-lint/no-cross-slice-dependency',
+    ],
+    [
+      'a_dynamic_relative_import_that_leaves_its_slice',
+      'src/features/task-management/ui/lazy.ts',
+      "export const load = () => import('../../../entities/task')\n",
+      'fsd-lint/no-relative-imports',
+    ],
+    [
+      'a_dynamic_deep_import_into_a_slice',
+      'src/widgets/board/ui/lazy.ts',
+      "export const load = () => import('@/entities/board/model/selectors')\n",
+      'fsd-lint/no-public-api-sidestep',
+    ],
     ['a_folder_of_src_that_is_not_a_layer', 'src/services/api.ts', 'export const api = 1\n', 'no-restricted-syntax'],
     [
       'the_entry_point_at_the_root_of_src',

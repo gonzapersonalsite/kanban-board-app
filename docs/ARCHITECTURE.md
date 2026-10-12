@@ -10,15 +10,16 @@ drop, styling tokens, i18n, test tooling and practices) by the
 
 **Every rule says what enforces it.** The ones the lint enforces have, in
 `eslint.config.test.ts`, the smallest case that breaks them, and that test
-fails if someone relaxes the rule in `eslint.config.js`. The `fsd-lint/` rules
-read static imports only (`import … from`): a dynamic `import()` or a re-export
-(`export … from`) that crosses a layer, a slice or a public API is a
-convention, because fsd-lint 1.2.1 does not read them. No comment switches a
-rule off: the lint reports an `eslint-disable` comment as a warning, and a
-warning is red (`--max-warnings=0` in `pnpm lint` and in the pre-commit hook),
-so an exception lives in `eslint.config.js`, next to its decision. The rules
-marked "convention" are checked by nothing: the review of the diff holds them,
-and they become lint rules with their case as soon as someone finds how.
+fails if someone relaxes the rule in `eslint.config.js`. The fsd-lint 1.2.1
+rules do not read re-exports (`export … from`), and
+`fsd-lint/forbidden-imports` does not read a dynamic `import()` either: a
+re-export that crosses a layer, a slice or a public API, or a dynamic
+`import()` of a layer above, is a convention. No comment switches a rule off:
+the lint reports an `eslint-disable` comment as a warning, and a warning is red
+(`--max-warnings=0` in `pnpm lint` and in the pre-commit hook), so an exception
+lives in `eslint.config.js`, next to its decision. The rules marked
+"convention" are checked by nothing: the review of the diff holds them, and
+they become lint rules with their case as soon as someone finds how.
 
 ## Layers
 
