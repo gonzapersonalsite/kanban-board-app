@@ -1,3 +1,8 @@
+---
+name: kanban-board-conventions
+description: Project conventions of kanban-board-app (state and store architecture, drag and drop, styling and design tokens, icons, IDs, dialogs, tooltips, testing, routing, data portability, domain types, error handling, i18n, theme, CSS animation limits and anti-patterns). Use before changing code, tests, styles or copy in this repository, together with react-fsd-maintainer.
+---
+
 # kanban-board-app — Project Conventions
 
 ## State Management

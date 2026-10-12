@@ -1,11 +1,22 @@
-# AGENTS.md — React FSD Template
+# AGENTS.md — Kanban Board App
 
 ## Project Identity
 | Property   | Value                                            |
 |------------|--------------------------------------------------|
 | Stack      | React, TypeScript, Vite, ESLint (flat), pnpm — see package.json for versions |
 | Architecture | Feature-Sliced Design (FSD)                     |
-| Purpose    | Template: every project spawned from this MUST preserve FSD integrity across its entire lifecycle. No architectural drift allowed. |
+| Purpose    | Trello-style Kanban board that runs fully in the browser (see README.md). Spawned from the React FSD template: it MUST preserve FSD integrity across its entire lifecycle. No architectural drift allowed. |
+
+---
+
+## Skills
+
+Read the matching skill before the work it covers:
+
+| Skill | When to use | Path |
+|-------|-------------|------|
+| `kanban-board-conventions` | Before changing code, tests, styles or copy in this app (project conventions) | `.agents/skills/kanban-board-conventions/SKILL.md` |
+| `react-fsd-maintainer` | Creating or moving a slice, choosing its layer, reviewing imports and public APIs | `.agents/skills/react-fsd-maintainer/SKILL.md` |
 
 ---
 
