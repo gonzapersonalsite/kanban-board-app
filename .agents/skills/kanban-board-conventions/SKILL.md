@@ -30,11 +30,7 @@ description: Project conventions of kanban-board-app (state and store architectu
 ## Styling
 
 - **CSS Modules** is the ONLY styling approach. Do NOT install or use Tailwind CSS, styled-components, Emotion, or any CSS-in-JS library.
-- Styles are co-located in `ui/` segment as `<Component>.module.css` next to the `.tsx` file that imports them.
-- CSS files MUST NOT be placed in `model/`, `api/`, `lib/`, or `config/` segments.
-- Global styles (reset, CSS custom properties) live exclusively in `app/styles/global.css`.
-- Shared design tokens (if needed) go in `shared/ui/variables.css`.
-- No `styles/` segment in any slice — co-location is the rule.
+- Where styles live (co-located CSS Modules in `ui/`, the global styles and tokens in `app/styles/global.css`) is ruled by `docs/ARCHITECTURE.md`, Styles.
 - Typography, iconography, and interactive control sizing MUST be driven by global tokens from `app/styles/global.css`. Do NOT scatter new hard-coded `12px`, `13px`, `14px`, `32px`, or `36px` values across component CSS when an equivalent token already exists.
 - Use the typography scale tokens:
   - `--font-size-caption` for metadata, helper text, and compact secondary copy.
@@ -86,10 +82,10 @@ description: Project conventions of kanban-board-app (state and store architectu
 ## Testing
 
 - **Vitest** + **@testing-library/react** + **jsdom** + **@testing-library/jest-dom**.
-- Test files are co-located alongside source files: `<name>.test.tsx` or `<name>.test.ts`.
-- Shared test infrastructure lives in `src/test/` (fixtures, helpers, and the setup `src/test/setup/vitestSetup.ts` with the jsdom stubs and the cleanup after each test). Production code MUST NOT import from `src/test/`.
-- One Vitest configuration, in `vite.config.ts`: the tests of `src` run in jsdom with the setup.
-- Every test runs and asserts: Vitest rejects a committed `.only` (`allowOnly: false`) and a test without assertions (`expect.requireAssertions`).
+- Tests live next to what they test (see `docs/ARCHITECTURE.md`, Slices and segments).
+- Shared test infrastructure lives in `src/test/` (fixtures, helpers, and the setup `src/test/setup/vitestSetup.ts` with the jsdom stubs and the cleanup after each test). It is the one folder of `src` outside the layers, and production code MUST NOT import from it: the lint rejects it (see `docs/ARCHITECTURE.md`).
+- One Vitest configuration, in `vite.config.ts`, with two projects: `app` runs the tests of `src` in jsdom with the setup, and `tooling` runs the tests next to the configuration (`eslint.config.test.ts`) in Node.
+- Every test runs and asserts: the rule and what enforces it are in `docs/ARCHITECTURE.md` (Slices and segments).
 - Run: `pnpm test` (Vitest), `pnpm test:coverage` (with thresholds).
 - Coverage: 70% branches/lines/functions/statements; the measured scope and the thresholds live in `vite.config.ts` (`coverage`), checked by `pnpm test:coverage`.
 - AAA pattern mandatory: Arrange → blank line → Act → blank line → Assert.
@@ -102,7 +98,7 @@ description: Project conventions of kanban-board-app (state and store architectu
 
 - **react-router-dom** (v7) is the ONLY routing library. Do NOT install Next.js router, TanStack Router, or any alternative.
 - All route definitions live in `app/router/ui/AppRouter.tsx` using `createBrowserRouter` and `RouterProvider`.
-- The public API is exported from `app/router/index.tsx` as `AppRouter`.
+- The public API is exported from `app/router/index.ts` as `AppRouter`.
 - Pages MUST be lazy-loaded via `React.lazy()` at the route level for code splitting.
 - Route components are wrapped in `<Suspense>` — the fallback is currently `null` (add a shared `<LoadingFallback />` from `shared/ui/` when non-trivial).
 - Shared route chrome (`Header`, future persistent navigation, and other app-shell UI) MUST live in an `app/router` layout route with `<Outlet />`, never inside individual page components. Pages render only route-specific content.
@@ -182,13 +178,7 @@ interface Task { id: TaskId; title: string; description: string }
 
 ## Data Flow
 
-```
-Component (ui/) → Store selector (model/) → Store (shared/api/) → localStorage persist
-```
-
-- Components NEVER call `fetch()`, `localStorage`, or `nanoid` directly.
-- All mutations go through store actions.
-- Store selectors are defined in entity `model/` segments for reusability.
+The data flow (how components reach the domain store, its persistence in `localStorage`, no requests) is ruled by `docs/ARCHITECTURE.md`, Data and I/O.
 
 ## Error Handling
 
@@ -199,13 +189,7 @@ Component (ui/) → Store selector (model/) → Store (shared/api/) → localSto
 
 ## Development Workflow
 
-```bash
-pnpm dev        # Vite dev server with HMR
-pnpm build      # tsc -b + vite build
-pnpm lint       # ESLint with all FSD rules as error
-pnpm test       # Vitest
-pnpm preview    # Preview production build
-```
+The commands, gates and hooks are in `AGENTS.md`, Development Workflow.
 
 ## Internationalization (i18n)
 
@@ -312,8 +296,5 @@ Guidelines:
 - Never install Tailwind CSS or any CSS-in-JS library.
 - Never use `react-beautiful-dnd` or `react-dnd`.
 - Never place domain store logic (Zustand `create` for kanban entities) outside `shared/api/store.ts`. Infrastructure stores (i18n, theme, toast) are exceptions — see State Management.
-- Never import from internal files — always use the public API (`index.ts`).
-- Never create top-level directories under `src/` outside the 6 FSD layers.
-- Never modify `AGENTS.md` or `.agents/skills/react-fsd-maintainer/SKILL.md`.
 - Never use CSS class selectors in `app/styles/global.css` to target dark mode overrides on CSS Module components. Use design tokens (CSS custom properties) instead — see Design Tokens & Dark Mode.
 - Never use `transform` inside `@keyframes` animations on components that participate in drag-and-drop. CSS animation declarations override inline styles in the cascade, which breaks `@dnd-kit` positioning. Use only `opacity` in enter animations — see CSS & Animation Constraints.

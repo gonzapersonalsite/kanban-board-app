@@ -41,9 +41,9 @@ pnpm dev
 ```bash
 pnpm dev            # Start the dev server
 pnpm build          # Type-check + production build
-pnpm lint           # ESLint (FSD rules enforced)
-pnpm test           # Vitest
-pnpm test:coverage  # Vitest with coverage report
+pnpm lint           # ESLint: architecture, TypeScript and React hooks rules; a warning is red
+pnpm test           # Vitest: the app tests (jsdom) and the lint cases (node)
+pnpm test:coverage  # Vitest with the coverage thresholds of vite.config.ts
 pnpm preview        # Preview the production build
 ```
 
@@ -51,7 +51,7 @@ Git hooks (husky): `pre-commit` lints staged files, `pre-push` runs the producti
 
 ## Architecture
 
-Feature-Sliced Design: see `AGENTS.md` and `.agents/skills/` for the full architectural contract and project conventions.
+Feature-Sliced Design: `docs/ARCHITECTURE.md` rules the shape of the code and says what enforces each rule; `AGENTS.md` and `.agents/skills/` hold the working rules and the project conventions.
 
 ## License
 

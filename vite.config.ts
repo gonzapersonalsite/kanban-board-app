@@ -10,19 +10,37 @@ export default defineConfig({
     },
   },
   test: {
+    // Both projects below inherit these.
     // A test that checks nothing fails instead of passing in silence.
     expect: { requireAssertions: true },
-    // A committed .only would skip the rest of the suite in silence.
+    // A committed .only would skip the rest of the suite in silence; skip and todo are the lint's.
     allowOnly: false,
-    include: ['src/**/*.test.{ts,tsx}'],
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup/vitestSetup.ts'],
-    // CSS Modules keep their class names in tests, so a test can check a state by its class.
-    css: {
-      modules: {
-        classNameStrategy: 'non-scoped',
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'app',
+          include: ['src/**/*.test.{ts,tsx}'],
+          environment: 'jsdom',
+          setupFiles: ['./src/test/setup/vitestSetup.ts'],
+          // CSS Modules keep their class names in tests, so a test can check a state by its class.
+          css: {
+            modules: {
+              classNameStrategy: 'non-scoped',
+            },
+          },
+        },
       },
-    },
+      {
+        // The tests next to the configuration files of the root run in Node, without a DOM.
+        extends: true,
+        test: {
+          name: 'tooling',
+          include: ['*.test.ts'],
+          environment: 'node',
+        },
+      },
+    ],
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
