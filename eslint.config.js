@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
 import prettierConfig from 'eslint-config-prettier'
 import { defineConfig, globalIgnores } from 'eslint/config'
@@ -5,10 +7,28 @@ import fsdPlugin from 'eslint-plugin-fsd-lint'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import globals from 'globals'
+import ts from 'typescript'
 import tseslint from 'typescript-eslint'
+import fsdGaps from './eslint-fsd-gaps.js'
 
-// The layers of Feature-Sliced Design, the only folders src/ holds besides the test support.
+// The layers of Feature-Sliced Design, from the top down: the only folders src/ holds besides the test support.
 const LAYERS = ['app', 'pages', 'widgets', 'features', 'entities', 'shared']
+// The layers split into slices, each entered through its index.ts only.
+const SLICED_LAYERS = ['pages', 'widgets', 'features', 'entities']
+// src/ and its alias as tsconfig.app.json declares it ("@/*": ["./src/*"]), read with TypeScript's own
+// parser: that file holds comments and a byte order mark, which JSON.parse rejects.
+const SRC = fileURLToPath(new URL('src', import.meta.url))
+const tsconfigApp = ts.parseConfigFileTextToJson(
+  'tsconfig.app.json',
+  readFileSync(new URL('tsconfig.app.json', import.meta.url), 'utf8'),
+)
+if (tsconfigApp.error) {
+  throw new Error(`tsconfig.app.json: ${ts.flattenDiagnosticMessageText(tsconfigApp.error.messageText, '\n')}`)
+}
+const { paths } = tsconfigApp.config.compilerOptions
+const SRC_ALIAS = Object.keys(paths)
+  .find((alias) => paths[alias].includes('./src/*'))
+  ?.replace('*', '')
 // The fixtures, helpers and setup the tests share: the one folder of src/ that is not a
 // layer, a decided deviation of docs/ARCHITECTURE.md. Only test code imports it.
 const TEST_SUPPORT = 'src/test/**'
@@ -70,12 +90,21 @@ export default defineConfig([
       'fsd-lint/forbidden-imports': 'error',
       'fsd-lint/no-cross-slice-dependency': 'error',
       'fsd-lint/no-relative-imports': 'error',
-      // A slice of pages, widgets, features or entities is entered through its index.ts only.
       'fsd-lint/no-public-api-sidestep': [
         'error',
-        { layers: ['pages', 'widgets', 'features', 'entities'], publicApi: { allowSegmentImports: false } },
+        { layers: SLICED_LAYERS, publicApi: { allowSegmentImports: false } },
       ],
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+    },
+  },
+  {
+    // fsd-lint 1.2.1 reads no re-export (export … from), and fsd-lint/forbidden-imports no dynamic import():
+    // the local rule holds the same boundaries over them (eslint-fsd-gaps.js).
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: [TESTS],
+    plugins: { 'fsd-gaps': fsdGaps },
+    rules: {
+      'fsd-gaps/boundaries': ['error', { root: SRC, alias: SRC_ALIAS, layers: LAYERS, slicedLayers: SLICED_LAYERS }],
     },
   },
   {

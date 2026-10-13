@@ -1,4 +1,6 @@
-import { readFileSync } from 'node:fs'
+import { lstatSync, mkdtempSync, readFileSync, rmdirSync, symlinkSync, unlinkSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { ESLint, type Linter } from 'eslint'
 import { beforeAll, describe, expect, it } from 'vitest'
 
@@ -104,6 +106,12 @@ describe('the layers of Feature-Sliced Design', () => {
     ],
     ['a_folder_of_src_that_is_not_a_layer', 'src/services/api.ts', 'export const api = 1\n', 'no-restricted-syntax'],
     [
+      'a_folder_of_src_that_is_not_a_layer_re_exporting',
+      'src/services/index.ts',
+      "export { api } from './api'\n",
+      'no-restricted-syntax',
+    ],
+    [
       'the_entry_point_at_the_root_of_src',
       'src/main.tsx',
       "import { createRoot } from 'react-dom/client'\nexport const root = createRoot\n",
@@ -144,13 +152,248 @@ describe('the layers of Feature-Sliced Design', () => {
   })
 
   it('leaves_a_test_free_of_the_import_rules_of_the_layers', async () => {
-    // A layer above, a sibling slice, a deep import and a relative path out of the slice.
+    // A layer above, a sibling slice, a deep import and a relative path out of the slice,
+    // imported, re-exported and imported dynamically.
     const code =
-      "import { AddTaskForm } from '@/features/task-management'\nimport { TaskCard } from '@/entities/task'\nimport { TaskCardView } from '@/entities/task/ui/TaskCard'\nimport { Card } from '../../task'\nexport const parts = [AddTaskForm, TaskCard, TaskCardView, Card]\n"
+      "import { AddTaskForm } from '@/features/task-management'\nimport { TaskCard } from '@/entities/task'\nimport { TaskCardView } from '@/entities/task/ui/TaskCard'\nimport { Card } from '../../task'\nexport const parts = [AddTaskForm, TaskCard, TaskCardView, Card]\nexport { useColumnActions } from '@/features/column-management'\nexport { ColumnHeader } from '@/entities/column'\nexport { TaskCardBody } from '@/entities/task/ui/TaskCardBody'\nexport { TaskTitle } from '../../task/ui/TaskTitle'\nexport const load = () => import('@/features/column-management')\n"
 
     const reports = await reportsOn('src/entities/board/model/selectors.extra.test.ts', code)
 
     expect(reports).toEqual([])
+  })
+})
+
+// The checks of fsd-gaps/boundaries a file breaks: one local rule, a message per check.
+async function gapChecksBrokenBy(path: string, code: string): Promise<string[]> {
+  const messages = await lint(path, code)
+  return messages
+    .filter((message) => message.severity === 2 && message.ruleId === 'fsd-gaps/boundaries')
+    .map((message) => message.messageId ?? message.message)
+    .sort()
+}
+
+describe('the layers over what fsd-lint 1.2.1 does not read: re-exports and a dynamic import()', () => {
+  it.each([
+    [
+      'a_re_export_from_a_layer_above',
+      'src/entities/board/model/selectors.ts',
+      "export { AddTaskForm } from '@/features/task-management'\n",
+      ['reExportFromAbove'],
+    ],
+    [
+      'a_re_export_of_everything_from_a_layer_above',
+      'src/entities/board/model/selectors.ts',
+      "export * from '@/features/task-management'\n",
+      ['reExportFromAbove'],
+    ],
+    [
+      'a_relative_re_export_from_a_layer_above',
+      'src/entities/board/model/selectors.ts',
+      "export { AddTaskForm } from '../../../features/task-management'\n",
+      ['reExportFromAbove', 'reExportOutOfSlice'],
+    ],
+    [
+      'a_re_export_from_a_sibling_of_its_own_layer',
+      'src/features/task-management/model/useTaskDialog.ts',
+      "export { useColumnActions } from '@/features/column-management'\n",
+      ['reExportFromSibling'],
+    ],
+    [
+      'a_relative_re_export_from_a_sibling_of_its_own_layer',
+      'src/features/task-management/model/useTaskDialog.ts',
+      "export { useColumnActions } from '../../column-management'\n",
+      ['reExportFromSibling', 'reExportOutOfSlice'],
+    ],
+    [
+      'a_re_export_of_a_segment_instead_of_the_slice',
+      'src/widgets/board/model/parts.ts',
+      "export { selectActiveBoard } from '@/entities/board/model'\n",
+      ['reExportPastPublicApi'],
+    ],
+    [
+      'a_deep_re_export_from_an_entity',
+      'src/widgets/board/ui/Board.tsx',
+      "export { selectActiveBoard } from '@/entities/board/model/selectors'\n",
+      ['reExportPastPublicApi'],
+    ],
+    [
+      'a_deep_re_export_from_a_feature',
+      'src/widgets/board/model/parts.ts',
+      "export { useTaskDialog } from '@/features/task-management/model/useTaskDialog'\n",
+      ['reExportPastPublicApi'],
+    ],
+    [
+      'a_deep_re_export_from_a_widget',
+      'src/pages/home/ui/HomePage.tsx',
+      "export { Board } from '@/widgets/board/ui/Board'\n",
+      ['reExportPastPublicApi'],
+    ],
+    [
+      'a_deep_re_export_from_a_page',
+      'src/app/router/ui/AppRouter.tsx',
+      "export { HomePage } from '@/pages/home/ui/HomePage'\n",
+      ['reExportPastPublicApi'],
+    ],
+    [
+      'a_relative_re_export_that_leaves_its_slice',
+      'src/features/task-management/model/parts.ts',
+      "export { selectActiveBoard } from '../../../entities/board/model/selectors'\n",
+      ['reExportOutOfSlice'],
+    ],
+    [
+      'a_relative_re_export_that_leaves_src',
+      'src/shared/lib/build.ts',
+      "export { default } from '../../../vite.config'\n",
+      ['reExportOutOfSlice'],
+    ],
+    [
+      'a_dynamic_import_of_a_layer_above',
+      'src/entities/board/model/lazy.ts',
+      "export const load = () => import('@/features/task-management')\n",
+      ['dynamicImportFromAbove'],
+    ],
+    [
+      'a_dynamic_relative_import_of_a_layer_above',
+      'src/entities/board/model/lazy.ts',
+      "export const load = () => import('../../../features/task-management')\n",
+      ['dynamicImportFromAbove'],
+    ],
+    [
+      'a_re_export_from_a_layer_above_after_a_doubled_slash',
+      'src/entities/board/model/selectors.ts',
+      "export { AddTaskForm } from '@//features/task-management'\n",
+      ['reExportFromAbove'],
+    ],
+    [
+      'a_re_export_from_a_layer_above_through_a_dot_segment',
+      'src/shared/lib/routes.ts',
+      "export * from '@/./app/router'\n",
+      ['reExportFromAbove'],
+    ],
+    [
+      'a_re_export_from_a_sibling_reached_through_another_layer',
+      'src/features/task-management/model/useTaskDialog.ts',
+      "export { useColumnActions } from '@/shared/../features/column-management'\n",
+      ['reExportFromSibling'],
+    ],
+    [
+      'a_dynamic_import_of_a_layer_above_after_a_doubled_slash',
+      'src/entities/board/model/lazy.ts',
+      "export const load = () => import('@//features/task-management')\n",
+      ['dynamicImportFromAbove'],
+    ],
+    [
+      'a_deep_re_export_from_a_widget_after_a_doubled_slash',
+      'src/pages/home/ui/HomePage.tsx',
+      "export { Board } from '@//widgets/board/ui/Board'\n",
+      ['reExportPastPublicApi'],
+    ],
+    [
+      'a_re_export_from_a_layer_above_out_of_src_and_back_in',
+      'src/entities/board/model/selectors.ts',
+      "export { AddTaskForm } from '@/../src/features/task-management'\n",
+      ['reExportFromAbove'],
+    ],
+    [
+      'a_dynamic_relative_import_of_a_layer_above_out_of_src_and_back_in',
+      'src/entities/board/model/lazy.ts',
+      "export const load = () => import('../../../../src/features/task-management')\n",
+      ['dynamicImportFromAbove'],
+    ],
+  ])('rejects_%s', async (_case, path, code, checks) => {
+    const broken = await gapChecksBrokenBy(path, code)
+
+    expect(broken).toEqual(checks)
+  })
+
+  it('accepts_re_exports_that_go_down_the_layers_through_each_public_api', async () => {
+    // The public API named as fsd-lint takes it in an import: the folder, with or without
+    // a trailing slash, or its index bare, with .ts or with the .js TypeScript resolves.
+    const code =
+      "export { useBoards } from '@/entities/board'\nexport * from '@/features/task-management'\nexport { useKanbanStore } from '@/shared/api'\nexport type { ActiveBoardState } from '@/entities/board/index'\nexport { selectActiveBoard } from '@/entities/board/index.ts'\nexport { BoardSelector } from '@/entities/board/index.js'\nexport { AddTaskForm } from '@/features/task-management/'\n"
+
+    const reports = await reportsOn('src/pages/home/model/parts.ts', code)
+
+    expect(reports).toEqual([])
+  })
+
+  it('accepts_a_re_export_through_a_public_api_named_with_a_doubled_slash', async () => {
+    // TypeScript resolves '@/widgets//board' to the slice itself.
+    const code = "export { Board } from '@/widgets//board'\n"
+
+    const reports = await reportsOn('src/pages/home/ui/HomePage.tsx', code)
+
+    expect(reports).toEqual([])
+  })
+
+  it('leaves_alone_what_the_alias_does_not_place_in_src_a_scoped_package_and_a_path_out_of_src', async () => {
+    // '@app/tokens' is a package, not the alias, and '@/../app/config' resolves outside src.
+    const code = "export { tokens } from '@app/tokens'\nexport { config } from '@/../app/config'\n"
+
+    const reports = await reportsOn('src/entities/board/model/selectors.ts', code)
+
+    expect(reports).toEqual([])
+  })
+
+  it('accepts_the_index_of_a_slice_re_exporting_its_own_segments', async () => {
+    const code =
+      "export { selectActiveBoard } from './model/selectors'\nexport type { ActiveBoardState } from './model/selectors'\nexport { BoardSelector } from './ui/BoardSelector'\n"
+
+    const reports = await reportsOn('src/entities/board/index.ts', code)
+
+    expect(reports).toEqual([])
+  })
+
+  it('accepts_relative_re_exports_between_the_segments_of_a_layer_without_slices', async () => {
+    const reports = await reportsOn('src/shared/lib/index.ts', "export { useKanbanStore } from '../api'\n")
+
+    expect(reports).toEqual([])
+  })
+
+  it('leaves_to_convention_a_re_export_into_its_own_slice_through_the_alias', async () => {
+    // A cycle the lint does not see, as an import of its own slice through the alias.
+    const code = "export { selectActiveBoard } from '@/entities/board/model/selectors'\n"
+
+    const reports = await reportsOn('src/entities/board/index.ts', code)
+
+    expect(reports).toEqual([])
+  })
+
+  it('accepts_a_dynamic_import_down_the_layers_and_inside_its_slice', async () => {
+    const code =
+      "export const loadBoard = () => import('@/widgets/board')\nexport const loadPage = () => import('./HomePage')\n"
+
+    const reports = await reportsOn('src/pages/home/ui/lazy.ts', code)
+
+    expect(reports).toEqual([])
+  })
+
+  it('leaves_alone_a_dynamic_import_whose_path_is_computed_which_no_rule_can_read', async () => {
+    const code = 'export const load = (module: string) => import(module)\n'
+
+    const reports = await reportsOn('src/shared/lib/load.ts', code)
+
+    expect(reports).toEqual([])
+  })
+
+  it('holds_in_a_project_reached_through_a_link_or_a_junction', async () => {
+    // Node loads eslint.config.js by its real path, and ESLint names a file by the path it reached it by.
+    const folder = mkdtempSync(join(tmpdir(), 'fsd-gaps-'))
+    const project = join(folder, 'project')
+    try {
+      symlinkSync(import.meta.dirname, project, 'junction')
+      const throughLink = new ESLint({ cwd: project })
+
+      const [result] = await throughLink.lintText("export * from '@/app/router'\n", {
+        filePath: 'src/shared/lib/up.ts',
+      })
+
+      expect(result.messages.map((message) => message.messageId)).toEqual(['reExportFromAbove'])
+    } finally {
+      // unlink removes the link itself, never what it points to.
+      if (lstatSync(project, { throwIfNoEntry: false })) unlinkSync(project)
+      rmdirSync(folder)
+    }
   })
 })
 
@@ -345,6 +588,14 @@ describe('the test support in src/test', () => {
     const broken = await rulesBrokenBy('src/features/task-management/ui/AddTaskForm.tsx', code)
 
     expect(broken).toContain('fsd-lint/no-relative-imports')
+  })
+
+  it('rejects_a_relative_re_export_of_it_from_production_code', async () => {
+    const code = "export { createKanbanFixture } from '../../../test/fixtures/kanbanFixtures'\n"
+
+    const broken = await gapChecksBrokenBy('src/features/task-management/ui/AddTaskForm.tsx', code)
+
+    expect(broken).toEqual(['reExportOutOfSlice'])
   })
 
   it('accepts_it_as_the_one_folder_of_src_that_is_not_a_layer', async () => {

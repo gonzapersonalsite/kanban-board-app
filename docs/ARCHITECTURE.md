@@ -13,13 +13,14 @@ drop, styling tokens, i18n, test tooling and practices) by the
 fails if someone relaxes the rule in `eslint.config.js`. The fsd-lint 1.2.1
 rules do not read re-exports (`export … from`), and
 `fsd-lint/forbidden-imports` does not read a dynamic `import()` either: a
-re-export that crosses a layer, a slice or a public API, or a dynamic
-`import()` of a layer above, is a convention. No comment switches a rule off:
-the lint reports an `eslint-disable` comment as a warning, and a warning is red
-(`--max-warnings=0` in `pnpm lint` and in the pre-commit hook), so an exception
-lives in `eslint.config.js`, next to its decision. The rules marked
-"convention" are checked by nothing: the review of the diff holds them, and
-they become lint rules with their case as soon as someone finds how.
+local rule, `fsd-gaps/boundaries` (`eslint-fsd-gaps.js`), holds the same
+boundaries over them, and goes away when fsd-lint reads them. No comment
+switches a rule off: the lint reports an `eslint-disable` comment as a
+warning, and a warning is red (`--max-warnings=0` in `pnpm lint` and in the
+pre-commit hook), so an exception lives in `eslint.config.js`, next to its
+decision. The rules marked "convention" are checked by nothing: the review of
+the diff holds them, and they become lint rules with their case as soon as
+someone finds how.
 
 ## Layers
 
@@ -36,10 +37,12 @@ described below:
 | `shared` | What knows nothing of a single screen: the domain store (see below), i18n, theme, toasts, utilities and the UI kit |
 
 - **A layer only imports from the layers below it.** Enforced by
-  `fsd-lint/forbidden-imports`.
+  `fsd-lint/forbidden-imports` and, in a re-export or a dynamic `import()`,
+  `fsd-gaps/boundaries`.
 - **Two slices of the same layer do not import each other.** If both need
   something, it moves down a layer. Enforced by
-  `fsd-lint/no-cross-slice-dependency`.
+  `fsd-lint/no-cross-slice-dependency` and, in a re-export,
+  `fsd-gaps/boundaries`.
 - **There are no more layers.** A code file outside those six folders and
   `src/test`, or loose at the root of `src`, is a `no-restricted-syntax`
   error: folders such as `services`, `hooks` or `utils` at the root do not
@@ -74,9 +77,10 @@ They are narrow, and nothing else follows from them:
   code imports it: an import of `@/test` from production code is an error,
   `no-restricted-imports` when static and `no-restricted-syntax` when dynamic,
   and a relative path to it leaves its slice, a `fsd-lint/no-relative-imports`
-  error. To build a fresh store, the test support may reach inside a `shared`
-  segment (`src/test/helpers/storeTestUtils.ts` imports
-  `@/shared/api/storeCreator`). Convention.
+  error, or `fsd-gaps/boundaries` in a re-export. To build a fresh store, the
+  test support may reach inside a `shared` segment
+  (`src/test/helpers/storeTestUtils.ts` imports `@/shared/api/storeCreator`).
+  Convention.
 
 ## Slices and segments
 
@@ -96,14 +100,15 @@ that hold something:
   which exports on purpose what is public and nothing else: neither an
   internal file nor a segment (`@/entities/<slice>`, never
   `@/entities/<slice>/model`). Enforced by `fsd-lint/no-public-api-sidestep`
-  for pages, widgets, features and entities. `shared` and `app` are entered by
-  segment (`@/shared/api`, `@/app/router`), by convention; the one exception,
-  in the test support, is under Decided deviations.
+  and, in a re-export, `fsd-gaps/boundaries`, for pages, widgets, features and
+  entities. `shared` and `app` are entered by segment (`@/shared/api`,
+  `@/app/router`), by convention; the one exception, in the test support, is
+  under Decided deviations.
 - **Between slices, imports use the `@/` alias**, enforced by
-  `fsd-lint/no-relative-imports`. **Inside a slice, they use relative paths**,
-  by convention: entering the slice itself through the alias, and even more
-  through its `<slice>/index.ts`, creates an import cycle the lint does not
-  see.
+  `fsd-lint/no-relative-imports` and, in a re-export, `fsd-gaps/boundaries`.
+  **Inside a slice, they use relative paths**, by convention: entering the
+  slice itself through the alias, and even more through its `<slice>/index.ts`,
+  creates an import cycle the lint does not see.
 - **There is no UI in `model`, `api` and `lib`**: no `.tsx` files, and no
   import, static or dynamic, of a `ui` segment (the `shared/ui` kit included),
   of styles, of any entry of `react-dom` or of the JSX runtimes, nor
