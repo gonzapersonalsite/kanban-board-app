@@ -114,6 +114,9 @@ const boundaries = {
         if (node.source !== null) checkReExport(node)
       },
       ImportExpression(node) {
+        // Only a path written as a string literal is read, as every rule of the lint reads one: a template
+        // literal, even with nothing to fill in, or a variable is left to convention, and so is a type that
+        // imports (typeof import('…')), which reaches no visitor here.
         const specifier = node.source.value
         if (typeof specifier !== 'string') return
         const target = targetOf(specifier)
