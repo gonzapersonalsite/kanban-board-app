@@ -699,3 +699,14 @@ describe('exceptions live in the configuration', () => {
     expect(commands.every((command?: string) => command?.includes('--max-warnings=0'))).toBe(true)
   })
 })
+
+describe('the pre-commit hook', () => {
+  it('runs_the_lint_staged_of_the_lockfile_through_pnpm_exec', () => {
+    // npx downloads and runs a package it does not find installed; pnpm exec runs only what the lockfile installed.
+    const hook = readFileSync(new URL('./.husky/pre-commit', import.meta.url), 'utf8')
+
+    const commands = hook.split(/\r?\n/).filter((line) => line.trim() !== '')
+
+    expect(commands).toEqual(['pnpm exec lint-staged'])
+  })
+})
