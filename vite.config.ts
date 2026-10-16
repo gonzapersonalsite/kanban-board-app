@@ -1,9 +1,10 @@
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
+import { agentFilesPlugin } from './tooling/agent-files/vitePlugin'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), agentFilesPlugin()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -32,11 +33,11 @@ export default defineConfig({
         },
       },
       {
-        // The tests next to the configuration files of the root run in Node, without a DOM.
+        // The tests of the configuration at the root and of the build tooling run in Node, without a DOM.
         extends: true,
         test: {
           name: 'tooling',
-          include: ['*.test.ts'],
+          include: ['*.test.ts', 'tooling/**/*.test.ts'],
           environment: 'node',
         },
       },

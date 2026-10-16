@@ -1,6 +1,6 @@
 ---
 name: kanban-board-conventions
-description: Project conventions of kanban-board-app (state and store architecture, drag and drop, styling and design tokens, icons, IDs, dialogs, tooltips, testing, routing, data portability, domain types, error handling, i18n, theme, CSS animation limits and anti-patterns). Use before changing code, tests, styles or copy in this repository, together with react-fsd-maintainer.
+description: Project conventions of kanban-board-app (state and store architecture, drag and drop, styling and design tokens, icons, IDs, dialogs, tooltips, testing, routing, social preview and agent-readable files, data portability, domain types, error handling, i18n, theme, CSS animation limits and anti-patterns). Use before changing code, tests, styles or copy in this repository, together with react-fsd-maintainer.
 ---
 
 # kanban-board-app — Project Conventions
@@ -84,7 +84,7 @@ description: Project conventions of kanban-board-app (state and store architectu
 - **Vitest** + **@testing-library/react** + **jsdom** + **@testing-library/jest-dom**.
 - Tests live next to what they test (see `docs/ARCHITECTURE.md`, Slices and segments).
 - Shared test infrastructure lives in `src/test/` (fixtures, helpers, and the setup `src/test/setup/vitestSetup.ts` with the jsdom stubs and the cleanup after each test). It is the one folder of `src` outside the layers, and production code MUST NOT import from it: the lint rejects it (see `docs/ARCHITECTURE.md`).
-- One Vitest configuration, in `vite.config.ts`, with two projects: `app` runs the tests of `src` in jsdom with the setup, and `tooling` runs the tests next to the configuration (`eslint.config.test.ts`) in Node.
+- One Vitest configuration, in `vite.config.ts`, with two projects: `app` runs the tests of `src` in jsdom with the setup, and `tooling` runs the tests of the configuration at the root (`eslint.config.test.ts`) and of the build tooling (`tooling/`) in Node.
 - Every test runs and asserts: the rule and what enforces it are in `docs/ARCHITECTURE.md` (Slices and segments).
 - Run: `pnpm test` (Vitest), `pnpm test:coverage` (with thresholds).
 - Coverage: 70% branches/lines/functions/statements; the measured scope and the thresholds live in `vite.config.ts` (`coverage`), checked by `pnpm test:coverage`.
@@ -111,6 +111,15 @@ description: Project conventions of kanban-board-app (state and store architectu
   - `*` → `NotFoundPage`
 - URL is the source of truth during navigation. Synchronize route params and store state in `app/router/model/useSyncBoardRoute.ts`, not inside `pages/` or `entities/`.
 - Header navigation and board switching MUST preserve the current view while swapping only `:boardId`.
+
+## Social Preview & Agent-Readable Files
+
+- Social crawlers, search engines and AI agents read `index.html` without running JavaScript, so what they must see is written by the build: `tooling/agent-files/vitePlugin.ts`, registered in `vite.config.ts`. `usePageMeta` only updates the title and description for people browsing the app.
+- **One source:** `tooling/agent-files/site.ts` holds the site address (`SITE_URL`, `absoluteUrl`) and the name and description of the whole site. The app never needs its own address, so it lives with its only consumer, the build tooling, not in `src`; a change of domain changes `SITE_URL` and nothing else.
+- **Social preview:** `index.html` declares the Open Graph and Twitter tags with `og:url` `/` and root-relative image paths. The build writes the title, the description and the absolute addresses from `site.ts`, and refuses an image path that is not root-relative or a tag it writes that is missing or repeated; the values in `index.html` only serve the dev server. Twitter/X falls back to `og:title` and `og:description`, so `index.html` does not repeat them.
+- **Cover:** `public/og-cover.png`, a 1200×630 PNG whose type, size and alt text `index.html` declares. It shows the app name, tagline and stack over a board drawn with the dark theme tokens, rendered from an HTML page in headless Edge; name and tagline sit inside the central 630×630 square for previews that crop it square. Platforms cache previews by URL, so a changed image gets a new file name; after the deploy, refresh the preview with LinkedIn Post Inspector.
+- **Agent files:** the build emits `llms.txt` (a summary and links, in the llmstxt.org format), `robots.txt` (allows everything and names the sitemap) and `sitemap.xml` (only the root: the board and calendar addresses name the boards each visitor keeps in their own browser), and the dev server serves the same files. Vercel serves the built files before the SPA rewrite of `vercel.json`. None of them is written by hand in `public/`.
+- The tests next to each module of `tooling/agent-files/` check the generators, the shell against the real `index.html` and the cover's real type and size, and build and serve the app with the real `vite.config.ts`.
 
 ## Store Architecture
 

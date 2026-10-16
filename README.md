@@ -42,7 +42,7 @@ pnpm dev
 pnpm dev            # Start the dev server
 pnpm build          # Type-check + production build
 pnpm lint           # ESLint: architecture, TypeScript and React hooks rules; a warning is red
-pnpm test           # Vitest: the app tests (jsdom) and the lint cases (node)
+pnpm test           # Vitest: the app tests (jsdom), and the lint cases and the build tooling (node)
 pnpm test:coverage  # Vitest with the coverage thresholds of vite.config.ts
 pnpm preview        # Preview the production build
 ```
@@ -52,6 +52,8 @@ Git hooks (husky): `pre-commit` lints staged files, `pre-push` runs the producti
 ## Architecture
 
 Feature-Sliced Design: `docs/ARCHITECTURE.md` rules the shape of the code and says what enforces each rule; `AGENTS.md` and `.agents/skills/` hold the working rules and the project conventions.
+
+Crawlers do not run the app's JavaScript, so the build writes what they read: the social preview of `index.html` and the files for crawlers and AI agents (`llms.txt`, `robots.txt`, `sitemap.xml`), all from one source, `tooling/agent-files/site.ts`.
 
 ## License
 

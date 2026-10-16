@@ -7,6 +7,8 @@ leaves the components. How the repository is worked on is ruled by
 `AGENTS.md`; the libraries and the project's own conventions (store, drag and
 drop, styling tokens, i18n, test tooling and practices) by the
 `kanban-board-conventions` skill; and how to set up a clone by `README.md`.
+The build tooling in `tooling/` and the configuration at the root are not
+application code: these rules, and the lint that holds them, read `src` only.
 
 **Every rule says what enforces it.** The ones the lint enforces have, in
 `eslint.config.test.ts`, the smallest case that breaks them, and that test

@@ -87,6 +87,14 @@ export default defineConfig([
     },
     rules: {
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+    },
+  },
+  {
+    // Feature-Sliced Design governs the application in src/ only: the build tooling in tooling/
+    // and the configuration at the root are not application code (docs/ARCHITECTURE.md).
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
       'fsd-lint/forbidden-imports': 'error',
       'fsd-lint/no-cross-slice-dependency': 'error',
       'fsd-lint/no-relative-imports': 'error',
@@ -94,7 +102,6 @@ export default defineConfig([
         'error',
         { layers: SLICED_LAYERS, publicApi: { allowSegmentImports: false } },
       ],
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
   {

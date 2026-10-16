@@ -16,7 +16,7 @@ Each subject has one document that rules it; the others point to it.
 | Subject | Document |
 |---------|----------|
 | The shape of `src`: layers, slices, segments, public APIs, imports, styles, data flow, and what enforces each rule | `docs/ARCHITECTURE.md` |
-| The libraries and project conventions: store, drag and drop, styling tokens, icons, dialogs, routing, data portability, i18n, theme, test tooling and practices | `.agents/skills/kanban-board-conventions/SKILL.md` |
+| The libraries and project conventions: store, drag and drop, styling tokens, icons, dialogs, routing, social preview and agent-readable files, data portability, i18n, theme, test tooling and practices | `.agents/skills/kanban-board-conventions/SKILL.md` |
 | How to work on this repository: gates, hooks, recording decisions | this file |
 | What the app does and how to set up a clone | `README.md` |
 
@@ -53,7 +53,7 @@ Read the matching skill before the work it covers:
 pnpm dev            # Start dev server with HMR
 pnpm build          # TypeScript compilation (tsc -b) + Vite production build
 pnpm lint           # ESLint: architecture, TypeScript and React hooks rules; a warning is red
-pnpm test           # Vitest: the app tests (jsdom) and the lint cases (node)
+pnpm test           # Vitest: the app tests (jsdom), and the lint cases and the build tooling (node)
 pnpm test:coverage  # Vitest with the coverage thresholds of vite.config.ts
 pnpm preview        # Preview production build locally
 ```

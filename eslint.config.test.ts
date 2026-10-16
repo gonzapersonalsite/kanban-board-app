@@ -151,6 +151,18 @@ describe('the layers of Feature-Sliced Design', () => {
     expect(reports).toEqual([])
   })
 
+  it('leaves_the_build_tooling_and_the_configuration_at_the_root_out_of_the_layers', async () => {
+    const tooling = "import { buildShell } from './shell'\nexport const shell = buildShell\n"
+    const configuration = "import { agentFilesPlugin } from './tooling/agent-files/vitePlugin'\nexport const plugin = agentFilesPlugin\n"
+
+    const reports = [
+      ...(await reportsOn('tooling/agent-files/vitePlugin.ts', tooling)),
+      ...(await reportsOn('vite.config.ts', configuration)),
+    ]
+
+    expect(reports).toEqual([])
+  })
+
   it('leaves_a_test_free_of_the_import_rules_of_the_layers', async () => {
     // A layer above, a sibling slice, a deep import and a relative path out of the slice,
     // imported, re-exported and imported dynamically.
