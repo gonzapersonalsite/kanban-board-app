@@ -47,7 +47,7 @@ pnpm test:coverage  # Vitest with the coverage thresholds of vite.config.ts
 pnpm preview        # Preview the production build
 ```
 
-Git hooks (husky): `pre-commit` lints staged files, `pre-push` runs the production build.
+Git hooks (husky): `pre-commit` lints staged files, `pre-push` refuses to push anything but HEAD, or with uncommitted or untracked files, restores the dependencies from the lockfile, runs `pnpm lint`, `pnpm test` and `pnpm build`, and checks the tree again.
 
 ## Architecture
 

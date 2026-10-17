@@ -59,7 +59,9 @@ pnpm preview        # Preview production build locally
 ```
 
 Git hooks (husky): `pre-commit` lints the staged files with the same rules and
-`--max-warnings=0`; `pre-push` runs `pnpm build`.
+`--max-warnings=0`; `pre-push` refuses to push anything but HEAD, or with
+uncommitted or untracked files, restores the dependencies from the lockfile,
+runs `pnpm lint`, `pnpm test` and `pnpm build`, and checks the tree again.
 
 A change is done when `pnpm lint`, `pnpm test:coverage` (the tests and the
 coverage thresholds) and `pnpm build` are green and the documents it affects
