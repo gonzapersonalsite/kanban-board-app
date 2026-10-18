@@ -1,183 +1,198 @@
-# Architecture
+# Arquitectura del producto
 
-Kanban Board is a React application built with Vite and TypeScript and
-organised with Feature-Sliced Design. This document rules the shape of the
-code in `src`: where each thing goes, what may import what, and where the data
-leaves the components. How the repository is worked on is ruled by
-`AGENTS.md`; the libraries and the project's own conventions (store, drag and
-drop, styling tokens, i18n, test tooling and practices) by the
-`kanban-board-conventions` skill; and how to set up a clone by `README.md`.
-The build tooling in `tooling/` and the configuration at the root are not
-application code: these rules, and the lint that holds them, read `src` only.
+Kanban Board es una aplicación React construida con Vite y TypeScript y
+organizada con Feature-Sliced Design. Este documento manda sobre la forma del
+código de `src`: dónde va cada cosa, qué puede importar qué y por dónde salen
+los datos de los componentes. Cómo se trabaja en el repositorio lo manda
+`AGENTS.md`; las librerías y convenciones propias del proyecto (store,
+drag-and-drop, tokens de diseño, i18n, pruebas y prácticas) las recoge la skill
+`kanban-board-conventions`; y cómo se pone en marcha un clon, `README.md`.
+Las herramientas de build en `tooling/` y la configuración en la raíz no son
+código de la aplicación: estas reglas, y el lint que las sostiene, leen solo
+`src`.
 
-**Every rule says what enforces it.** The ones the lint enforces have, in
-`eslint.config.test.ts`, the smallest case that breaks them, and that test
-fails if someone relaxes the rule in `eslint.config.js`. The fsd-lint 1.2.1
-rules do not read re-exports (`export … from`), and
-`fsd-lint/forbidden-imports` does not read a dynamic `import()` either: a
-local rule, `fsd-gaps/boundaries` (`eslint-fsd-gaps.js`), holds the same
-boundaries over them, and goes away when fsd-lint reads them. No rule reads
-an `import()` whose path is not a string literal (a template literal, even
-one with nothing to fill in, or a variable), nor a type that imports
-(`typeof import('…')` or `import('…').Type`): what is imported that way is
-convention, and `eslint.config.test.ts` has its cases. No comment
-switches a rule off: the lint reports an `eslint-disable` comment as a
-warning, and a warning is red (`--max-warnings=0` in `pnpm lint`, enforced by
-`python verify.py`), so an exception lives in `eslint.config.js`, next to its
-decision. The rules marked "convention" are checked by nothing: the review of
-the diff holds them, and they become lint rules with their case as soon as
-someone finds how.
+**Cada regla dice qué la hace cumplir.** Las que hace cumplir el lint tienen en
+`eslint.config.test.ts` el caso más pequeño que las rompe, y ese test falla si
+alguien relaja la regla en `eslint.config.js`. Las reglas de fsd-lint 1.2.1
+no leen las reexportaciones (`export … from`), y `fsd/forbidden-imports`
+tampoco lee el `import()` dinámico: sobre ellas sostiene los mismos límites una
+regla local, `fsd-gaps/boundaries` (`eslint-fsd-gaps.js`), que sobra cuando
+fsd-lint los lea. Ninguna regla lee un `import()` cuya ruta no esté escrita
+entre comillas (una plantilla de texto, aunque no tenga huecos, o una
+variable), ni un tipo que importa (`typeof import('…')` o `import('…').Tipo`):
+lo que se importa así es convención, y `eslint.config.test.ts` tiene sus casos.
+Un comentario no apaga ninguna regla: el lint da por aviso un `eslint-disable`,
+y un aviso es rojo (`--max-warnings=0` en `pnpm run lint`, exigido por
+`python verify.py`), así que una excepción vive en `eslint.config.js`, junto a
+su decisión. Las reglas marcadas como «convención» no las comprueba nada: las
+sostiene la revisión del diff, y se convierten en regla de lint con su caso en
+cuanto alguien encuentra cómo.
 
-## Layers
+## Capas
 
-`src` holds these six folders, top to bottom, plus the test support
-described below:
+`src` contiene estas seis carpetas, de arriba abajo, más el soporte de tests
+descrito más abajo:
 
-| Layer      | What it holds                                                                                                      |
-| ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| `app`      | The entry point (`src/app/main.tsx`), the providers, the router and the global styles                              |
-| `pages`    | A whole screen: it composes what lies below and keeps the code only it uses                                        |
-| `widgets`  | A large UI block that pages or the app shell use: the board, the calendar, the header                              |
-| `features` | A user action with value of its own: a form, a dialog, drag and drop, a backup                                     |
-| `entities` | A business concept: its selectors, its rules and its view                                                          |
-| `shared`   | What knows nothing of a single screen: the domain store (see below), i18n, theme, toasts, utilities and the UI kit |
+| Capa | Qué contiene |
+|---|---|
+| `app` | La entrada (`src/app/main.tsx`), los providers, el router y los estilos globales |
+| `pages` | Una pantalla entera: compone lo de debajo y guarda el código que solo usa ella |
+| `widgets` | Un bloque de interfaz grande que usan las páginas o el shell de la app: el tablero, el calendario, la cabecera |
+| `features` | Una acción del usuario con valor propio: un formulario, un diálogo, drag-and-drop, una copia de seguridad |
+| `entities` | Un concepto del negocio: sus selectores, sus reglas y su vista |
+| `shared` | Lo que no sabe nada de una pantalla concreta: el store de dominio (ver abajo), i18n, tema, toasts, utilidades y el kit de UI |
 
-- **A layer only imports from the layers below it.** Enforced by
-  `fsd-lint/forbidden-imports` and, in a re-export or a dynamic `import()`,
+- **Una capa solo importa de las que tiene debajo.** Lo hacen cumplir
+  `fsd/forbidden-imports` y, en una reexportación o un `import()` dinámico,
   `fsd-gaps/boundaries`.
-- **Two slices of the same layer do not import each other.** If both need
-  something, it moves down a layer. Enforced by
-  `fsd-lint/no-cross-slice-dependency` and, in a re-export,
+- **Dos slices de la misma capa no se importan entre sí.** Si los dos necesitan
+  algo, ese algo baja a una capa inferior. Lo hacen cumplir
+  `fsd/no-cross-slice-dependency` y, en una reexportación,
   `fsd-gaps/boundaries`.
-- **There are no more layers.** A code file outside those six folders and
-  `src/test`, or loose at the root of `src`, is a `no-restricted-syntax`
-  error: folders such as `services`, `hooks` or `utils` at the root do not
-  exist.
-- **The code in `src` is TypeScript in `.ts` and `.tsx` files**, the only
-  ones these rules read: a `.js`, `.jsx`, `.mjs`, `.cjs`, `.mts` or `.cts`
-  file is an error: `no-restricted-syntax`, or a parsing error when it holds
-  TypeScript or JSX.
-- `app` and `shared` have no slices: their folders are segments
-  (`app/router`, `shared/api`, `shared/i18n`, ...). A segment that holds both
-  logic and UI splits them into `model`, `lib`, `config` and `ui` folders like
-  a slice does (`app/router`), and each UI component of `shared/ui` has a
-  folder of its own with its `index.ts`. Convention.
+- **No hay más capas.** Un fichero de código fuera de esas seis carpetas y de
+  `src/test`, o suelto en la raíz de `src`, es un error de
+  `no-restricted-syntax`: carpetas como `services`, `hooks` o `utils` en la
+  raíz no existen.
+- **En `src` el código es TypeScript en `.ts` y `.tsx`**, los únicos ficheros
+  que leen estas reglas: un `.js`, `.jsx`, `.mjs`, `.cjs`, `.mts` o `.cts` es un
+  error de `no-restricted-syntax`, o un error de parseo (`Parsing error`) si
+  contiene sintaxis de TypeScript o JSX.
+- `app` y `shared` no tienen slices: sus carpetas internas son segmentos
+  (`app/router`, `shared/api`, `shared/i18n`, ...). Un segmento que contiene
+  lógica y vista las separa en carpetas `model`, `lib`, `config` y `ui` igual
+  que un slice (`app/router`), y cada componente de UI de `shared/ui` tiene su
+  propia carpeta con su `index.ts`. Convención.
 
-### Decided deviations
+### Desviaciones decididas
 
-Two decisions of this application differ from plain Feature-Sliced Design.
-They are narrow, and nothing else follows from them:
+Dos decisiones de esta aplicación difieren de Feature-Sliced Design puro. Son
+acotadas y de ellas no se deriva ninguna otra:
 
-- **The domain store lives in `shared/api`.** The Zustand store of the boards,
-  columns and tasks, its slices, the domain types, the sample board and the
-  restore entry are `src/shared/api`, re-exported by `shared/api/index.ts`;
-  entities hold the selectors and routing helpers over it
-  (`entities/board/model`) and the views. It is the edge of the application:
-  the only code that persists the boards, columns and tasks (to
-  `localStorage`, through the `persist` middleware); the i18n and theme stores
-  persist only the visitor's preferences. Convention, decided in the
-  `kanban-board-conventions` skill (State Management, Store Architecture).
-- **The test support lives in `src/test`**: fixtures, helpers and the Vitest
-  setup that the tests share, decided in the `kanban-board-conventions` skill
-  (Testing). It is the one folder of `src` that is not a layer, and only test
-  code imports it: an import of `@/test` from production code is an error,
-  `no-restricted-imports` when static and `no-restricted-syntax` when dynamic,
-  and a relative path to it leaves its slice, a `fsd-lint/no-relative-imports`
-  error, or `fsd-gaps/boundaries` in a re-export. To build a fresh store, the
-  test support may reach inside a `shared` segment
-  (`src/test/helpers/storeTestUtils.ts` imports `@/shared/api/storeCreator`).
-  Convention.
+- **El store de dominio vive en `shared/api`.** El store de Zustand de tableros,
+  columnas y tareas, sus slices, los tipos de dominio, el tablero de ejemplo y
+  el punto de entrada de restauración están en `src/shared/api`, reexportados
+  por `src/shared/api/index.ts`; las entidades contienen los selectores y
+  utilidades de rutas sobre él (`src/entities/board/model`) y las vistas. Es el
+  borde de la aplicación: el único código que persiste tableros, columnas y
+  tareas (en `localStorage`, mediante el middleware `persist`); los stores de
+  i18n y tema solo persisten las preferencias del visitante. Convención,
+  recogida en la skill `kanban-board-conventions`.
+- **El soporte de tests vive en `src/test`**: fixtures, helpers y el setup de
+  Vitest que comparten los tests, recogido en la skill
+  `kanban-board-conventions`. Es la única carpeta de `src` que no es una capa,
+  y solo el código de test la importa: un import de `@/test` desde código de
+  producción es un error (`no-restricted-imports` cuando es estático y
+  `no-restricted-syntax` cuando es dinámico), y una ruta relativa hacia ella
+  sale de su slice (`fsd/no-relative-imports`, o `fsd-gaps/boundaries` en una
+  reexportación). Para construir un store limpio, el soporte de tests puede
+  entrar dentro de un segmento de `shared`
+  (`src/test/helpers/storeTestUtils.ts` importa `@/shared/api/storeCreator`).
+  Convención.
 
-## Slices and segments
+## Slices y segmentos
 
-A slice is a folder inside `pages`, `widgets`, `features` or `entities`
-(`src/entities/<slice>/`), named in kebab-case. Inside it, only the segments
-that hold something:
+Un slice es una carpeta dentro de `pages`, `widgets`, `features` o `entities`
+(`src/entities/<slice>/`), con nombre en kebab-case. Dentro, solo los
+segmentos que tengan algo:
 
-| Segment  | What it holds                                                   |
-| -------- | --------------------------------------------------------------- |
-| `ui`     | `.tsx` components and their CSS Modules                         |
-| `model`  | Types, business rules as pure functions, hooks and state        |
-| `api`    | The calls of the slice to the outside world, if it ever has any |
-| `lib`    | Internal utilities of the slice                                 |
-| `config` | Constants and data files of the slice                           |
+| Segmento | Qué contiene |
+|---|---|
+| `ui` | Componentes `.tsx` y sus CSS Modules |
+| `model` | Tipos, reglas de negocio como funciones puras, hooks y estado |
+| `api` | Las llamadas del slice al exterior, si algún día las tiene |
+| `lib` | Utilidades internas del slice |
+| `config` | Constantes y ficheros de datos del slice |
 
-- **From outside, a slice is entered only through its `<slice>/index.ts`**,
-  which exports on purpose what is public and nothing else: neither an
-  internal file nor a segment (`@/entities/<slice>`, never
-  `@/entities/<slice>/model`). Enforced by `fsd-lint/no-public-api-sidestep`
-  and, in a re-export, `fsd-gaps/boundaries`, for pages, widgets, features and
-  entities. `shared` and `app` are entered by segment (`@/shared/api`,
-  `@/app/router`), by convention; the one exception, in the test support, is
-  under Decided deviations.
-- **Between slices, imports use the `@/` alias**, enforced by
-  `fsd-lint/no-relative-imports` and, in a re-export, `fsd-gaps/boundaries`.
-  **Inside a slice, they use relative paths**, by convention: entering the
-  slice itself through the alias, and even more through its `<slice>/index.ts`,
-  creates an import cycle the lint does not see.
-- **There is no UI in `model`, `api` and `lib`**: no `.tsx` files, and no
-  import, static or dynamic, of a `ui` segment (the `shared/ui` kit included),
-  of styles, of any entry of `react-dom` or of the JSX runtimes, nor
-  `createElement`, `cloneElement` or React as a whole (default, namespace or
-  dynamic import): from React, what is logic, such as its hooks, is imported by name.
-  Enforced by `no-restricted-imports` and `no-restricted-syntax` on those
-  segments. That no component arrives through the public API of another slice
-  is convention: the lint sees paths, not what each one exports. Their tests
-  may render.
-- **Logic reports to the visitor through the infrastructure stores**, never
-  through a component: `useToastStore` (`@/shared/toast`) for notifications
-  and `useI18nStore` (`@/shared/i18n`) for texts. Convention.
-- **Tests live next to what they test**, as `<file>.test.ts` or
-  `<file>.test.tsx`, by convention, and the Feature-Sliced Design import rules
-  do not apply to them: a test may enter the slice it tests.
-- **Every test runs and checks something.** `.skip`, `.todo`, `skipIf` and
-  `runIf` are `no-restricted-properties` errors in the tests and in
-  `src/test`; Vitest rejects a `.only` (`allowOnly: false`) and fails a test
-  that makes no assertion (`expect.requireAssertions`), both in
-  `vite.config.ts`.
+- **Desde fuera, a un slice solo se entra por su `<slice>/index.ts`**, que
+  exporta a propósito lo que es público y nada más: ni un fichero interno ni
+  un segmento (`@/entities/<slice>`, nunca `@/entities/<slice>/model`). Lo
+  hacen cumplir `fsd/no-public-api-sidestep` y, en una reexportación,
+  `fsd-gaps/boundaries`, para `pages`, `widgets`, `features` y `entities`. A
+  `shared` y `app` se entra por segmento (`@/shared/api`, `@/app/router`), por
+  convención; la única excepción, en el soporte de tests, está en
+  «Desviaciones decididas».
+- **Entre slices se importa con el alias `@/`**, y lo hacen cumplir
+  `fsd/no-relative-imports` y, en una reexportación, `fsd-gaps/boundaries`.
+  **Dentro del slice, con rutas relativas**, por convención: entrar en el
+  propio slice por el alias, y más aún por su `<slice>/index.ts`, crea un ciclo
+  de imports que el lint no ve.
+- **En `model`, `api` y `lib` no hay UI**: ni ficheros `.tsx`, ni imports,
+  estáticos o dinámicos, de un segmento `ui` (incluido el kit `shared/ui`), de
+  estilos, de cualquier entrada de `react-dom` o de los runtimes de JSX, ni
+  `createElement`, `cloneElement` o React entero (por defecto, como espacio de
+  nombres o dinámico): de React se importa por nombre lo que es lógica, como
+  sus hooks. Lo hacen cumplir `no-restricted-imports` y `no-restricted-syntax`
+  sobre esos segmentos. Que no llegue un componente por la API pública de otro
+  slice es convención: el lint ve rutas, no qué exporta cada una. Sus tests sí
+  pueden renderizar.
+- **La lógica informa al visitante mediante los stores de infraestructura**,
+  nunca mediante un componente: `useToastStore` (`@/shared/toast`) para las
+  notificaciones y `useI18nStore` (`@/shared/i18n`) para los textos.
+  Convención.
+- **Los tests van al lado de lo que prueban**, como `<fichero>.test.ts` o
+  `<fichero>.test.tsx`, por convención, y las reglas de imports de
+  Feature-Sliced Design no se les aplican: un test puede entrar en el slice que
+  prueba.
+- **Todo test corre y comprueba algo.** `.skip`, `.todo`, `skipIf` y `runIf`
+  son errores de `no-restricted-properties` en los tests y en `src/test`;
+  Vitest rechaza un `.only` (`allowOnly: false`) y hace fallar un test que no
+  comprueba nada (`expect.requireAssertions`), los dos en `vite.config.ts`.
 
-## Where new code goes
+## Dónde va el código nuevo
 
-First, in the page that uses it. It moves down when the second consumer
-appears, and not before: to `widgets` if it is a UI block, to `features` if it
-is a user action, to `entities` if it is a business concept, and to `shared`
-if it knows nothing of a single screen. Moving code down is a change with a
-diff of its own, which leaves the imports going through the `<slice>/index.ts`
-of the new place. Convention; the lint only stops a layer from using what lies
-above it.
+Primero, en la página que lo usa. Baja cuando aparece el segundo consumidor, y
+no antes: a `widgets` si es un bloque de interfaz, a `features` si es una
+acción del usuario, a `entities` si es un concepto del negocio, y a `shared` si
+no sabe nada de una pantalla concreta. Bajar código es un cambio con su propio
+diff, que deja los imports por la `<slice>/index.ts` del nuevo sitio.
+Convención; el lint solo impide que una capa use lo que tiene encima.
 
-## Styles
+## Estilos
 
-- The styles of a component live next to it, in its `ui` segment, as a CSS
-  Module (`<slice>/ui/<Component>.module.css`). That no styles are imported
-  from `model`, `api` or `lib` is enforced by the lint; the rest is
-  convention.
-- The design tokens and the reset of the whole application live in
-  `src/app/styles/global.css`, which `src/app/App.tsx` imports and nothing
-  else. Convention.
+- Los estilos de un componente viven a su lado, en su segmento `ui`, como un
+  CSS Module (`<slice>/ui/<Componente>.module.css`). Que no se importen estilos
+  desde `model`, `api` ni `lib` lo hace cumplir el lint; el resto es convención.
+- Los tokens de diseño y el reset de toda la aplicación viven en
+  `src/app/styles/global.css`, que importa `src/app/App.tsx` y nadie más.
+  Convención.
 
-## Data and I/O
+## Datos y E/S
 
-- **The flow goes one way:** components read and change the domain state
-  through the store of `@/shared/api`, which persists it: directly, with
-  `useKanbanStore`, or through a model that adds logic over it, such as the
-  hooks of their slice or the selectors and `useBoards` of `entities/board`.
-  Components never call `localStorage` or `nanoid` directly and never mutate
-  state outside a store action. Convention.
-- **The application sends no requests**: its data stays in the browser, and a
-  backup is a local file. Outside `src/shared/api`, `fetch`,
-  `XMLHttpRequest`, `window.fetch`, `globalThis.fetch` and `self.fetch` are
-  `no-restricted-globals` and `no-restricted-properties` errors; tests and the
-  test support are left out. A network client, if one is ever decided, lives
-  in `src/shared/api` and is an owner decision.
-- **The business rules live in `model`**, as pure functions wherever they can
-  (the board selectors, the drag-and-drop appliers, the backup snapshot
-  checks), **or in the actions of the domain store**, which validate before
-  they change anything; each with its test in the same change. Hooks only hold
-  state and call them. Convention.
+- **El flujo va en una dirección:** los componentes leen y cambian el estado de
+  dominio mediante el store de `@/shared/api`, que lo persiste: directamente,
+  con `useKanbanStore`, o mediante un modelo que añade lógica sobre él, como
+  los hooks de su slice o los selectores y `useBoards` de `src/entities/board`.
+  Los componentes nunca llaman a `localStorage` ni a `nanoid` directamente y
+  nunca mutan el estado fuera de una acción del store. Convención.
+- **La aplicación no envía peticiones de red**: sus datos se quedan en el
+  navegador, y una copia de seguridad es un fichero local. Fuera de
+  `src/shared/api`, `fetch`, `XMLHttpRequest`, `window.fetch`,
+  `globalThis.fetch` y `self.fetch` son errores de `no-restricted-globals` y
+  `no-restricted-properties`; los tests y el soporte de tests quedan fuera. Un
+  cliente de red, si algún día se decide, vive en `src/shared/api` y es una
+  decisión del dueño.
+- **Las reglas de negocio viven en `model`**, como funciones puras siempre que
+  puedan (los selectores de tablero, los aplicadores de drag-and-drop, las
+  validaciones de instantáneas de copia de seguridad), **o en las acciones del
+  store de dominio**, que validan antes de cambiar nada; cada una con su test
+  en el mismo cambio. Los hooks solo guardan estado y las llaman. Convención.
 
-## Names
+## La superficie para agentes y buscadores
 
-By convention: components in PascalCase (`<slice>/ui/TaskCard.tsx`), hooks in
-camelCase with `use` in front (`<slice>/model/useBoards.ts`), slices in
-kebab-case (`<layer>/task-management`) and segments in lowercase.
+- **Lo que ven los crawlers y los agentes sale del build, con una sola
+  fuente.** `tooling/agent-files/site.ts` nombra la dirección del sitio, sus
+  textos, el repositorio, la portada y las rutas del sitemap; el plugin
+  cableado en `vite.config.ts` reescribe en el build el título, la descripción
+  y las direcciones absolutas de la vista previa social de `index.html`, y
+  emite llms.txt, robots.txt y sitemap.xml (el servidor de desarrollo sirve
+  los mismos ficheros por middleware). Los tests de `tooling/agent-files`
+  cruzan cada valor con el fichero real —el tipo y el tamaño declarados de la
+  portada `public/og-cover.png` incluidos— y comprueban que el plugin sigue
+  cableado en la configuración real: quitarlo de `vite.config.ts` los deja en
+  rojo.
+
+## Nombres
+
+Por convención: componentes en PascalCase (`<slice>/ui/TaskCard.tsx`), hooks en
+camelCase con `use` delante (`<slice>/model/useBoards.ts`), slices en
+kebab-case (`<capa>/task-management`) y segmentos en minúsculas.

@@ -1,130 +1,130 @@
 ---
 name: kanban-board-conventions
-description: Project conventions of kanban-board-app (state and store architecture, drag and drop, styling and design tokens, icons, IDs, dialogs, tooltips, testing, routing, social preview and agent-readable files, data portability, domain types, error handling, i18n, theme, CSS animation limits and anti-patterns). Use before changing code, tests, styles or copy in this repository, together with react-fsd-maintainer.
+description: Convenciones de kanban-board-app (arquitectura de estado y store, drag-and-drop, estilos y tokens de diseño, iconos, IDs, diálogos, tooltips, testing, rutas, vista previa social y ficheros para agentes, portabilidad de datos, tipos de dominio, manejo de errores, i18n, tema, límites de animación CSS y antipatrones). Úsala antes de cambiar código, tests, estilos o textos en este repositorio, junto con react-fsd-maintainer.
 ---
 
-# kanban-board-app — Project Conventions
+# kanban-board-app — Convenciones del proyecto
 
-## State Management
+## Gestión de estado
 
-- **Zustand** is the ONLY state library. Do NOT introduce Redux, Jotai, Context API, or any other state tool for cross-component state.
-- **Domain store** (kanban board data): lives at `shared/api/store.ts`. This is a single store with `persist` middleware.
-- **Infrastructure stores** (i18n, theme, toast): live in their own `shared/<segment>/model/store.ts` files, each exported by its `shared/<segment>/index.ts`. Each is a separate Zustand store; i18n and theme have their own `persist` middleware, and the toast notifications stay in memory. This pattern is distinct from the domain store — infrastructure stores manage cross-cutting concerns, not business entities.
-- Use the **slices pattern** to organize domain store logic: create separate slice functions per domain (`createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice`) and compose them into one bound store.
-- Apply the `persist` middleware ONLY at the composed store level for the domain store, never inside individual slices.
-- Storage engine: `localStorage` via `createJSONStorage(() => localStorage)` (Zustand built-in). No IndexedDB unless explicitly required.
-- Domain store key name: `kanban-board-storage`. Infrastructure stores use their own keys (`i18n-locale`, `theme-preference`).
+- **Zustand** es la ÚNICA librería de estado. NO introduzcas Redux, Jotai, Context API ni ninguna otra herramienta para estado entre componentes.
+- **Store de dominio** (datos del tablero Kanban): vive en `src/shared/api/store.ts`. Es un único store con el middleware `persist`.
+- **Stores de infraestructura** (i18n, tema, toast): viven en sus propios ficheros `src/shared/<segmento>/model/store.ts`, exportados cada uno por su `src/shared/<segmento>/index.ts`. Cada uno es un store de Zustand independiente; i18n y tema tienen su propio middleware `persist`, y las notificaciones toast viven en memoria. Este patrón es distinto del store de dominio: los stores de infraestructura gestionan preocupaciones transversales, no entidades de negocio.
+- Usa el **patrón de slices** para organizar la lógica del store de dominio: crea funciones de slice separadas por dominio (`createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice`) y componlas en un único store enlazado.
+- Aplica el middleware `persist` SOLO en el nivel del store compuesto para el store de dominio, nunca dentro de los slices individuales.
+- Motor de almacenamiento: `localStorage` mediante `createJSONStorage(() => localStorage)` (integrado en Zustand). Sin IndexedDB salvo que se pida explícitamente.
+- Clave del store de dominio: `kanban-board-storage`. Los stores de infraestructura usan sus propias claves (`i18n-locale`, `theme-preference`).
 
 ## Drag & Drop
 
-- `@dnd-kit/react` (latest v0.4+) is the ONLY drag-and-drop library. Do NOT use `react-beautiful-dnd` (deprecated), `react-dnd`, or any alternative.
-- Use the new unified API: `DragDropProvider`, `useDraggable`, `useDroppable` from `@dnd-kit/react`. `useSortable` from `@dnd-kit/react/sortable` (subpath export in v0.5+).
-- No `SortableContext` — the new API handles this automatically.
-- Use `move` helper from `@dnd-kit/helpers` for array mutations.
-- Drag feedback is rendered via `<DragOverlay>` from `@dnd-kit/react`.
-- Sensors: default pointer sensor (mouse + touch), keyboard sensor for accessibility.
-- A drag that moves nothing MUST NOT write to the store. dnd-kit fires a `dragover` with the source over itself as soon as a drag starts, and `move()` then returns the same collection, so `handleDragOver` in `useBoardDndLifecycle` skips `setState` when the applier returns its input. The drag-start snapshot is the store's own references (collections are never mutated in place), so cancelling a drag that moved nothing restores nothing. Otherwise a mere pick-up would persist the untouched sample board (see Store Architecture).
-- Screen reader output MUST be localized. Every draggable activator (card wrapper in `DraggableTaskCard`, column content in `ColumnShell` via `SortableColumn`) sets `aria-roledescription={t('dnd.role_description')}` and `aria-describedby={BOARD_DND_INSTRUCTIONS_ID}`, which points to the hidden `dnd.instructions` paragraph rendered by `BoardDndContext`; the dnd-kit Accessibility plugin leaves both attributes alone when they already exist. Live announcements come from `boardDndAnnouncements` (`features/drag-and-drop/model/boardDndAccessibility.ts`), which resolves titles from the store and texts from `dnd.*` when each event fires.
-- `@dnd-kit/react` does not export the Accessibility plugin class and `@dnd-kit/dom` is not a direct dependency, so `withBoardDndAnnouncements` passes the announcements to every default plugin (only Accessibility reads them). `BoardDndContext.accessibility.test.tsx` renders the real provider and MUST keep proving that a keyboard pick-up is announced in the current locale; re-check it on every dnd-kit upgrade.
+- `@dnd-kit/react` (v0.4+) es la ÚNICA librería de drag-and-drop. NO uses `react-beautiful-dnd` (deprecada), `react-dnd` ni ninguna alternativa.
+- Usa la API unificada: `DragDropProvider`, `useDraggable`, `useDroppable` de `@dnd-kit/react`, y `useSortable` de `@dnd-kit/react/sortable` (exportación de subruta en v0.5+).
+- Sin `SortableContext`: la nueva API lo gestiona automáticamente.
+- Usa el helper `move` de `@dnd-kit/helpers` para mutaciones de arrays.
+- La respuesta visual de arrastre se renderiza con `<DragOverlay>` de `@dnd-kit/react`.
+- Sensores: sensor de puntero por defecto (ratón + táctil) y sensor de teclado para accesibilidad.
+- Un arrastre que no mueve nada NO DEBE escribir en el store. dnd-kit dispara un `dragover` con el origen sobre sí mismo nada más empezar un arrastre, y `move()` devuelve entonces la misma colección, por lo que `handleDragOver` en `useBoardDndLifecycle` omite `setState` cuando el aplicador devuelve su entrada. La instantánea de inicio de arrastre conserva las referencias del propio store (las colecciones nunca se mutan in situ), así que cancelar un arrastre que no movió nada no restaura nada. De lo contrario, levantar una tarjeta sin moverla persistiría el tablero de ejemplo intacto (ver «Arquitectura del store»).
+- La salida para lectores de pantalla DEBE estar localizada. Cada activador arrastrable (envoltorio de tarjeta en `DraggableTaskCard`, contenido de columna en `ColumnShell` vía `SortableColumn`) establece `aria-roledescription={t('dnd.role_description')}` y `aria-describedby={BOARD_DND_INSTRUCTIONS_ID}`, que apunta al párrafo oculto `dnd.instructions` renderizado por `BoardDndContext`; el plugin Accessibility de dnd-kit respeta ambos atributos cuando ya existen. Los anuncios en vivo salen de `boardDndAnnouncements` (`src/features/drag-and-drop/model/boardDndAccessibility.ts`), que resuelve títulos desde el store y textos desde `dnd.*` al dispararse cada evento.
+- `@dnd-kit/react` no exporta la clase del plugin Accessibility y `@dnd-kit/dom` no es dependencia directa, por lo que `withBoardDndAnnouncements` pasa los anuncios a cada plugin por defecto (solo Accessibility los lee). `BoardDndContext.accessibility.test.tsx` renderiza el provider real y DEBE seguir probando que levantar con teclado se anuncia en el idioma activo; revísalo en cada actualización de dnd-kit.
 
-## Styling
+## Estilos
 
-- **CSS Modules** is the ONLY styling approach. Do NOT install or use Tailwind CSS, styled-components, Emotion, or any CSS-in-JS library.
-- Where styles live (co-located CSS Modules in `ui/`, the global styles and tokens in `app/styles/global.css`) is ruled by `docs/ARCHITECTURE.md`, Styles.
-- Typography, iconography, and interactive control sizing MUST be driven by global tokens from `app/styles/global.css`. Do NOT scatter new hard-coded `12px`, `13px`, `14px`, `32px`, or `36px` values across component CSS when an equivalent token already exists.
-- Use the typography scale tokens:
-  - `--font-size-caption` for metadata, helper text, and compact secondary copy.
-  - `--font-size-body-sm` for compact UI text such as nav items, inline buttons, and dense form controls.
-  - `--font-size-body` for primary interface text and card titles.
-  - `--font-size-body-lg` and heading tokens for prominent labels and page headings.
-- Use the control size tokens:
-  - `--control-size-sm` for desktop compact controls.
-  - `--control-size-md` for primary inputs/selects.
-  - `--control-size-lg` for coarse-pointer/touch contexts.
-- Use fluid `clamp()`-based tokens for scalable UI. Prefer token reuse over component-specific responsive font rules unless the component has a genuinely unique need.
+- **CSS Modules** es el ÚNICO enfoque de estilos. NO instales ni uses Tailwind CSS, styled-components, Emotion ni ninguna librería CSS-in-JS.
+- Dónde viven los estilos (CSS Modules co-localizados en `ui/`, estilos globales y tokens en `src/app/styles/global.css`) lo manda `docs/ARCHITECTURE.md` («Estilos»).
+- La tipografía, la iconografía y el tamaño de controles interactivos DEBEN regirse por los tokens globales de `src/app/styles/global.css`. NO disperses valores fijos como `12px`, `13px`, `14px`, `32px` o `36px` en los CSS de componentes cuando ya exista un token equivalente.
+- Usa los tokens de escala tipográfica:
+  - `--font-size-caption` para metadatos, textos de ayuda y texto secundario compacto.
+  - `--font-size-body-sm` para texto de interfaz compacto como elementos de navegación, botones en línea y controles de formulario densos.
+  - `--font-size-body` para texto principal de interfaz y títulos de tarjetas.
+  - `--font-size-body-lg` y tokens de encabezado para etiquetas destacadas y títulos de página.
+- Usa los tokens de tamaño de control:
+  - `--control-size-sm` para controles compactos de escritorio.
+  - `--control-size-md` para inputs y selects principales.
+  - `--control-size-lg` para contextos táctiles (`coarse-pointer`).
+- Usa tokens fluidos basados en `clamp()` para que la interfaz escale. Prioriza reutilizar tokens frente a reglas de fuente responsivas por componente salvo que el componente tenga una necesidad genuinamente única.
 
-## Icons
+## Iconos
 
-- **lucide-react** is the ONLY icon library. Import individual icons by name (tree-shakable):
+- **lucide-react** es la ÚNICA librería de iconos. Importa iconos individuales por nombre (tree-shakable):
   ```ts
   import { Plus, Trash2, Pencil, GripVertical, X } from 'lucide-react'
   ```
-- Do NOT import the entire library with `import * as Icons`.
-- Icon sizing MUST be consistent with the global icon tokens from `app/styles/global.css`.
-- For icons rendered inside shared `Button` or `IconButton`, let the component CSS control the final rendered size. Do NOT micro-tune each icon with ad-hoc per-call sizes unless there is a clear visual exception.
-- For standalone icons not wrapped by shared controls, match one of the token tiers conceptually:
-  - small affordance/icon hint → `--icon-size-sm`
-  - standard action icon → `--icon-size-md`
-  - prominent icon → `--icon-size-lg`
-- Desktop icon-only controls MUST NOT be visually smaller than `--control-size-sm`. Touch/coarse-pointer contexts MUST use `--control-size-lg`.
+- NO importes la librería entera con `import * as Icons`.
+- El tamaño de los iconos DEBE ser coherente con los tokens globales de `src/app/styles/global.css`.
+- Para iconos renderizados dentro de `Button` o `IconButton` de `shared/ui`, deja que el CSS del componente controle el tamaño final. NO ajustes cada icono con tamaños puntuales salvo excepción visual clara.
+- Para iconos sueltos fuera de controles compartidos, usa uno de los niveles de token:
+  - indicador pequeño → `--icon-size-sm`
+  - icono de acción estándar → `--icon-size-md`
+  - icono destacado → `--icon-size-lg`
+- Los controles de solo icono en escritorio NO DEBEN ser menores que `--control-size-sm`. En contextos táctiles (`coarse-pointer`) DEBEN usar `--control-size-lg`.
 
-## ID Generation
+## Generación de IDs
 
-- **nanoid** is the ONLY ID generator. Used for all domain entities (boards, columns, tasks).
-- Import: `import { nanoid } from 'nanoid'`
-- Call `nanoid()` at creation time for each entity.
+- **nanoid** es el ÚNICO generador de IDs para todas las entidades de dominio (tableros, columnas, tareas).
+- Importación: `import { nanoid } from 'nanoid'`
+- Llama a `nanoid()` en el momento de creación de cada entidad.
 
-## Modals / Dialogs
+## Modales y diálogos
 
-- Use the native **HTML `<dialog>` element** (Baseline Widely available). Do NOT install a modal library.
-- A thin wrapper component lives in `shared/ui/Dialog/Dialog.tsx` with imperative open/close via `ref`.
-- Use `showModal()` for modal behavior, `close()` for dismissal.
-- The `Dialog` component accepts an optional `closeLabel` prop (defaults to `'Close dialog'`) for the close button's aria-label.
+- Usa el elemento nativo **HTML `<dialog>`** (Baseline Widely available). NO instales una librería de modales.
+- Un componente contenedor ligero vive en `src/shared/ui/Dialog/Dialog.tsx` con apertura y cierre imperativos mediante `ref`.
+- Usa `showModal()` para comportamiento modal y `close()` para cerrar.
+- El componente `Dialog` acepta una prop opcional `closeLabel` (por defecto `'Close dialog'`) para el `aria-label` del botón de cierre.
 
 ## Tooltips
 
-- Generic tooltip component at `shared/ui/Tooltip/Tooltip.tsx`.
-- Accepts `text` (string) and `children` (ReactNode). Wraps any element to show a tooltip on hover/focus.
-- Uses `position: fixed` with coordinates calculated via `getBoundingClientRect()` at show time, so it floats above any `overflow: hidden/auto` container (columns, modals).
-- Accessibility: connected via `aria-describedby` on the trigger element, `role="tooltip"` on the tooltip.
-- Applied to all icon-only buttons in `ColumnHeader` and `TaskCard` (edit, delete, save title, cancel edit).
+- Componente genérico de tooltip en `src/shared/ui/Tooltip/Tooltip.tsx`.
+- Acepta `text` (`string`) y `children` (`ReactNode`). Envuelve cualquier elemento para mostrar un tooltip al pasar el ratón o recibir foco.
+- Usa `position: fixed` con coordenadas calculadas mediante `getBoundingClientRect()` al mostrarse, de modo que flota por encima de cualquier contenedor con `overflow: hidden/auto` (columnas, modales).
+- Accesibilidad: conectado mediante `aria-describedby` en el elemento disparador y `role="tooltip"` en el tooltip.
+- Aplicado a todos los botones de solo icono en `ColumnHeader` y `TaskCard` (editar, eliminar, guardar título, cancelar edición).
 
 ## Testing
 
 - **Vitest** + **@testing-library/react** + **jsdom** + **@testing-library/jest-dom**.
-- Tests live next to what they test (see `docs/ARCHITECTURE.md`, Slices and segments).
-- Shared test infrastructure lives in `src/test/` (fixtures, helpers, and the setup `src/test/setup/vitestSetup.ts` with the jsdom stubs and the cleanup after each test). It is the one folder of `src` outside the layers, and production code MUST NOT import from it: the lint rejects it (see `docs/ARCHITECTURE.md`).
-- One Vitest configuration, in `vite.config.ts`, with two projects: `app` runs the tests of `src` in jsdom with the setup, and `tooling` runs the tests of the configuration at the root (`eslint.config.test.ts`) and of the build tooling (`tooling/`) in Node.
-- Every test runs and asserts: the rule and what enforces it are in `docs/ARCHITECTURE.md` (Slices and segments).
-- Run: `pnpm test` (Vitest), `pnpm test:coverage` (with thresholds).
-- Coverage: 70% branches/lines/functions/statements; the measured scope and the thresholds live in `vite.config.ts` (`coverage`), checked by `pnpm test:coverage`.
-- AAA pattern mandatory: Arrange → blank line → Act → blank line → Assert.
-- Test naming: `does_expected_behavior_when_condition` (snake_case, behaviour-focused).
-- Mock only external boundaries (`@dnd-kit/*`, `HTMLDialogElement.showModal`). Never mock domain store slices or owned types.
-- Reset Zustand store via `resetPersistedKanbanStore()` from `@/test/helpers/storeTestUtils` before each integration test.
-- Deterministic fixtures in `@/test/fixtures/kanbanFixtures`.
+- Los tests viven al lado de lo que prueban (ver `docs/ARCHITECTURE.md`, «Slices y segmentos»).
+- La infraestructura compartida de tests vive en `src/test/` (fixtures, helpers y el setup `src/test/setup/vitestSetup.ts` con los stubs de jsdom y la limpieza tras cada test). Es la única carpeta de `src` fuera de las capas, y el código de producción NO DEBE importarla: el lint lo rechaza (ver `docs/ARCHITECTURE.md`).
+- Una sola configuración de Vitest, en `vite.config.ts`, con dos proyectos: `app` corre los tests de `src` en jsdom con el setup, y `tooling` corre los tests de la configuración en la raíz (`eslint.config.test.ts`) y de las herramientas de build (`tooling/`) en Node.
+- Todo test corre y comprueba algo: la regla y qué la hace cumplir están en `docs/ARCHITECTURE.md` («Slices y segmentos»).
+- Ejecución: `pnpm test` (Vitest), `pnpm test:coverage` (con umbrales).
+- Cobertura: 70 % en ramas, líneas, funciones y sentencias; el alcance medido y los umbrales viven en `vite.config.ts` (`coverage`), comprobados por `pnpm test:coverage`.
+- Patrón AAA obligatorio: Arrange → línea en blanco → Act → línea en blanco → Assert.
+- Nombres de test: `does_expected_behavior_when_condition` (`snake_case`, centrados en el comportamiento).
+- Haz mock solo de fronteras externas (`@dnd-kit/*`, `HTMLDialogElement.showModal`). Nunca hagas mock de los slices del store de dominio ni de tipos propios.
+- Reinicia el store de Zustand con `resetPersistedKanbanStore()` de `@/test/helpers/storeTestUtils` antes de cada test de integración.
+- Fixtures deterministas en `@/test/fixtures/kanbanFixtures`.
 
-## Routing
+## Rutas
 
-- **react-router-dom** (v7) is the ONLY routing library. Do NOT install Next.js router, TanStack Router, or any alternative.
-- All route definitions live in `app/router/ui/AppRouter.tsx` using `createBrowserRouter` and `RouterProvider`.
-- The public API is exported from `app/router/index.ts` as `AppRouter`.
-- Pages MUST be lazy-loaded via `React.lazy()` at the route level for code splitting.
-- Route components are wrapped in `<Suspense>` — the fallback is currently `null` (add a shared `<LoadingFallback />` from `shared/ui/` when non-trivial).
-- Shared route chrome (`Header`, future persistent navigation, and other app-shell UI) MUST live in an `app/router` layout route with `<Outlet />`, never inside individual page components. Pages render only route-specific content.
-- Error boundaries are handled per-route in the future via `errorElement` on route definitions. For now, the app-level `<ErrorBoundary>` in `app/providers/` catches all errors.
-- Routing is board-scoped. Final routes are:
-  - root path → redirects to `/board/:activeBoardId`
-  - `/board/:boardId` → board view
-  - `/calendar` → redirects to `/calendar/:activeBoardId`
-  - `/calendar/:boardId` → calendar view
+- **react-router-dom** (v7) es la ÚNICA librería de enrutado. NO instales el router de Next.js, TanStack Router ni ninguna alternativa.
+- Todas las definiciones de rutas viven en `src/app/router/ui/AppRouter.tsx` usando `createBrowserRouter` y `RouterProvider`.
+- La API pública se exporta desde `src/app/router/index.ts` como `AppRouter`.
+- Las páginas DEBEN cargarse de forma diferida con `React.lazy()` en el nivel de ruta para dividir el bundle.
+- Los componentes de ruta se envuelven en `<Suspense>`; el fallback actual es `null` (añade un `<LoadingFallback />` compartido de `src/shared/ui/` cuando sea no trivial).
+- El marco compartido de las rutas (`Header`, futura navegación persistente y demás UI del shell) DEBE vivir en una ruta de layout de `src/app/router` con `<Outlet />`, nunca dentro de páginas individuales. Las páginas solo renderizan el contenido específico de su ruta.
+- Los límites de error están manejados actualmente por el `<ErrorBoundary>` de nivel de aplicación en `src/app/providers/`.
+- Las rutas tienen alcance de tablero:
+  - ruta raíz → redirige a `/board/:activeBoardId`
+  - `/board/:boardId` → vista de tablero
+  - `/calendar` → redirige a `/calendar/:activeBoardId`
+  - `/calendar/:boardId` → vista de calendario
   - `*` → `NotFoundPage`
-- URL is the source of truth during navigation. Synchronize route params and store state in `app/router/model/useSyncBoardRoute.ts`, not inside `pages/` or `entities/`.
-- Header navigation and board switching MUST preserve the current view while swapping only `:boardId`.
+- La URL es la fuente de verdad durante la navegación. Sincroniza los parámetros de ruta y el estado del store en `src/app/router/model/useSyncBoardRoute.ts`, no dentro de `pages/` ni `entities/`.
+- La navegación de la cabecera y el cambio de tablero DEBEN conservar la vista actual (`board` o `calendar`) cambiando únicamente `:boardId`.
 
-## Social Preview & Agent-Readable Files
+## Vista previa social y ficheros legibles por agentes
 
-- Social crawlers, search engines and AI agents read `index.html` without running JavaScript, so what they must see is written by the build: `tooling/agent-files/vitePlugin.ts`, registered in `vite.config.ts`. `usePageMeta` only updates the title and description for people browsing the app.
-- **One source:** `tooling/agent-files/site.ts` holds the site address (`SITE_URL`, `absoluteUrl`) and the name and description of the whole site. The app never needs its own address, so it lives with its only consumer, the build tooling, not in `src`; a change of domain changes `SITE_URL` and nothing else.
-- **Social preview:** `index.html` declares the Open Graph and Twitter tags with `og:url` pointing to the site root and root-relative image paths. The build writes the title, the description and the absolute addresses from `site.ts`, and refuses an image path that is not root-relative or a tag it writes that is missing or repeated; the values in `index.html` only serve the dev server. Twitter/X falls back to `og:title` and `og:description`, so `index.html` does not repeat them.
-- **Cover:** `public/og-cover.png`, a 1200×630 PNG whose type, size and alt text `index.html` declares. It shows the app name, tagline and stack over a board drawn with the dark theme tokens, rendered from an HTML page in headless Edge; name and tagline sit inside the central 630×630 square for previews that crop it square. Platforms cache previews by URL, so a changed image gets a new file name; after the deploy, refresh the preview with LinkedIn Post Inspector.
-- **Agent files:** the build emits llms.txt (a summary and links, in the llmstxt.org format), robots.txt (allows everything and names the sitemap) and sitemap.xml (only the root: the board and calendar addresses name the boards each visitor keeps in their own browser), and the dev server serves the same files. Vercel serves the built files before the SPA rewrite of `vercel.json`. None of them is written by hand in `public/`.
-- The tests next to each module of `tooling/agent-files/` check the generators, the shell against the real `index.html` and the cover's real type and size, and build and serve the app with the real `vite.config.ts`.
+- Los crawlers sociales, buscadores y agentes de IA leen `index.html` sin ejecutar JavaScript, así que lo que deben ver lo escribe el build: `tooling/agent-files/vitePlugin.ts`, registrado en `vite.config.ts`. `usePageMeta` solo actualiza el título y la descripción para las personas que navegan por la app.
+- **Una sola fuente:** `tooling/agent-files/site.ts` guarda la dirección del sitio (`SITE_URL`, `absoluteUrl`) y el nombre y la descripción del sitio. La app nunca necesita su propia dirección, así que vive con su único consumidor, las herramientas de build, no en `src`; cambiar de dominio cambia `SITE_URL` y nada más.
+- **Vista previa social:** `index.html` declara las etiquetas Open Graph y Twitter con `og:url` apuntando a la raíz del sitio y rutas de imagen relativas a la raíz. El build escribe el título, la descripción y las direcciones absolutas desde `tooling/agent-files/site.ts`, y rechaza una ruta de imagen que no sea relativa a la raíz o una etiqueta ausente o repetida; los valores de `index.html` solo sirven al servidor de desarrollo. Twitter/X usa como respaldo `og:title` y `og:description`, así que `index.html` no los repite.
+- **Portada:** `public/og-cover.png`, un PNG de 1200×630 cuyo tipo, tamaño y texto alternativo declara `index.html`. Muestra el nombre de la app, el lema y el stack sobre un tablero dibujado con los tokens del tema oscuro, renderizado desde una página HTML en Edge headless; el nombre y el lema quedan dentro del cuadrado central de 630×630 para vistas previas que recortan en cuadrado. Como las plataformas cachean las vistas previas por URL, cambiar la imagen exige un nombre de fichero nuevo; tras desplegar, refresca la vista previa con LinkedIn Post Inspector.
+- **Ficheros para agentes:** el build emite llms.txt (resumen y enlaces en formato llmstxt.org), robots.txt (permite todo y nombra el sitemap) y sitemap.xml (solo la raíz, porque las direcciones de tablero y calendario nombran los tableros que cada visitante guarda en su propio navegador), y el servidor de desarrollo sirve los mismos ficheros. Vercel sirve los ficheros construidos antes de la reescritura SPA de `vercel.json`. Ninguno se escribe a mano en `public/`.
+- Los tests junto a cada módulo de `tooling/agent-files/` comprueban los generadores, el shell contra el `index.html` real y el tipo y tamaño reales de la portada, y construyen y sirven la app con el `vite.config.ts` real.
 
-## Store Architecture
+## Arquitectura del store
 
-- Single Zustand store at `shared/api/store.ts` with `persist` middleware.
-- Store state shape:
+- Único store de Zustand en `src/shared/api/store.ts` con middleware `persist`.
+- Forma del estado del store:
   ```ts
   interface KanbanState {
     boards: Board[]
@@ -150,29 +150,29 @@ description: Project conventions of kanban-board-app (state and store architectu
     reorderTask(columnId: ColumnId, fromIndex: number, toIndex: number): void
   }
   ```
-- The persisted domain state MUST always contain at least one board.
-- First-visit sample board: `createInitialKanbanState()` in `shared/api/slices/helpers.ts` is the pre-hydration state, so it is only visible when nothing is persisted under `kanban-board-storage`. It seeds the localized default board with sample tasks (`seed.tasks.*`) whose due dates are relative to the current visit. Persisted data MUST always replace it on hydration — never merge sample tasks into stored data and never re-add them. Boards created through `addBoard` start empty (`createBoardData`).
-- Sample board lifecycle (`createSampleBoardLifecycle()` in `shared/api/sampleBoard.ts`, wired once in `shared/api/store.ts`): while the sample is untouched it is never written to storage, and a locale change re-localizes it in place with `localizeSampleBoard()` (same ids and due dates, so routes and React keys stay valid). "Untouched" is decided by reference identity of `boards`, `activeBoardId`, `columnsByBoard` and `tasksByBoard`, so every store action MUST keep replacing the collections it changes instead of mutating them. The first change is persisted as usual and, from then on, locale changes never touch the board. Never relocalize or rewrite persisted data.
-- Slice functions: `createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice` in separate files under `shared/api/slices/`.
-- Persisted schema migration from the legacy flat state is handled via `version` + `migrate` in `shared/api/store.ts`. Keep the storage key as `kanban-board-storage`.
+- El estado de dominio persistido DEBE contener siempre al menos un tablero.
+- Tablero de ejemplo en la primera visita: `createInitialKanbanState()` en `src/shared/api/slices/helpers.ts` es el estado previo a la hidratación, por lo que solo es visible cuando no hay nada persistido bajo `kanban-board-storage`. Siembra el tablero por defecto localizado con tareas de ejemplo (`seed.tasks.*`) cuyas fechas de vencimiento son relativas a la visita actual. Los datos persistidos DEBEN reemplazarlo siempre al hidratar: nunca mezcles tareas de ejemplo con datos guardados ni las vuelvas a añadir. Los tableros creados con `addBoard` nacen vacíos (`createBoardData`).
+- Ciclo de vida del tablero de ejemplo (`createSampleBoardLifecycle()` en `src/shared/api/sampleBoard.ts`, conectado una vez en `src/shared/api/store.ts`): mientras el ejemplo no se haya tocado, nunca se escribe en almacenamiento, y un cambio de idioma lo relocaliza in situ con `localizeSampleBoard()` (mismos IDs y fechas de vencimiento, para que las rutas y las claves de React sigan siendo válidas). «Intacto» se decide por identidad de referencia de `boards`, `activeBoardId`, `columnsByBoard` y `tasksByBoard`, así que toda acción del store DEBE seguir reemplazando las colecciones que cambia en vez de mutarlas. El primer cambio se persiste con normalidad y, a partir de entonces, los cambios de idioma nunca tocan el tablero. Nunca relocalices ni reescribas datos persistidos.
+- Funciones de slice: `createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice` en ficheros separados bajo `src/shared/api/slices/`.
+- La migración del esquema persistido desde el estado plano heredado se gestiona mediante `version` + `migrate` en `src/shared/api/store.ts`. Conserva la clave de almacenamiento `kanban-board-storage`.
 
-## Data Portability
+## Portabilidad de datos
 
-- Public backup/import contracts live in `features/data-portability/`. Do NOT couple them to Zustand `persist` internals.
-- The portable format is a versioned snapshot contract (`schemaVersion`, `exportedAt`, `boards`, `activeBoardId`, `columnsByBoard`, `tasksByBoard`).
-- Never export or import the raw `localStorage` blob from `kanban-board-storage` as the public backup format.
-- Snapshot validation and normalization must happen inside `features/data-portability/model/` before any restore flow touches the domain store.
-- Domain restore enters ONLY through `shared/api/restore.ts`. Do NOT restore data by mutating `localStorage` directly or by patching state from UI components.
-- Restore must be atomic: validate and normalize first, write to the store once, and leave the current state untouched on failure.
-- Export UI lives in the Header settings dialog, never inside `board-management`.
-- Export always offers file download first. `navigator.share` is progressive enhancement only and must never replace the download path.
-- Import UI also lives in the Header settings dialog and follows a two-step flow: select file → review summary → confirm destructive replace.
-- After a successful import, navigate to the restored `activeBoardId` while preserving the current view (`board` or `calendar`).
-- Data portability is strictly local-file based. Do NOT introduce URL payload sharing, remote sync, or backend-backed transfer flows unless the user explicitly changes this project decision in a later session.
+- Los contratos públicos de exportación e importación viven en `src/features/data-portability/`. NO los acoples a los detalles internos de `persist` de Zustand.
+- El formato portable es un contrato de instantánea versionado (`schemaVersion`, `exportedAt`, `boards`, `activeBoardId`, `columnsByBoard`, `tasksByBoard`).
+- Nunca exportes ni importes el blob crudo de `localStorage` de `kanban-board-storage` como formato público de copia de seguridad.
+- La validación y normalización de la instantánea deben ocurrir dentro de `src/features/data-portability/model/` antes de que cualquier flujo de restauración toque el store de dominio.
+- La restauración del dominio entra ÚNICAMENTE por `src/shared/api/restore.ts`. NO restaures datos mutando `localStorage` directamente ni parcheando el estado desde componentes de UI.
+- La restauración debe ser atómica: valida y normaliza primero, escribe en el store una sola vez y deja el estado actual intacto si falla.
+- La UI de exportación vive en el diálogo de ajustes del Header, nunca dentro de `src/features/board-management`.
+- La exportación ofrece siempre descarga de fichero primero. `navigator.share` es solo mejora progresiva y nunca debe sustituir la descarga.
+- La UI de importación también vive en el diálogo de ajustes del Header y sigue un flujo en dos pasos: seleccionar fichero → revisar resumen → confirmar reemplazo destructivo.
+- Tras una importación correcta, navega al `activeBoardId` restaurado conservando la vista actual (`board` o `calendar`).
+- La portabilidad de datos se basa estrictamente en ficheros locales. NO introduzcas compartición por URL, sincronización remota ni transferencias con backend salvo que el dueño cambie esta decisión en una sesión posterior.
 
-## Domain Types
+## Tipos de dominio
 
-All domain types live alongside the store in `shared/api/slices/types.ts` and are re-exported via `shared/api/index.ts`. Consumers import from `@/shared/api`:
+Todos los tipos de dominio viven junto al store en `src/shared/api/slices/types.ts` y se reexportan por `src/shared/api/index.ts`. Los consumidores importan desde `@/shared/api`:
 ```ts
 type BoardId = string
 type ColumnId = string
@@ -183,42 +183,42 @@ interface Column { id: ColumnId; title: string }
 interface Task { id: TaskId; title: string; description: string }
 ```
 
-- Board-scoped selector helpers and routing helpers live in `entities/board/model/` and are re-exported via `entities/board/index.ts`.
+- Los selectores y helpers de rutas con alcance de tablero viven en `src/entities/board/model/` y se reexportan por `src/entities/board/index.ts`.
 
-## Data Flow
+## Flujo de datos
 
-The data flow (how components reach the domain store, its persistence in `localStorage`, no requests) is ruled by `docs/ARCHITECTURE.md`, Data and I/O.
+El flujo de datos (cómo llegan los componentes al store de dominio, su persistencia en `localStorage`, sin peticiones de red) lo manda `docs/ARCHITECTURE.md` («Datos y E/S»).
 
-## Error Handling
+## Manejo de errores
 
-- Zustand actions validate state before mutation (fail-fast).
-- No silent catch blocks — every error path must have explicit handling.
-- User-facing errors surface via a shared `Toast` (`useToastStore` from `@/shared/toast`, rendered by `Toast` from `@/shared/ui` in `app/App.tsx`) or inline validation.
-- No `console.log` in production code — use `console.warn` / `console.error` only for development.
+- Las acciones de Zustand validan el estado antes de mutarlo (fail-fast).
+- Sin bloques `catch` silenciosos: todo camino de error debe tener manejo explícito.
+- Los errores visibles para el usuario se muestran mediante el `Toast` compartido (`useToastStore` de `@/shared/toast`, renderizado por `Toast` de `@/shared/ui` en `src/app/App.tsx`) o validación en línea.
+- Sin `console.log` en código de producción; usa `console.warn` / `console.error` solo para desarrollo.
 
-## Development Workflow
+## Flujo de desarrollo
 
-The commands, gates (`gates.txt`, `python verify.py`) and hooks (`.githooks/`) are in `AGENTS.md` and `README.md`.
+Los comandos, puertas (`gates.txt`, `python verify.py`) y hooks (`.githooks/`) están en `AGENTS.md` y `README.md`.
 
-## Internationalization (i18n)
+## Internacionalización (i18n)
 
-- **i18n slice**: `shared/i18n/` — cross-cutting infrastructure, zero business logic.
-- **Translation files**: JSON per locale in `shared/i18n/config/`. Flat keys are generated by a `flattenTranslations` utility at load time.
-- **Locale discovery**: `import.meta.glob` auto-discovers all `*.json` files in the config directory. Adding a new locale = adding a new JSON file.
-- **State**: Zustand store at `shared/i18n/model/store.ts` with `persist` middleware (storage key: `i18n-locale`). Only `locale` is persisted; translations are re-derived on rehydration.
-- **Reactivity**: Components use `useTranslation()` hook (not direct store selector) to ensure reactive re-renders when locale changes. `useTranslation()` subscribes to `state.locale` (a string that changes) and returns a fresh `t` closure each render.
-- **API**: `useTranslation()` returns `{ t, locale, setLocale, availableLocales }`.
-  - `t(key, params?)` — resolves and interpolates a translation key.
-  - `locale` — current locale string.
-  - `setLocale(locale)` — switches locale, persists to localStorage.
-  - `availableLocales` — list of available locale codes derived from JSON files.
-- **Interpolation syntax**: `{{param}}` — e.g., `t('task.edit', { title })`.
-- **Type safety**: Keys are strings (dot notation from JSON nesting). No auto-generated type — consumer knows keys from the English JSON.
-- **Browser detection**: On first visit (no persisted locale), `navigator.language` is checked and matched against available locales.
-- **Document language**: `shared/i18n/model/store.ts` keeps `document.documentElement.lang` equal to the active locale at startup and on every locale change (English for a locale without messages), so screen readers read the UI and the drag-and-drop announcements with the right pronunciation rules. `lang="en"` in `index.html` is only the default before the app starts; never set `lang` anywhere else.
-- Seed data: store helpers call `useI18nStore.getState().t()` lazily to resolve localized seed column titles, the default board title and the first-visit sample tasks from the current locale. The untouched sample board also follows later locale changes (see Store Architecture); columns and boards the visitor already changed or created keep the language they were created in.
-- **Dialog close label**: `Dialog` accepts optional `closeLabel` prop (defaults to `'Close dialog'`). Consumers pass `t('dialog.close')`.
-- **Import pattern**:
+- **Segmento i18n**: `src/shared/i18n/` — infraestructura transversal, cero lógica de negocio.
+- **Ficheros de traducción**: un JSON por idioma en `src/shared/i18n/config/`. Las claves planas se generan con la utilidad `flattenTranslations` al cargar.
+- **Descubrimiento de idiomas**: `import.meta.glob` descubre automáticamente todos los ficheros `*.json` del directorio de configuración. Añadir un idioma nuevo = añadir un fichero JSON nuevo.
+- **Estado**: store de Zustand en `src/shared/i18n/model/store.ts` con middleware `persist` (clave: `i18n-locale`). Solo se persiste `locale`; las traducciones se vuelven a derivar al rehidratar.
+- **Reactividad**: los componentes usan el hook `useTranslation()` (no un selector directo del store) para garantizar re-renderizados reactivos al cambiar de idioma. `useTranslation()` se suscribe a `state.locale` y devuelve una clausura `t` fresca en cada render.
+- **API**: `useTranslation()` devuelve `{ t, locale, setLocale, availableLocales }`:
+  - `t(key, params?)` — resuelve e interpola una clave de traducción.
+  - `locale` — código del idioma actual.
+  - `setLocale(locale)` — cambia el idioma y lo persiste en `localStorage`.
+  - `availableLocales` — lista de códigos de idioma disponibles derivados de los ficheros JSON.
+- **Sintaxis de interpolación**: `{{param}}` — p. ej., `t('task.edit', { title })`.
+- **Tipado**: las claves son strings (notación con puntos a partir del anidamiento JSON). Sin tipo autogenerado: el consumidor conoce las claves a partir del JSON en inglés.
+- **Detección del navegador**: en la primera visita (sin idioma persistido), se comprueba `navigator.language` contra los idiomas disponibles.
+- **Idioma del documento**: `src/shared/i18n/model/store.ts` mantiene `document.documentElement.lang` igual al idioma activo al arrancar y en cada cambio de idioma (inglés si un idioma no tuviera mensajes), para que los lectores de pantalla lean la interfaz y los anuncios de drag-and-drop con las reglas de pronunciación adecuadas. `lang="en"` en `index.html` es solo el valor por defecto antes de que arranque la app; no asignes `lang` en ningún otro sitio.
+- **Datos semilla**: los helpers del store llaman a `useI18nStore.getState().t()` de forma perezosa para resolver los títulos iniciales de columnas, el título del tablero por defecto y las tareas de ejemplo de la primera visita en el idioma actual. El tablero de ejemplo intacto también sigue los cambios de idioma posteriores (ver «Arquitectura del store»); las columnas y tableros que el visitante ya haya cambiado o creado conservan el idioma en que se crearon.
+- **Etiqueta de cierre de diálogo**: `Dialog` acepta la prop opcional `closeLabel` (por defecto `'Close dialog'`). Los consumidores pasan `t('dialog.close')`.
+- **Patrón de importación**:
   ```ts
   import { useTranslation } from '@/shared/i18n'
 
@@ -227,19 +227,19 @@ The commands, gates (`gates.txt`, `python verify.py`) and hooks (`.githooks/`) a
     return <h1>{t('app.title')}</h1>
   }
   ```
-- **Adding a locale**: Copy `src/shared/i18n/config/en.json` to a new locale file in `src/shared/i18n/config/` (like `src/shared/i18n/config/es.json` or `src/shared/i18n/config/de.json`) and translate all values. No code changes needed — `import.meta.glob` picks it up automatically.
-- **Locale parity**: `shared/i18n/config/locales.test.ts` enforces that every locale has exactly the English flattened keys, the same `{{placeholders}}` in each message and no empty messages. Never add a key to one locale only.
-- **Copy style**: Spanish copy is Spain Spanish in sentence case (only the first word and proper nouns capitalised): `Añadir`, `Ajustes`, `copia de seguridad`; never Latin American variants such as `Agregar`. English copy is also sentence case (`New board`, `Add card`, `To do`) with US spelling (`canceled`, `color`, `prioritize`); only the product name `Kanban Board` keeps its capitals. `Kanban` is always capitalised as the name of the method (`Kanban board`, `tablero Kanban`, `Kanban-Board`). German copy uses the informal `du`. Keep the meaning of EN, ES and DE aligned.
-- **Sample task descriptions** (`seed.tasks.*.description`) MUST fit the card's two-line clamp in the narrowest desktop column (about 230px wide at a ~1250px viewport, roughly 55 characters in Inter) in every locale. Measure them in the browser after any change.
+- **Añadir un idioma**: copia `src/shared/i18n/config/en.json` a un fichero nuevo en `src/shared/i18n/config/` (como `src/shared/i18n/config/es.json` o `src/shared/i18n/config/de.json`) y traduce todos los valores. No hace falta tocar código: `import.meta.glob` lo detecta automáticamente.
+- **Paridad de idiomas**: `src/shared/i18n/config/locales.test.ts` exige que cada idioma tenga exactamente las claves planas del inglés, los mismos `{{placeholders}}` en cada mensaje y ningún mensaje vacío. Nunca añadas una clave a un solo idioma.
+- **Estilo de los textos**: el español es español de España con mayúscula solo en la primera palabra y nombres propios (`Añadir`, `Ajustes`, `copia de seguridad`; nunca variantes como `Agregar`). El inglés usa también sentence case (`New board`, `Add card`, `To do`) con ortografía estadounidense (`canceled`, `color`, `prioritize`); solo el nombre del producto `Kanban Board` conserva sus mayúsculas. `Kanban` va siempre con mayúscula inicial como nombre del método (`Kanban board`, `tablero Kanban`, `Kanban-Board`). El alemán usa el tratamiento informal `du`. Mantén alineado el significado entre EN, ES y DE.
+- **Descripciones de tareas de ejemplo** (`seed.tasks.*.description`): DEBEN caber en el recorte de dos líneas de la tarjeta en la columna de escritorio más estrecha (unos 230 px de ancho en un viewport de ~1250 px, ~55 caracteres en Inter) en todos los idiomas. Mídelas en el navegador tras cualquier cambio.
 
-### Translation key structure
+### Estructura de claves de traducción
 
-Keys are organised in namespaces that mirror feature/entity boundaries:
+Las claves se organizan en espacios de nombres que reflejan las fronteras de features y entidades:
 
 ```
 app/          → app.title
- board/        → board.add, board.rename, board.delete, board.default_title
- board_view/   → board_view.empty_column
+board/        → board.add, board.rename, board.delete, board.default_title
+board_view/   → board_view.empty_column
 column/       → column.add, column.rename, column.title_placeholder, column.title_aria, ...
 task/         → task.add, task.edit, task.delete, task.title_placeholder, task.title_aria
 task_dialog/  → task_dialog.title, task_dialog.title_label, task_dialog.cancel, task_dialog.save, ...
@@ -248,62 +248,62 @@ seed/         → seed.column_todo, seed.column_in_progress, seed.column_done, s
 dnd/          → dnd.role_description, dnd.instructions, dnd.cancelled, dnd.task|column.picked_up|over_column|dropped
 ```
 
-Guidelines:
-- Namespace per domain (`task`), not per UI location. `cancel` and `save` buttons belong to `task_dialog.*`, not a generic namespace — this prevents collisions when other dialogs are added.
-- Reserve `board.*` for board-management UI and `board_view.*` for board-view-only presentation text.
-- Placeholders and aria-labels live with their entity (`column.title_placeholder`, `task.title_aria`), not mixed with action keys.
-- New features create their own top-level namespace (e.g., `auth.*`, `settings.*`, `confirm_dialog.*`).
+Pautas:
+- Espacio de nombres por dominio (`task`), no por ubicación visual. Los botones `cancel` y `save` pertenecen a `task_dialog.*`, no a un espacio genérico, para evitar colisiones al añadir otros diálogos.
+- Reserva `board.*` para la gestión de tableros y `board_view.*` para textos exclusivos de la vista de tablero.
+- Los placeholders y `aria-label` viven con su entidad (`column.title_placeholder`, `task.title_aria`), sin mezclarlos con claves de acción.
+- Las features nuevas crean su propio espacio de nombres de primer nivel (p. ej., `auth.*`, `settings.*`, `confirm_dialog.*`).
 
-### Language switcher
+### Selector de idioma
 
-- **Slice**: `features/language-switcher/` — renders a `<select>` with available locales.
-- Reads `t`, `locale`, `setLocale` and `availableLocales` from `useTranslation()`; calls `setLocale` on change and reflects the current `locale`.
-- The select MUST carry `aria-label={t('header.language')}`: the visible "Language" text next to it is a plain `<span>`, so without it screen readers announce only "EN, combo box".
-- Display labels are defined in a `LABELS` constant within the component (not translated — locale codes like "EN", "ES" are language-independent abbreviations).
-- Rendered in the Header settings dialog (`widgets/header/ui/Header.tsx`), next to `ThemeSwitcher` and the data portability sections.
+- **Slice**: `src/features/language-switcher/` — renderiza un `<select>` con los idiomas disponibles.
+- Lee `t`, `locale`, `setLocale` y `availableLocales` de `useTranslation()`; llama a `setLocale` al cambiar y refleja el `locale` actual.
+- El `<select>` DEBE llevar `aria-label={t('header.language')}`: el texto visible junto a él es un `<span>` plano, así que sin `aria-label` los lectores de pantalla anunciarían solo `"EN, combo box"`.
+- Las etiquetas visibles se definen en una constante `LABELS` dentro del componente (no se traducen: códigos como `"EN"`, `"ES"` son abreviaturas independientes del idioma).
+- Se renderiza en el diálogo de ajustes del Header (`src/widgets/header/ui/Header.tsx`), junto a `ThemeSwitcher` y las secciones de portabilidad de datos.
 
-## Theme System (Dark Mode)
+## Sistema de temas (modo oscuro)
 
-- **Infrastructure slice**: `shared/theme/` — store + types, zero UI. Follows the same pattern as `shared/i18n/`.
-- **State**: Zustand store at `shared/theme/model/store.ts` with `persist` middleware (storage key: `theme-preference`). Persists only `theme` value (`'light' | 'dark'`).
-- **Initialization**: On rehydration, the store applies `data-theme` attribute on `document.documentElement`. If no persisted value, it falls back to `prefers-color-scheme` media query without storing it, so the theme keeps following the system until the visitor toggles it.
-- zustand calls `merge` with `undefined` when nothing is stored (a first visit), and `persist` silently swallows anything `merge` throws. The `merge` of both infrastructure stores (theme and i18n) MUST handle a missing persisted state; `shared/theme/model/store.test.ts` proves a first visit follows a dark and a light system preference.
-- **UI feature**: `features/theme-switcher/` — renders a sun/moon toggle button (lucide-react `Sun`/`Moon` icons). Imports `useThemeStore` from `@/shared/theme`.
-- **Import pattern**:
+- **Segmento de infraestructura**: `src/shared/theme/` — store + tipos, cero UI. Sigue el mismo patrón que `src/shared/i18n/`.
+- **Estado**: store de Zustand en `src/shared/theme/model/store.ts` con middleware `persist` (clave: `theme-preference`). Persiste únicamente el valor `theme` (`'light' | 'dark'`).
+- **Inicialización**: al rehidratar, el store aplica el atributo `data-theme` en `document.documentElement`. Si no hay valor persistido, recurre a la media query `prefers-color-scheme` sin guardarlo, de modo que el tema sigue al sistema hasta que el visitante lo cambie manualmente.
+- Zustand llama a `merge` con `undefined` cuando no hay nada guardado (primera visita), y `persist` traga en silencio cualquier excepción que lance `merge`. El `merge` de ambos stores de infraestructura (tema e i18n) DEBE manejar un estado persistido ausente; `src/shared/theme/model/store.test.ts` prueba que una primera visita sigue la preferencia oscura y clara del sistema.
+- **Feature de UI**: `src/features/theme-switcher/` — renderiza el botón de alternancia sol/luna (iconos `Sun`/`Moon` de lucide-react). Importa `useThemeStore` de `@/shared/theme`.
+- **Patrón de importación**:
   ```ts
   import { useThemeStore } from '@/shared/theme'
   import { ThemeSwitcher } from '@/features/theme-switcher'
   ```
-- **Public API** (`shared/theme/index.ts`): exports `useThemeStore`, `Theme` type, `ThemeStore` type.
-- **Public API** (`features/theme-switcher/index.ts`): exports `ThemeSwitcher` only. The store is NOT re-exported from features — consumers import it directly from `@/shared/theme`.
+- **API pública** (`src/shared/theme/index.ts`): exporta `useThemeStore`, el tipo `Theme` y el tipo `ThemeStore`.
+- **API pública** (`src/features/theme-switcher/index.ts`): exporta únicamente `ThemeSwitcher`. El store NO se reexporta desde `features`: los consumidores lo importan directamente de `@/shared/theme`.
 
-## Design Tokens & Dark Mode
+## Tokens de diseño y modo oscuro
 
-- **Token location**: All design tokens live in `app/styles/global.css` inside `:root` for light mode and `[data-theme='dark']` for dark mode.
-- **Dark mode approach**: Rely EXCLUSIVELY on CSS custom properties. NEVER use class selectors in global.css to target dark-mode overrides on CSS Module components — CSS Modules hash class names, so `[data-theme='dark'] .card` would NOT match `TaskCard_card__abc123`.
-- **Element selectors are safe**: `[data-theme='dark'] header`, `[data-theme='dark'] dialog::backdrop`, etc. target HTML elements (not classes), so they work across CSS Modules.
-- **Card-specific tokens**: Since card backgrounds are translucent glass effects, they need their own tokens:
-  - `--color-card-bg`: semi-transparent background (light: `rgba(255,255,255,0.7)`, dark: `rgba(39,39,42,0.6)`)
-  - `--color-card-border`: semi-transparent border (light: `rgba(255,255,255,0.5)`, dark: `rgba(255,255,255,0.06)`)
-  - `--color-card-shadow`: card shadow color (light: indigo tint, dark: black tint)
-  - `--color-card-shadow-hover`: card hover shadow color
-- **Column accent colors**: Defined as a constant array `COLUMN_ACCENT_COLORS` in `widgets/board/ui/Board.tsx`. Passed to `SortableColumn` → `ColumnShell` as `accentColor` prop, applied via inline `style` as `--column-accent` CSS custom property. Same color is passed to `DraggableTaskCard` → `TaskCard` as `--card-accent` for the left border stripe. Colors cycle via `index % COLUMN_ACCENT_COLORS.length`.
-- **Header glassmorphism**: `widgets/header/ui/Header.module.css` uses `background: rgba(255,255,255,0.75)` + `backdrop-filter: blur(16px)`. Dark mode override via element selector `[data-theme='dark'] header { background: rgba(39,39,42,0.75) }` in global.css.
-- **Button primary gradient**: `shared/ui/Button/Button.module.css` uses `background: linear-gradient(135deg, #6366f1, #8b5cf6)` with colored `box-shadow`. Hover darkens the gradient + `translateY(-1px)`.
+- **Ubicación de tokens**: todos los tokens de diseño viven en `src/app/styles/global.css` dentro de `:root` para el modo claro y `[data-theme='dark']` para el modo oscuro.
+- **Enfoque de modo oscuro**: apóyate EXCLUSIVAMENTE en propiedades personalizadas CSS (custom properties). NUNCA uses selectores de clase en `src/app/styles/global.css` para sobreescribir componentes con CSS Modules en modo oscuro: CSS Modules aplica hash a los nombres de clase, por lo que `[data-theme='dark'] .card` NO coincidiría con `TaskCard_card__abc123`.
+- **Los selectores de elemento son seguros**: `[data-theme='dark'] header`, `[data-theme='dark'] dialog::backdrop`, etc. apuntan a elementos HTML (no a clases), por lo que funcionan con CSS Modules.
+- **Tokens específicos de tarjeta**: como los fondos de tarjeta tienen efecto cristal translúcido, usan sus propios tokens:
+  - `--color-card-bg`: fondo semitransparente (claro: `rgba(255,255,255,0.7)`, oscuro: `rgba(39,39,42,0.6)`)
+  - `--color-card-border`: borde semitransparente (claro: `rgba(255,255,255,0.5)`, oscuro: `rgba(255,255,255,0.06)`)
+  - `--color-card-shadow`: color de sombra de tarjeta (claro: tinte índigo, oscuro: tinte negro)
+  - `--color-card-shadow-hover`: color de sombra de tarjeta al pasar el ratón
+- **Colores de acento de columna**: definidos como el array constante `COLUMN_ACCENT_COLORS` en `src/widgets/board/ui/Board.tsx`. Se pasan a `SortableColumn` → `ColumnShell` como prop `accentColor`, aplicados mediante `style` en línea como la custom property `--column-accent`. El mismo color se pasa a `DraggableTaskCard` → `TaskCard` como `--card-accent` para la franja lateral izquierda. Los colores rotan con `index % COLUMN_ACCENT_COLORS.length`.
+- **Glassmorphism del Header**: `src/widgets/header/ui/Header.module.css` usa `background: rgba(255,255,255,0.75)` + `backdrop-filter: blur(16px)`. El modo oscuro se aplica con el selector de elemento `[data-theme='dark'] header { background: rgba(39,39,42,0.75) }` en `src/app/styles/global.css`.
+- **Gradiente primario de Button**: `src/shared/ui/Button/Button.module.css` usa `background: linear-gradient(135deg, #6366f1, #8b5cf6)` con `box-shadow` coloreado. El hover oscurece el gradiente y aplica `translateY(-1px)`.
 
-## CSS & Animation Constraints
+## Restricciones de CSS y animaciones
 
-- **No `transform` in `@keyframes` on sortable elements**: CSS animation declarations (`@keyframes`) sit above normal author declarations (including inline `style`) in the CSS cascade. If a `@keyframes` declares `transform`, it overrides any inline `transform` set by `@dnd-kit` during drag operations, breaking drag-and-drop entirely.
-  - ✅ `@keyframes` with `opacity` only → safe for enter animations on cards and columns.
-  - ✅ `transform` in `.hover` or `.overlayCard` selectors → safe (not inside `@keyframes`, and overlays are separate elements).
-  - ❌ `@keyframes` with `transform: scale(...)` or `transform: translateY(...)` → BREAKS dnd-kit positioning.
-- **Enter animations**: `cardEnter` (TaskCard) and `columnEnter` (ColumnShell) are simple `opacity` fades with `animation-fill-mode: both`. No scale/slide.
-- **Drag overlay rotation**: `BoardDndContext.module.css` adds `rotate(2deg)` to `.overlayCard` via a static `transform` rule (not a keyframe). This is safe because the DragOverlay is a separate element rendered by dnd-kit, not a sortable item.
+- **Sin `transform` en `@keyframes` sobre elementos ordenables**: las declaraciones de animación CSS (`@keyframes`) prevalecen sobre las declaraciones normales del autor (incluido `style` en línea) en la cascada CSS. Si un `@keyframes` declara `transform`, pisa cualquier `transform` en línea aplicado por `@dnd-kit` durante el arrastre y rompe el drag-and-drop.
+  - ✅ `@keyframes` solo con `opacity` → seguro para animaciones de entrada en tarjetas y columnas.
+  - ✅ `transform` en selectores `.hover` o `.overlayCard` → seguro (no está dentro de `@keyframes`, y los overlays son elementos separados).
+  - ❌ `@keyframes` con `transform: scale(...)` o `transform: translateY(...)` → ROMPE el posicionamiento de dnd-kit.
+- **Animaciones de entrada**: `cardEnter` (`TaskCard`) y `columnEnter` (`ColumnShell`) son fundidos simples de `opacity` con `animation-fill-mode: both`, sin escalado ni desplazamiento.
+- **Rotación del overlay de arrastre**: `BoardDndContext.module.css` añade `rotate(2deg)` a `.overlayCard` mediante una regla `transform` estática (no un keyframe). Es seguro porque `DragOverlay` es un elemento separado renderizado por dnd-kit, no un elemento ordenable.
 
-## Anti-Patterns (Zero Tolerance)
+## Antipatrones (tolerancia cero)
 
-- Never install Tailwind CSS or any CSS-in-JS library.
-- Never use `react-beautiful-dnd` or `react-dnd`.
-- Never place domain store logic (Zustand `create` for kanban entities) outside `shared/api/store.ts`. Infrastructure stores (i18n, theme, toast) are exceptions — see State Management.
-- Never use CSS class selectors in `app/styles/global.css` to target dark mode overrides on CSS Module components. Use design tokens (CSS custom properties) instead — see Design Tokens & Dark Mode.
-- Never use `transform` inside `@keyframes` animations on components that participate in drag-and-drop. CSS animation declarations override inline styles in the cascade, which breaks `@dnd-kit` positioning. Use only `opacity` in enter animations — see CSS & Animation Constraints.
+- Nunca instales Tailwind CSS ni ninguna librería CSS-in-JS.
+- Nunca uses `react-beautiful-dnd` ni `react-dnd`.
+- Nunca coloques lógica del store de dominio (`create` de Zustand para entidades Kanban) fuera de `src/shared/api/store.ts`. Los stores de infraestructura (i18n, tema, toast) son las excepciones declaradas en «Gestión de estado».
+- Nunca uses selectores de clase CSS en `src/app/styles/global.css` para aplicar modo oscuro sobre componentes con CSS Modules; usa tokens de diseño (CSS custom properties).
+- Nunca uses `transform` dentro de animaciones `@keyframes` en componentes que participen en drag-and-drop; usa únicamente `opacity` en las animaciones de entrada.
