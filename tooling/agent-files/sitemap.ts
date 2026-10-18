@@ -1,4 +1,4 @@
-import { absoluteUrl } from './site'
+import { absoluteUrl } from './site.ts'
 
 // Only the root: the board and calendar addresses name the boards each visitor keeps in their own browser.
 const PUBLIC_PATHS: readonly string[] = ['/']

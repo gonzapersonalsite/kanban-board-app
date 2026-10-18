@@ -1,4 +1,4 @@
-import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from './site'
+import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from './site.ts'
 
 export const REPOSITORY_URL = 'https://github.com/gonzapersonalsite/kanban-board-app'
 const PORTFOLIO_URL = 'https://mi-portafolio-gonzalo.vercel.app/'

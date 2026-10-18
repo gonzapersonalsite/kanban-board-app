@@ -1,4 +1,4 @@
-import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from './site'
+import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from './site.ts'
 
 type HtmlEdit = (html: string) => string
 

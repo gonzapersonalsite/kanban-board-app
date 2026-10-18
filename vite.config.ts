@@ -1,13 +1,13 @@
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
-import { agentFilesPlugin } from './tooling/agent-files/vitePlugin'
+import { agentFilesPlugin } from './tooling/agent-files/vitePlugin.ts'
 
 export default defineConfig({
   plugins: [react(), agentFilesPlugin()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(import.meta.dirname, './src'),
     },
   },
   test: {

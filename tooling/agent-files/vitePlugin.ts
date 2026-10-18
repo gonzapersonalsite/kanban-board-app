@@ -1,6 +1,6 @@
 import type { Plugin } from 'vite'
-import { buildAgentFiles } from './generate'
-import { buildShell } from './shell'
+import { buildAgentFiles } from './generate.ts'
+import { buildShell } from './shell.ts'
 
 // Crawlers and agents read the HTML without running the app: the build writes the social preview
 // into index.html and emits the agent files; the dev server serves the same files.

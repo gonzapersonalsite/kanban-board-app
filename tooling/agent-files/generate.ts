@@ -1,6 +1,6 @@
-import { buildLlmsTxt } from './llmsTxt'
-import { buildRobotsTxt } from './robotsTxt'
-import { buildSitemap } from './sitemap'
+import { buildLlmsTxt } from './llmsTxt.ts'
+import { buildRobotsTxt } from './robotsTxt.ts'
+import { buildSitemap } from './sitemap.ts'
 
 export interface AgentFile {
   path: string
