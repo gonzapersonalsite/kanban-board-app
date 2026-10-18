@@ -102,11 +102,7 @@ function createTaskToColumnDragOverEvent({
 }
 
 // dnd-kit fires this right after a drag starts, before the pointer or the keyboard moves.
-function createTaskOverItselfEvent(
-  taskId: string,
-  columnId: ColumnId,
-  index: number,
-): DragOverEvent {
+function createTaskOverItselfEvent(taskId: string, columnId: ColumnId, index: number): DragOverEvent {
   return createTaskToTaskDragOverEvent({
     taskId,
     sourceColumnId: columnId,

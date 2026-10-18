@@ -7,7 +7,10 @@
   border-radius: var(--radius-md);
   padding: 12px 14px;
   cursor: grab;
-  transition: opacity 150ms ease, box-shadow 150ms ease, transform 200ms ease;
+  transition:
+    opacity 150ms ease,
+    box-shadow 150ms ease,
+    transform 200ms ease;
   box-shadow: 0 2px 8px var(--color-card-shadow);
   animation: cardEnter 0.3s ease-out both;
 }

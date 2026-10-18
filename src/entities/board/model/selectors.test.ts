@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  BOARD_MAIN_ID,
-  createKanbanFixture,
-} from '@/test/fixtures/kanbanFixtures'
+import { BOARD_MAIN_ID, createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
 import {
   selectActiveBoard,
   selectActiveBoardColumns,
@@ -20,12 +17,8 @@ describe('board selectors', () => {
   it('returns_columns_and_tasks_for_the_active_board', () => {
     const state = createKanbanFixture()
 
-    expect(selectActiveBoardColumns(state)).toEqual(
-      state.columnsByBoard[BOARD_MAIN_ID],
-    )
-    expect(selectActiveBoardTasks(state)).toEqual(
-      state.tasksByBoard[BOARD_MAIN_ID],
-    )
+    expect(selectActiveBoardColumns(state)).toEqual(state.columnsByBoard[BOARD_MAIN_ID])
+    expect(selectActiveBoardTasks(state)).toEqual(state.tasksByBoard[BOARD_MAIN_ID])
   })
 
   it('returns_a_compound_active_board_state', () => {

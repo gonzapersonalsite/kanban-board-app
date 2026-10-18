@@ -37,42 +37,23 @@ describe('boardDndHandlers', () => {
     })
 
     it('moves_a_task_to_another_column', () => {
-      const nextTasks = applyTaskDragOver(
-        fixtureTasks,
-        dragFixtures.moveAlphaToProgress(),
-      )
+      const nextTasks = applyTaskDragOver(fixtureTasks, dragFixtures.moveAlphaToProgress())
 
-      expect(nextTasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual([
-        TASK_BETA_ID,
-      ])
-      expect(nextTasks[COLUMN_PROGRESS_ID].map((task) => task.id)).toEqual([
-        TASK_GAMMA_ID,
-        TASK_ALPHA_ID,
-      ])
+      expect(nextTasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual([TASK_BETA_ID])
+      expect(nextTasks[COLUMN_PROGRESS_ID].map((task) => task.id)).toEqual([TASK_GAMMA_ID, TASK_ALPHA_ID])
     })
 
     it('reorders_tasks_within_the_same_column', () => {
-      const nextTasks = applyTaskDragOver(
-        fixtureTasks,
-        dragFixtures.moveBetaWithinTodo(),
-      )
+      const nextTasks = applyTaskDragOver(fixtureTasks, dragFixtures.moveBetaWithinTodo())
 
-      expect(nextTasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual([
-        TASK_BETA_ID,
-        TASK_ALPHA_ID,
-      ])
+      expect(nextTasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual([TASK_BETA_ID, TASK_ALPHA_ID])
     })
 
     it('moves_a_task_into_an_empty_column', () => {
-      const nextTasks = applyTaskDragOver(
-        fixtureTasks,
-        dragFixtures.moveGammaToDone(),
-      )
+      const nextTasks = applyTaskDragOver(fixtureTasks, dragFixtures.moveGammaToDone())
 
       expect(nextTasks[COLUMN_PROGRESS_ID]).toEqual([])
-      expect(nextTasks[COLUMN_DONE_ID].map((task) => task.id)).toEqual([
-        TASK_GAMMA_ID,
-      ])
+      expect(nextTasks[COLUMN_DONE_ID].map((task) => task.id)).toEqual([TASK_GAMMA_ID])
     })
   })
 
@@ -89,11 +70,7 @@ describe('boardDndHandlers', () => {
       const snapshot = fixtureTasks
       const mutated = applyTaskDragOver(fixtureTasks, dragFixtures.moveAlphaToProgress())
 
-      const resolved = resolveTasksAfterDragEnd(
-        snapshot,
-        createCanceledTaskDragEndEvent(),
-        mutated,
-      )
+      const resolved = resolveTasksAfterDragEnd(snapshot, createCanceledTaskDragEndEvent(), mutated)
 
       expect(resolved).toBe(snapshot)
     })
@@ -102,11 +79,7 @@ describe('boardDndHandlers', () => {
       const snapshot = fixtureTasks
       const mutated = applyTaskDragOver(fixtureTasks, dragFixtures.moveAlphaToProgress())
 
-      const resolved = resolveTasksAfterDragEnd(
-        snapshot,
-        createCompletedTaskDragEndEvent(),
-        mutated,
-      )
+      const resolved = resolveTasksAfterDragEnd(snapshot, createCompletedTaskDragEndEvent(), mutated)
 
       expect(resolved).toEqual(mutated)
     })

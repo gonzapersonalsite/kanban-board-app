@@ -6,9 +6,7 @@ import { renderWithKanban } from '@/test/helpers/renderWithKanban'
 import { useKanbanStore } from '@/shared/api'
 
 vi.mock('@dnd-kit/react', () => ({
-  DragDropProvider: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  DragDropProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DragOverlay: () => null,
   useDroppable: () => ({ ref: () => undefined, isDropTarget: false }),
   useDragOperation: () => ({ source: null, target: null }),
@@ -40,9 +38,7 @@ describe('Board', () => {
     renderWithKanban(<Board />)
 
     expect(screen.getAllByText('No tasks yet')).toHaveLength(1)
-    expect(
-      (useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID] ?? []).length,
-    ).toBeGreaterThan(0)
+    expect((useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID] ?? []).length).toBeGreaterThan(0)
     expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_DONE_ID] ?? []).toHaveLength(0)
   })
 })

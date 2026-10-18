@@ -16,12 +16,9 @@ describe('AddColumnForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /add column/i }))
 
     expect(useKanbanStore.getState().columnsByBoard[BOARD_MAIN_ID]).toHaveLength(before + 1)
-    expect(
-      useKanbanStore
-        .getState()
-        .columnsByBoard[BOARD_MAIN_ID]
-        .some((column) => column.title === 'Review'),
-    ).toBe(true)
+    expect(useKanbanStore.getState().columnsByBoard[BOARD_MAIN_ID].some((column) => column.title === 'Review')).toBe(
+      true,
+    )
   })
 
   it('does_not_create_a_column_when_title_is_blank', () => {

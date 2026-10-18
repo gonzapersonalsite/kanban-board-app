@@ -1,8 +1,5 @@
 import { useState } from 'react'
-import {
-  type PortableKanbanState,
-  restoreKanbanState,
-} from '@/shared/api'
+import { type PortableKanbanState, restoreKanbanState } from '@/shared/api'
 import { useTranslation } from '@/shared/i18n'
 import { useToastStore } from '@/shared/toast'
 import { deserializeKanbanSnapshot } from './snapshot'
@@ -147,17 +144,10 @@ export async function parseBackupFile(file: File): Promise<BackupImportPreview> 
 
 export function summarizeKanbanSnapshot(snapshot: KanbanSnapshot): BackupSummary {
   const boardCount = snapshot.boards.length
-  const columnCount = Object.values(snapshot.columnsByBoard).reduce(
-    (total, columns) => total + columns.length,
-    0,
-  )
+  const columnCount = Object.values(snapshot.columnsByBoard).reduce((total, columns) => total + columns.length, 0)
   const taskCount = Object.values(snapshot.tasksByBoard).reduce(
     (boardTotal, tasksByColumn) =>
-      boardTotal +
-      Object.values(tasksByColumn).reduce(
-        (columnTotal, tasks) => columnTotal + tasks.length,
-        0,
-      ),
+      boardTotal + Object.values(tasksByColumn).reduce((columnTotal, tasks) => columnTotal + tasks.length, 0),
     0,
   )
 
@@ -169,10 +159,7 @@ export function summarizeKanbanSnapshot(snapshot: KanbanSnapshot): BackupSummary
   }
 }
 
-function resolveImportErrorMessage(
-  error: unknown,
-  t: ReturnType<typeof useTranslation>['t'],
-): string {
+function resolveImportErrorMessage(error: unknown, t: ReturnType<typeof useTranslation>['t']): string {
   if (isSnapshotError(error)) {
     switch (error.code) {
       case 'invalid_json':
@@ -202,20 +189,10 @@ function resolveImportErrorMessage(
 
 function isSnapshotError(error: unknown): error is KanbanSnapshotError {
   return (
-    !!error &&
-    typeof error === 'object' &&
-    'name' in error &&
-    error.name === 'KanbanSnapshotError' &&
-    'code' in error
+    !!error && typeof error === 'object' && 'name' in error && error.name === 'KanbanSnapshotError' && 'code' in error
   )
 }
 
 function isBackupFileError(error: unknown): error is BackupFileError {
-  return (
-    !!error &&
-    typeof error === 'object' &&
-    'name' in error &&
-    error.name === 'BackupFileError' &&
-    'code' in error
-  )
+  return !!error && typeof error === 'object' && 'name' in error && error.name === 'BackupFileError' && 'code' in error
 }

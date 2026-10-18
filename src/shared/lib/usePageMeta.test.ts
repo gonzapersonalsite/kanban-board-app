@@ -94,10 +94,7 @@ describe('usePageMeta', () => {
   })
 
   it('updates_title_when_props_change', () => {
-    const { rerender } = renderHook(
-      ({ title }) => usePageMeta({ title }),
-      { initialProps: { title: 'First' } },
-    )
+    const { rerender } = renderHook(({ title }) => usePageMeta({ title }), { initialProps: { title: 'First' } })
 
     expect(document.title).toBe('First')
 
@@ -106,10 +103,9 @@ describe('usePageMeta', () => {
   })
 
   it('updates_description_when_props_change', () => {
-    const { rerender } = renderHook(
-      ({ title, description }) => usePageMeta({ title, description }),
-      { initialProps: { title: 'T', description: 'First.' } },
-    )
+    const { rerender } = renderHook(({ title, description }) => usePageMeta({ title, description }), {
+      initialProps: { title: 'T', description: 'First.' },
+    })
 
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', 'First.')
 

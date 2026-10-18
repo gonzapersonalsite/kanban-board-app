@@ -7,10 +7,7 @@ import {
   TASK_BETA_ID,
   createKanbanFixture,
 } from '@/test/fixtures/kanbanFixtures'
-import {
-  createTestKanbanStore,
-  resetKanbanStore,
-} from '@/test/helpers/storeTestUtils'
+import { createTestKanbanStore, resetKanbanStore } from '@/test/helpers/storeTestUtils'
 
 describe('dndSlice', () => {
   const store = createTestKanbanStore()
@@ -21,17 +18,11 @@ describe('dndSlice', () => {
 
   describe('reorderColumns', () => {
     it('moves_a_column_to_a_new_position', () => {
-      const initial = store
-        .getState()
-        .columnsByBoard[BOARD_MAIN_ID]
-        .map((column) => column.id)
+      const initial = store.getState().columnsByBoard[BOARD_MAIN_ID].map((column) => column.id)
 
       store.getState().reorderColumns(0, 2)
 
-      const next = store
-        .getState()
-        .columnsByBoard[BOARD_MAIN_ID]
-        .map((column) => column.id)
+      const next = store.getState().columnsByBoard[BOARD_MAIN_ID].map((column) => column.id)
 
       expect(next).toEqual([initial[1], initial[2], initial[0]])
     })
@@ -51,20 +42,17 @@ describe('dndSlice', () => {
 
       const tasks = store.getState().tasksByBoard[BOARD_MAIN_ID]
 
-      expect(tasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual([
-        TASK_BETA_ID,
-      ])
-      expect(tasks[COLUMN_DONE_ID].map((task) => task.id)).toEqual([
-        TASK_ALPHA_ID,
-      ])
+      expect(tasks[COLUMN_TODO_ID].map((task) => task.id)).toEqual([TASK_BETA_ID])
+      expect(tasks[COLUMN_DONE_ID].map((task) => task.id)).toEqual([TASK_ALPHA_ID])
     })
 
     it('reorders_a_task_within_the_same_column', () => {
       store.getState().moveTask(COLUMN_TODO_ID, COLUMN_TODO_ID, TASK_BETA_ID, 0)
 
-      expect(
-        store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id),
-      ).toEqual([TASK_BETA_ID, TASK_ALPHA_ID])
+      expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id)).toEqual([
+        TASK_BETA_ID,
+        TASK_ALPHA_ID,
+      ])
     })
 
     it('does_not_mutate_state_when_task_id_is_missing', () => {

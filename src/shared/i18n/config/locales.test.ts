@@ -24,24 +24,18 @@ describe('locale files', () => {
     expect(Object.keys(locales)).toEqual(expect.arrayContaining(['en', 'es', 'de']))
   })
 
-  it.each(Object.entries(translations))(
-    'has_the_same_flattened_keys_as_english_in_%s',
-    (_locale, messages) => {
-      expect(Object.keys(messages).sort()).toEqual(Object.keys(english).sort())
-    },
-  )
+  it.each(Object.entries(translations))('has_the_same_flattened_keys_as_english_in_%s', (_locale, messages) => {
+    expect(Object.keys(messages).sort()).toEqual(Object.keys(english).sort())
+  })
 
-  it.each(Object.entries(translations))(
-    'keeps_the_english_placeholders_in_every_%s_message',
-    (_locale, messages) => {
-      for (const [key, message] of Object.entries(english)) {
-        expect({ key, placeholders: placeholdersOf(messages[key] ?? '') }).toEqual({
-          key,
-          placeholders: placeholdersOf(message),
-        })
-      }
-    },
-  )
+  it.each(Object.entries(translations))('keeps_the_english_placeholders_in_every_%s_message', (_locale, messages) => {
+    for (const [key, message] of Object.entries(english)) {
+      expect({ key, placeholders: placeholdersOf(messages[key] ?? '') }).toEqual({
+        key,
+        placeholders: placeholdersOf(message),
+      })
+    }
+  })
 
   it.each(Object.entries(locales))('has_no_empty_messages_in_%s', (_locale, messages) => {
     const emptyKeys = Object.entries(messages)

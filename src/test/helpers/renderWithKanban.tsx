@@ -3,10 +3,7 @@ import type { ReactElement } from 'react'
 import { useKanbanStore } from '@/shared/api'
 import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
 
-export function renderWithKanban(
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>,
-) {
+export function renderWithKanban(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) {
   resetPersistedKanbanStore(useKanbanStore.setState)
 
   return render(ui, options)

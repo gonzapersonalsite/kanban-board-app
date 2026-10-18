@@ -1,7 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
-import prettierConfig from 'eslint-config-prettier'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import fsdPlugin from 'eslint-plugin-fsd-lint'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -29,6 +28,10 @@ const { paths } = tsconfigApp.config.compilerOptions
 const SRC_ALIAS = Object.keys(paths)
   .find((alias) => paths[alias].includes('./src/*'))
   ?.replace('*', '')
+// fsd-lint reads '@' as its alias by default, so a scoped package like '@app/tokens' would
+// be taken for the app layer: with the slash, only '@/...', what tsconfig.app.json declares,
+// is the alias and everything else is a package.
+const FSD_ALIAS = { value: SRC_ALIAS.replace(/\/$/, ''), withSlash: true }
 // The fixtures, helpers and setup the tests share: the one folder of src/ that is not a
 // layer, a decided deviation of docs/ARCHITECTURE.md. Only test code imports it.
 const TEST_SUPPORT = 'src/test/**'
@@ -71,7 +74,7 @@ const NO_TEST_SUPPORT_DYNAMIC_IMPORT = dynamicImportOf(TEST_SUPPORT_MODULES, NO_
 const NO_UI_DYNAMIC_IMPORT = dynamicImportOf([...UI_MODULES, '^react$'], NO_UI_IN_LOGIC)
 
 export default defineConfig([
-  globalIgnores(['dist', 'coverage']),
+  globalIgnores(['dist', 'coverage', 'reports']),
   // A comment cannot switch a rule off: an exception lives in this file, next to its decision.
   { linterOptions: { noInlineConfig: true } },
   {
@@ -95,12 +98,12 @@ export default defineConfig([
     // and the configuration at the root are not application code (docs/ARCHITECTURE.md).
     files: ['src/**/*.{ts,tsx}'],
     rules: {
-      'fsd-lint/forbidden-imports': 'error',
-      'fsd-lint/no-cross-slice-dependency': 'error',
-      'fsd-lint/no-relative-imports': 'error',
+      'fsd-lint/forbidden-imports': ['error', { alias: FSD_ALIAS }],
+      'fsd-lint/no-cross-slice-dependency': ['error', { alias: FSD_ALIAS }],
+      'fsd-lint/no-relative-imports': ['error', { alias: FSD_ALIAS }],
       'fsd-lint/no-public-api-sidestep': [
         'error',
-        { layers: SLICED_LAYERS, publicApi: { allowSegmentImports: false } },
+        { alias: FSD_ALIAS, layers: SLICED_LAYERS, publicApi: { allowSegmentImports: false } },
       ],
     },
   },
@@ -212,5 +215,4 @@ export default defineConfig([
     files: [TESTS],
     rules: { 'fsd-lint/no-relative-imports': 'off' },
   },
-  prettierConfig,
 ])

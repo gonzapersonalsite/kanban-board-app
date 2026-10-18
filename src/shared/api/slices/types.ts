@@ -42,32 +42,16 @@ export interface ColumnSlice {
 export interface TaskSlice {
   tasksByBoard: TasksByBoard
   addTask: (columnId: ColumnId, title: string, description?: string, dueDate?: string) => void
-  updateTask: (
-    columnId: ColumnId,
-    taskId: TaskId,
-    data: Partial<Task>,
-  ) => void
+  updateTask: (columnId: ColumnId, taskId: TaskId, data: Partial<Task>) => void
   deleteTask: (columnId: ColumnId, taskId: TaskId) => void
-  reorderTask: (
-    columnId: ColumnId,
-    fromIndex: number,
-    toIndex: number,
-  ) => void
+  reorderTask: (columnId: ColumnId, fromIndex: number, toIndex: number) => void
 }
 
 export interface DndSlice {
   reorderColumns: (fromIndex: number, toIndex: number) => void
-  moveTask: (
-    sourceColId: ColumnId,
-    destColId: ColumnId,
-    taskId: TaskId,
-    newIndex: number,
-  ) => void
+  moveTask: (sourceColId: ColumnId, destColId: ColumnId, taskId: TaskId, newIndex: number) => void
 }
 
 export type KanbanState = BoardSlice & ColumnSlice & TaskSlice & DndSlice
 
-export type PortableKanbanState = Pick<
-  KanbanState,
-  'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'
->
+export type PortableKanbanState = Pick<KanbanState, 'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'>

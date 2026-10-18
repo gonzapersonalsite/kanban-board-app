@@ -1,14 +1,20 @@
-import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from './site.ts'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
+import { absoluteUrl, DOCUMENTS, REPOSITORY_URL, SITE_DESCRIPTION, SITE_NAME } from './site.ts'
 
-export const REPOSITORY_URL = 'https://github.com/gonzapersonalsite/kanban-board-app'
+const ROOT = join(import.meta.dirname, '..', '..')
 const PORTFOLIO_URL = 'https://mi-portafolio-gonzalo.vercel.app/'
 
 // A document of this repository as GitHub shows it on the default branch.
 const repositoryDocumentUrl = (path: string): string => `${REPOSITORY_URL}/blob/main/${path}`
 
 // The llmstxt.org format: a title, a one-line summary, and sections of links.
-export const buildLlmsTxt = (): string =>
-  [
+export const buildLlmsTxt = (): string => {
+  const documents = DOCUMENTS.filter(([path]) => existsSync(join(ROOT, path))).map(
+    ([path, description]) => `- [${path}](${repositoryDocumentUrl(path)}): ${description}`,
+  )
+
+  return [
     `# ${SITE_NAME}`,
     '',
     `> ${SITE_DESCRIPTION}`,
@@ -22,11 +28,11 @@ export const buildLlmsTxt = (): string =>
     '',
     '## Docs',
     '',
-    `- [README](${repositoryDocumentUrl('README.md')}): features, stack and how to run it.`,
-    `- [Architecture](${repositoryDocumentUrl('docs/ARCHITECTURE.md')}): the Feature-Sliced Design rules of the code and what enforces each one.`,
+    ...documents,
     '',
     '## Optional',
     '',
     `- [Author's portfolio](${PORTFOLIO_URL}): Gonzalo Martínez, Junior Full Stack Developer.`,
     '',
   ].join('\n')
+}

@@ -13,13 +13,7 @@ const ICON_MAP = {
 
 const DISMISS_DELAY = 3500
 
-function ToastItem({
-  notification,
-  onDismiss,
-}: {
-  notification: AppNotification
-  onDismiss: () => void
-}) {
+function ToastItem({ notification, onDismiss }: { notification: AppNotification; onDismiss: () => void }) {
   useEffect(() => {
     const timer = setTimeout(onDismiss, DISMISS_DELAY)
     return () => clearTimeout(timer)
@@ -31,12 +25,7 @@ function ToastItem({
     <div className={`${styles.item} ${styles[notification.type]}`} role="alert">
       <Icon className={styles.icon} aria-hidden="true" />
       <span className={styles.message}>{notification.message}</span>
-      <IconButton
-        icon={<X />}
-        label="Dismiss notification"
-        onClick={onDismiss}
-        className={styles.dismiss}
-      />
+      <IconButton icon={<X />} label="Dismiss notification" onClick={onDismiss} className={styles.dismiss} />
     </div>
   )
 }
@@ -50,11 +39,7 @@ export function Toast() {
   return (
     <div className={styles.container} aria-live="polite">
       {notifications.map((n) => (
-        <ToastItem
-          key={n.id}
-          notification={n}
-          onDismiss={() => removeNotification(n.id)}
-        />
+        <ToastItem key={n.id} notification={n} onDismiss={() => removeNotification(n.id)} />
       ))}
     </div>
   )

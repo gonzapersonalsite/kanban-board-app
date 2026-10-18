@@ -79,9 +79,7 @@ describe('Header', () => {
       useKanbanStore.getState().setActiveBoard(BOARD_MAIN_ID)
     })
 
-    const secondaryBoardId = useKanbanStore
-      .getState()
-      .boards.find((board) => board.title === 'Secondary')!.id
+    const secondaryBoardId = useKanbanStore.getState().boards.find((board) => board.title === 'Secondary')!.id
 
     render(
       <MemoryRouter initialEntries={[`/calendar/${BOARD_MAIN_ID}`]}>
@@ -115,9 +113,7 @@ describe('Header', () => {
       </MemoryRouter>,
     )
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /settings/i }),
-    )
+    fireEvent.click(screen.getByRole('button', { name: /settings/i }))
 
     expect(screen.getByText('Theme')).toBeInTheDocument()
     expect(screen.getByText('Language')).toBeInTheDocument()
@@ -136,9 +132,7 @@ describe('Header', () => {
       </MemoryRouter>,
     )
 
-    fireEvent.mouseEnter(
-      screen.getByRole('button', { name: /settings/i }),
-    )
+    fireEvent.mouseEnter(screen.getByRole('button', { name: /settings/i }))
 
     expect(screen.getByRole('tooltip')).toHaveTextContent('Settings')
   })
@@ -146,21 +140,22 @@ describe('Header', () => {
   it('navigates_to_the_restored_active_board_after_importing_a_backup', async () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
 
-    const snapshot = createKanbanSnapshot({
-      ...createKanbanFixture(),
-      boards: [{ id: 'board-restored', title: 'Restored Board' }],
-      activeBoardId: 'board-restored',
-      columnsByBoard: {
-        'board-restored': [{ id: 'col-restored', title: 'Restored Column' }],
-      },
-      tasksByBoard: {
-        'board-restored': {
-          'col-restored': [
-            { id: 'task-restored', title: 'Restored Task', description: 'From backup' },
-          ],
+    const snapshot = createKanbanSnapshot(
+      {
+        ...createKanbanFixture(),
+        boards: [{ id: 'board-restored', title: 'Restored Board' }],
+        activeBoardId: 'board-restored',
+        columnsByBoard: {
+          'board-restored': [{ id: 'col-restored', title: 'Restored Column' }],
+        },
+        tasksByBoard: {
+          'board-restored': {
+            'col-restored': [{ id: 'task-restored', title: 'Restored Task', description: 'From backup' }],
+          },
         },
       },
-    }, '2026-07-01T12:00:00.000Z')
+      '2026-07-01T12:00:00.000Z',
+    )
 
     const file = new File([serializeKanbanSnapshot(snapshot)], 'backup.json', {
       type: 'application/json',

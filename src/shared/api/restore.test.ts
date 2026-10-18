@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
 import { createTestKanbanStore } from '@/test/helpers/storeTestUtils'
-import {
-  KanbanRestoreError,
-  normalizePortableKanbanState,
-  restoreKanbanStateInStore,
-} from './restore'
+import { KanbanRestoreError, normalizePortableKanbanState, restoreKanbanStateInStore } from './restore'
 
 describe('kanban restore boundary', () => {
   it('normalizes_portable_state_and_discards_orphaned_data', () => {
@@ -132,11 +128,7 @@ describe('kanban restore boundary', () => {
           'board-invalid': {},
         },
       }),
-    ).toThrowError(
-      new KanbanRestoreError(
-        'Restore state activeBoardId "missing-board" does not exist in boards.',
-      ),
-    )
+    ).toThrowError(new KanbanRestoreError('Restore state activeBoardId "missing-board" does not exist in boards.'))
 
     expect({
       boards: store.getState().boards,

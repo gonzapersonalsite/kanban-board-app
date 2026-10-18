@@ -32,28 +32,31 @@ Exact versions live in `package.json`.
 
 ```bash
 pnpm install --frozen-lockfile --ignore-scripts
-pnpm exec husky   # enable the Git hooks (install scripts are skipped above)
+git config core.hooksPath .githooks
 pnpm dev
 ```
 
-## Scripts
+## Scripts and gates
 
 ```bash
+python verify.py    # Run all repository gates declared in gates.txt
 pnpm dev            # Start the dev server
 pnpm build          # Type-check + production build
+pnpm run typecheck  # TypeScript project build (tsc -b)
 pnpm lint           # ESLint: architecture, TypeScript and React hooks rules; a warning is red
+pnpm run format:check # Prettier formatting check
 pnpm test           # Vitest: the app tests (jsdom), and the lint cases and the build tooling (node)
 pnpm test:coverage  # Vitest with the coverage thresholds of vite.config.ts
 pnpm preview        # Preview the production build
 ```
 
-Git hooks (husky): `pre-commit` lints staged files, `pre-push` refuses to push anything but HEAD, or with uncommitted or untracked files, restores the dependencies from the lockfile, runs `pnpm lint`, `pnpm test` and `pnpm build`, and checks the tree again.
+Git hooks (`.githooks/`): `commit-msg` validates the commit message format (`tools/board/commit_message.py`), and `pre-push` refuses to push with uncommitted or untracked files or out-of-date indices and runs `python -I verify.py` (`tools/board/pre_push.py`).
 
 ## Architecture
 
 Feature-Sliced Design: `docs/ARCHITECTURE.md` rules the shape of the code and says what enforces each rule; `AGENTS.md` and `.agents/skills/` hold the working rules and the project conventions.
 
-Crawlers do not run the app's JavaScript, so the build writes what they read: the social preview of `index.html` and the files for crawlers and AI agents (`llms.txt`, `robots.txt`, `sitemap.xml`), all from one source, `tooling/agent-files/site.ts`.
+Crawlers do not run the app's JavaScript, so the build writes what they read: the social preview of `index.html` and the files for crawlers and AI agents (llms.txt, robots.txt, sitemap.xml), all from one source, `tooling/agent-files/site.ts`.
 
 ## License
 

@@ -3,8 +3,8 @@ import type { AddressInfo } from 'node:net'
 import { join } from 'node:path'
 import { build, createServer } from 'vite'
 import { describe, expect, it, onTestFinished } from 'vitest'
-import { buildAgentFiles } from './generate'
-import { SITE_URL } from './site'
+import { buildAgentFiles } from './generate.ts'
+import { SITE_URL } from './site.ts'
 
 // The real configuration: removing the plugin from vite.config.ts turns these cases red.
 const ROOT = join(import.meta.dirname, '..', '..')

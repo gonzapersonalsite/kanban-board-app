@@ -58,11 +58,7 @@ export function DataImportSection({ onImportComplete }: DataImportSectionProps) 
           <span className={styles.fileName}>
             {t('data_portability.selected_file', { fileName: selectedFile.name })}
           </span>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={clearSelection}
-          >
+          <Button size="sm" variant="ghost" onClick={clearSelection}>
             {t('data_portability.clear_selection')}
           </Button>
         </div>
@@ -78,11 +74,7 @@ export function DataImportSection({ onImportComplete }: DataImportSectionProps) 
           disabled={!selectedFile || isReviewing}
         >
           <Upload aria-hidden="true" />
-          <span>
-            {isReviewing
-              ? t('data_portability.review_loading')
-              : t('data_portability.review')}
-          </span>
+          <span>{isReviewing ? t('data_portability.review_loading') : t('data_portability.review')}</span>
         </Button>
       </div>
 
@@ -124,22 +116,11 @@ export function DataImportSection({ onImportComplete }: DataImportSectionProps) 
           </div>
 
           <div className={styles.confirmActions}>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={cancelImport}
-            >
+            <Button size="sm" variant="ghost" onClick={cancelImport}>
               {t('data_portability.cancel_import')}
             </Button>
-            <Button
-              size="sm"
-              variant="danger"
-              onClick={confirmImport}
-              disabled={isImporting}
-            >
-              {isImporting
-                ? t('data_portability.import_loading')
-                : t('data_portability.confirm_import')}
+            <Button size="sm" variant="danger" onClick={confirmImport} disabled={isImporting}>
+              {isImporting ? t('data_portability.import_loading') : t('data_portability.confirm_import')}
             </Button>
           </div>
         </div>

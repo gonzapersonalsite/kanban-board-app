@@ -32,9 +32,9 @@ describe('DataImportSection', () => {
     expect(await screen.findByText('Backup summary')).toBeInTheDocument()
     expect(screen.getByText('backup.json')).toBeInTheDocument()
     expect(screen.getByText('1')).toBeInTheDocument()
-    expect(
-      useToastStore.getState().notifications.at(-1)?.message,
-    ).toBe('Backup reviewed. Confirm to replace current data.')
+    expect(useToastStore.getState().notifications.at(-1)?.message).toBe(
+      'Backup reviewed. Confirm to replace current data.',
+    )
   })
 
   it('shows_a_validation_error_when_the_selected_file_is_invalid', async () => {
@@ -52,12 +52,8 @@ describe('DataImportSection', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /review backup/i }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'The selected file is not valid JSON.',
-    )
-    expect(useToastStore.getState().notifications.at(-1)?.message).toBe(
-      'The selected file is not valid JSON.',
-    )
+    expect(await screen.findByRole('alert')).toHaveTextContent('The selected file is not valid JSON.')
+    expect(useToastStore.getState().notifications.at(-1)?.message).toBe('The selected file is not valid JSON.')
   })
 
   it('imports_a_reviewed_backup_and_calls_the_completion_callback', async () => {
@@ -75,9 +71,7 @@ describe('DataImportSection', () => {
       },
       tasksByBoard: {
         'board-imported': {
-          'col-imported': [
-            { id: 'task-imported', title: 'Imported Task', description: 'From backup' },
-          ],
+          'col-imported': [{ id: 'task-imported', title: 'Imported Task', description: 'From backup' }],
         },
       },
     }
@@ -176,11 +170,7 @@ describe('DataImportSection', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /review backup/i }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'The selected backup file could not be read.',
-    )
-    expect(useToastStore.getState().notifications.at(-1)?.message).toBe(
-      'The selected backup file could not be read.',
-    )
+    expect(await screen.findByRole('alert')).toHaveTextContent('The selected backup file could not be read.')
+    expect(useToastStore.getState().notifications.at(-1)?.message).toBe('The selected backup file could not be read.')
   })
 })

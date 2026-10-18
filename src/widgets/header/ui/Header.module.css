@@ -63,7 +63,10 @@
   padding: 0 12px;
   border-radius: 6px;
   border-bottom: 2px solid transparent;
-  transition: color 150ms ease, background 150ms ease, border-color 150ms ease;
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease;
   white-space: nowrap;
 }
 
@@ -179,7 +182,6 @@
     min-height: var(--control-size-md);
     padding: 0 10px;
   }
-
 }
 
 @media (max-width: 479px) {

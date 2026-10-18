@@ -64,11 +64,7 @@ export function CalendarGrid({ onTaskClick }: CalendarGridProps) {
           const entries = tasksByDate.get(day.dateStr)
           const isToday = day.dateStr === todayStr
 
-          const cellClass = [
-            styles.dayCell,
-            !day.isCurrentMonth ? styles.otherMonth : '',
-            isToday ? styles.today : '',
-          ]
+          const cellClass = [styles.dayCell, !day.isCurrentMonth ? styles.otherMonth : '', isToday ? styles.today : '']
             .filter(Boolean)
             .join(' ')
 
@@ -93,9 +89,7 @@ export function CalendarGrid({ onTaskClick }: CalendarGridProps) {
                   {entries.length > MAX_VISIBLE && (
                     <button
                       className={styles.moreBtn}
-                      onClick={() =>
-                        setDayOverflow({ dateStr: day.dateStr, entries })
-                      }
+                      onClick={() => setDayOverflow({ dateStr: day.dateStr, entries })}
                     >
                       +{entries.length - MAX_VISIBLE} {t('calendar.more')}
                     </button>
@@ -111,10 +105,11 @@ export function CalendarGrid({ onTaskClick }: CalendarGridProps) {
         <Dialog
           open={true}
           onClose={() => setDayOverflow(null)}
-          title={new Date(dayOverflow.dateStr + 'T12:00:00').toLocaleDateString(
-            locale,
-            { weekday: 'long', month: 'long', day: 'numeric' }
-          )}
+          title={new Date(dayOverflow.dateStr + 'T12:00:00').toLocaleDateString(locale, {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+          })}
         >
           <div className={styles.dayOverflowList}>
             {dayOverflow.entries.map(({ task, columnId }) => {

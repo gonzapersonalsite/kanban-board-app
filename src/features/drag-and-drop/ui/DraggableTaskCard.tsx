@@ -14,14 +14,7 @@ interface DraggableTaskCardProps {
   accentColor?: string
 }
 
-export function DraggableTaskCard({
-  task,
-  columnId,
-  index,
-  onEdit,
-  onDelete,
-  accentColor,
-}: DraggableTaskCardProps) {
+export function DraggableTaskCard({ task, columnId, index, onEdit, onDelete, accentColor }: DraggableTaskCardProps) {
   const { t } = useTranslation()
   const { ref, isDragging } = useSortable({
     id: task.id,
@@ -39,13 +32,7 @@ export function DraggableTaskCard({
       aria-roledescription={t('dnd.role_description')}
       aria-describedby={BOARD_DND_INSTRUCTIONS_ID}
     >
-      <TaskCard
-        task={task}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        isDragging={isDragging}
-        accentColor={accentColor}
-      />
+      <TaskCard task={task} onEdit={onEdit} onDelete={onDelete} isDragging={isDragging} accentColor={accentColor} />
     </div>
   )
 }

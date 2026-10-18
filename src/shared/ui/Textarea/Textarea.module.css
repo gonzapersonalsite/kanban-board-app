@@ -9,7 +9,9 @@
   background: var(--color-surface);
   resize: vertical;
   min-height: 60px;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
 }
 
 .textarea::placeholder {
@@ -28,4 +30,3 @@
     font-size: 16px;
   }
 }
-

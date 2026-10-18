@@ -79,9 +79,7 @@ describe('calendarUtils', () => {
           { id: 'a', title: 'A', description: '', dueDate: '2026-07-15' },
           { id: 'b', title: 'B', description: '', dueDate: '2026-07-20' },
         ],
-        [COL_B]: [
-          { id: 'c', title: 'C', description: '', dueDate: '2026-07-15' },
-        ],
+        [COL_B]: [{ id: 'c', title: 'C', description: '', dueDate: '2026-07-15' }],
       }
 
       const grouped = groupTasksByDate(tasks as Record<ColumnId, Task[]>)

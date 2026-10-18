@@ -3,10 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { Locale, TranslationMap } from './types'
 import { flattenTranslations, interpolate } from '../lib/translations'
 
-const localeModules = import.meta.glob<Record<string, unknown>>(
-  '../config/*.json',
-  { eager: true, import: 'default' },
-)
+const localeModules = import.meta.glob<Record<string, unknown>>('../config/*.json', { eager: true, import: 'default' })
 
 function extractLocale(filePath: string): Locale {
   const match = filePath.match(/\/([a-z]{2}(?:-[A-Z]{2})?)\.json$/)
@@ -49,8 +46,7 @@ export const useI18nStore = create<I18nStore>()(
       availableLocales: Object.keys(allTranslations),
 
       setLocale: (locale: Locale) => {
-        const translations =
-          allTranslations[locale] ?? allTranslations[DEFAULT_LOCALE]
+        const translations = allTranslations[locale] ?? allTranslations[DEFAULT_LOCALE]
         set({ locale, translations })
       },
 
@@ -67,14 +63,11 @@ export const useI18nStore = create<I18nStore>()(
       partialize: (state) => ({ locale: state.locale }),
       // zustand calls merge with undefined when nothing is stored yet (a first visit).
       merge: (persisted, current) => {
-        const locale =
-          (persisted as { locale?: Locale } | undefined)?.locale ??
-          current.locale
+        const locale = (persisted as { locale?: Locale } | undefined)?.locale ?? current.locale
         return {
           ...current,
           locale,
-          translations:
-            allTranslations[locale] ?? allTranslations[DEFAULT_LOCALE],
+          translations: allTranslations[locale] ?? allTranslations[DEFAULT_LOCALE],
         }
       },
     },

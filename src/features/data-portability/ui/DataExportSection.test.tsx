@@ -36,9 +36,7 @@ describe('DataExportSection', () => {
   })
 
   it('downloads_a_backup_and_shows_success_feedback', async () => {
-    const anchorClickSpy = vi
-      .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockImplementation(() => {})
+    const anchorClickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
 
     render(<DataExportSection />)
 

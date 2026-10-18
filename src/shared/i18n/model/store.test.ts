@@ -17,9 +17,7 @@ describe('useI18nStore', () => {
     })
 
     it('exposes_available_locales', () => {
-      expect(useI18nStore.getState().availableLocales).toEqual(
-        expect.arrayContaining(['en', 'es']),
-      )
+      expect(useI18nStore.getState().availableLocales).toEqual(expect.arrayContaining(['en', 'es']))
     })
   })
 
@@ -101,21 +99,15 @@ describe('useI18nStore', () => {
 
   describe('t', () => {
     it('returns_translation_for_existing_key', () => {
-      expect(useI18nStore.getState().t('board_view.empty_column')).toBe(
-        'No tasks yet',
-      )
+      expect(useI18nStore.getState().t('board_view.empty_column')).toBe('No tasks yet')
     })
 
     it('returns_the_key_when_translation_is_missing', () => {
-      expect(useI18nStore.getState().t('nonexistent.key')).toBe(
-        'nonexistent.key',
-      )
+      expect(useI18nStore.getState().t('nonexistent.key')).toBe('nonexistent.key')
     })
 
     it('interpolates_parameters_in_translation', () => {
-      expect(
-        useI18nStore.getState().t('column.delete', { title: 'My Column' }),
-      ).toBe('Delete column "My Column"')
+      expect(useI18nStore.getState().t('column.delete', { title: 'My Column' })).toBe('Delete column "My Column"')
     })
   })
 })

@@ -60,10 +60,7 @@ export function normalizeKanbanSnapshot(input: unknown): KanbanSnapshot {
 
 function normalizeSchemaVersion(value: unknown): typeof KANBAN_SNAPSHOT_SCHEMA_VERSION {
   if (value !== KANBAN_SNAPSHOT_SCHEMA_VERSION) {
-    throw new KanbanSnapshotError(
-      'unsupported_schema_version',
-      `Unsupported snapshot schema version: ${String(value)}`,
-    )
+    throw new KanbanSnapshotError('unsupported_schema_version', `Unsupported snapshot schema version: ${String(value)}`)
   }
 
   return KANBAN_SNAPSHOT_SCHEMA_VERSION
@@ -72,10 +69,7 @@ function normalizeSchemaVersion(value: unknown): typeof KANBAN_SNAPSHOT_SCHEMA_V
 function normalizeExportedAt(value: unknown): string {
   const exportedAt = normalizeNonEmptyString(value, 'Snapshot exportedAt must be a string.')
   if (Number.isNaN(Date.parse(exportedAt))) {
-    throw new KanbanSnapshotError(
-      'invalid_snapshot',
-      'Snapshot exportedAt must be a valid ISO date string.',
-    )
+    throw new KanbanSnapshotError('invalid_snapshot', 'Snapshot exportedAt must be a valid ISO date string.')
   }
 
   return exportedAt

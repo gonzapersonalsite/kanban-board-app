@@ -38,10 +38,7 @@ export function createColumnSlice(
         const tasks = getActiveBoardTasks(state)
 
         return {
-          columnsByBoard: setActiveBoardColumns(state.columnsByBoard, boardId, [
-            ...columns,
-            { id, title: trimmed },
-          ]),
+          columnsByBoard: setActiveBoardColumns(state.columnsByBoard, boardId, [...columns, { id, title: trimmed }]),
           tasksByBoard: setActiveBoardTasks(state.tasksByBoard, boardId, {
             ...tasks,
             [id]: [],
@@ -71,9 +68,7 @@ export function createColumnSlice(
           columnsByBoard: setActiveBoardColumns(
             state.columnsByBoard,
             boardId,
-            getActiveBoardColumns(state).map((col) =>
-              col.id === id ? { ...col, title: trimmed } : col,
-            ),
+            getActiveBoardColumns(state).map((col) => (col.id === id ? { ...col, title: trimmed } : col)),
           ),
         }
       })
@@ -96,16 +91,8 @@ export function createColumnSlice(
         const remainingTasks = removeBoardTasksByColumns(getActiveBoardTasks(state), [id])
 
         return {
-          columnsByBoard: setActiveBoardColumns(
-            state.columnsByBoard,
-            boardId,
-            remainingColumns,
-          ),
-          tasksByBoard: setActiveBoardTasks(
-            state.tasksByBoard,
-            boardId,
-            remainingTasks,
-          ),
+          columnsByBoard: setActiveBoardColumns(state.columnsByBoard, boardId, remainingColumns),
+          tasksByBoard: setActiveBoardTasks(state.tasksByBoard, boardId, remainingTasks),
         }
       })
 

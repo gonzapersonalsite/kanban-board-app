@@ -1,11 +1,7 @@
 import { renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { useColumnActions } from '@/features/column-management/model/useColumnActions'
-import {
-  BOARD_MAIN_ID,
-  COLUMN_DONE_ID,
-  COLUMN_TODO_ID,
-} from '@/test/fixtures/kanbanFixtures'
+import { BOARD_MAIN_ID, COLUMN_DONE_ID, COLUMN_TODO_ID } from '@/test/fixtures/kanbanFixtures'
 import { setupKanbanStore } from '@/test/setup/kanbanStoreSetup'
 import { useKanbanStore } from '@/shared/api'
 
@@ -32,10 +28,7 @@ describe('useColumnActions', () => {
 
       result.current.handleRename(COLUMN_TODO_ID, '  Backlog  ')
 
-      const column = useKanbanStore
-        .getState()
-        .columnsByBoard[BOARD_MAIN_ID]
-        .find((item) => item.id === COLUMN_TODO_ID)
+      const column = useKanbanStore.getState().columnsByBoard[BOARD_MAIN_ID].find((item) => item.id === COLUMN_TODO_ID)
       expect(column?.title).toBe('Backlog')
     })
 
@@ -56,10 +49,7 @@ describe('useColumnActions', () => {
       result.current.handleDelete(COLUMN_DONE_ID)
 
       expect(
-        useKanbanStore
-          .getState()
-          .columnsByBoard[BOARD_MAIN_ID]
-          .some((column) => column.id === COLUMN_DONE_ID),
+        useKanbanStore.getState().columnsByBoard[BOARD_MAIN_ID].some((column) => column.id === COLUMN_DONE_ID),
       ).toBe(false)
     })
   })

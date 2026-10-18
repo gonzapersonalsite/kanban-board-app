@@ -17,13 +17,10 @@ describe('AddTaskForm', () => {
 
     const created = useKanbanStore
       .getState()
-      .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]
-      .find((task) => task.title === 'Quick task')
+      .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].find((task) => task.title === 'Quick task')
 
     expect(created).toBeDefined()
-    expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toHaveLength(
-      before + 1,
-    )
+    expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toHaveLength(before + 1)
     expect(screen.getByLabelText('Task title')).toHaveValue('')
   })
 
@@ -33,8 +30,6 @@ describe('AddTaskForm', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /add card/i }))
 
-    expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toHaveLength(
-      before,
-    )
+    expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toHaveLength(before)
   })
 })

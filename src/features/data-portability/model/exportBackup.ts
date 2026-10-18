@@ -61,9 +61,7 @@ export function createBackupFile(): File {
 }
 
 export function buildBackupFileName(exportedAt: string): string {
-  const safeTimestamp = exportedAt
-    .replace(/\.\d{3}Z$/, 'Z')
-    .replace(/:/g, '-')
+  const safeTimestamp = exportedAt.replace(/\.\d{3}Z$/, 'Z').replace(/:/g, '-')
 
   return `${BACKUP_FILE_PREFIX}-${safeTimestamp}.json`
 }

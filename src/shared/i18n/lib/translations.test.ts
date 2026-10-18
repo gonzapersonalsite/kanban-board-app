@@ -40,9 +40,7 @@ describe('interpolate', () => {
   })
 
   it('replaces_multiple_placeholders', () => {
-    expect(
-      interpolate('{{greeting}} {{name}}', { greeting: 'Hi', name: 'Alice' }),
-    ).toBe('Hi Alice')
+    expect(interpolate('{{greeting}} {{name}}', { greeting: 'Hi', name: 'Alice' })).toBe('Hi Alice')
   })
 
   it('leaves_placeholder_when_value_not_provided', () => {

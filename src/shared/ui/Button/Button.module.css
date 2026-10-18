@@ -8,7 +8,10 @@
   font-family: var(--font-family);
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 120ms ease, box-shadow 120ms ease, transform 150ms ease;
+  transition:
+    background-color 120ms ease,
+    box-shadow 120ms ease,
+    transform 150ms ease;
   line-height: 1;
 }
 

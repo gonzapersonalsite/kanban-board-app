@@ -10,7 +10,9 @@
   max-width: none;
   max-height: none;
   box-shadow: var(--shadow-sm);
-  transition: border-color 150ms ease, background-color 150ms ease;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
   animation: columnEnter 0.35s ease-out both;
 }
 

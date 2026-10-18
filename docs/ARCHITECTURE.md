@@ -22,8 +22,8 @@ one with nothing to fill in, or a variable), nor a type that imports
 (`typeof import('…')` or `import('…').Type`): what is imported that way is
 convention, and `eslint.config.test.ts` has its cases. No comment
 switches a rule off: the lint reports an `eslint-disable` comment as a
-warning, and a warning is red (`--max-warnings=0` in `pnpm lint` and in the
-pre-commit hook), so an exception lives in `eslint.config.js`, next to its
+warning, and a warning is red (`--max-warnings=0` in `pnpm lint`, enforced by
+`python verify.py`), so an exception lives in `eslint.config.js`, next to its
 decision. The rules marked "convention" are checked by nothing: the review of
 the diff holds them, and they become lint rules with their case as soon as
 someone finds how.
@@ -33,14 +33,14 @@ someone finds how.
 `src` holds these six folders, top to bottom, plus the test support
 described below:
 
-| Layer | What it holds |
-|---|---|
-| `app` | The entry point (`src/app/main.tsx`), the providers, the router and the global styles |
-| `pages` | A whole screen: it composes what lies below and keeps the code only it uses |
-| `widgets` | A large UI block that pages or the app shell use: the board, the calendar, the header |
-| `features` | A user action with value of its own: a form, a dialog, drag and drop, a backup |
-| `entities` | A business concept: its selectors, its rules and its view |
-| `shared` | What knows nothing of a single screen: the domain store (see below), i18n, theme, toasts, utilities and the UI kit |
+| Layer      | What it holds                                                                                                      |
+| ---------- | ------------------------------------------------------------------------------------------------------------------ |
+| `app`      | The entry point (`src/app/main.tsx`), the providers, the router and the global styles                              |
+| `pages`    | A whole screen: it composes what lies below and keeps the code only it uses                                        |
+| `widgets`  | A large UI block that pages or the app shell use: the board, the calendar, the header                              |
+| `features` | A user action with value of its own: a form, a dialog, drag and drop, a backup                                     |
+| `entities` | A business concept: its selectors, its rules and its view                                                          |
+| `shared`   | What knows nothing of a single screen: the domain store (see below), i18n, theme, toasts, utilities and the UI kit |
 
 - **A layer only imports from the layers below it.** Enforced by
   `fsd-lint/forbidden-imports` and, in a re-export or a dynamic `import()`,
@@ -94,13 +94,13 @@ A slice is a folder inside `pages`, `widgets`, `features` or `entities`
 (`src/entities/<slice>/`), named in kebab-case. Inside it, only the segments
 that hold something:
 
-| Segment | What it holds |
-|---|---|
-| `ui` | `.tsx` components and their CSS Modules |
-| `model` | Types, business rules as pure functions, hooks and state |
-| `api` | The calls of the slice to the outside world, if it ever has any |
-| `lib` | Internal utilities of the slice |
-| `config` | Constants and data files of the slice |
+| Segment  | What it holds                                                   |
+| -------- | --------------------------------------------------------------- |
+| `ui`     | `.tsx` components and their CSS Modules                         |
+| `model`  | Types, business rules as pure functions, hooks and state        |
+| `api`    | The calls of the slice to the outside world, if it ever has any |
+| `lib`    | Internal utilities of the slice                                 |
+| `config` | Constants and data files of the slice                           |
 
 - **From outside, a slice is entered only through its `<slice>/index.ts`**,
   which exports on purpose what is public and nothing else: neither an

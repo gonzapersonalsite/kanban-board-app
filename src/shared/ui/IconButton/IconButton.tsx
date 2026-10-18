@@ -7,16 +7,8 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'ghost' | 'danger'
 }
 
-export function IconButton({
-  icon,
-  label,
-  variant = 'ghost',
-  className,
-  ...props
-}: IconButtonProps) {
-  const classes = [styles.button, styles[variant], className]
-    .filter(Boolean)
-    .join(' ')
+export function IconButton({ icon, label, variant = 'ghost', className, ...props }: IconButtonProps) {
+  const classes = [styles.button, styles[variant], className].filter(Boolean).join(' ')
 
   return (
     <button className={classes} aria-label={label} type="button" {...props}>

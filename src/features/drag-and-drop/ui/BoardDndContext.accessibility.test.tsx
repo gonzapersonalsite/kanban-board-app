@@ -1,11 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { useI18nStore } from '@/shared/i18n'
-import {
-  COLUMN_TODO_ID,
-  TASK_ALPHA_ID,
-  fixtureTasks,
-} from '@/test/fixtures/kanbanFixtures'
+import { COLUMN_TODO_ID, TASK_ALPHA_ID, fixtureTasks } from '@/test/fixtures/kanbanFixtures'
 import { setupKanbanStore } from '@/test/setup/kanbanStoreSetup'
 import { BoardDndContext } from './BoardDndContext'
 import { DraggableTaskCard } from './DraggableTaskCard'
@@ -17,13 +13,7 @@ function renderBoardWithAlpha() {
 
   return render(
     <BoardDndContext>
-      <DraggableTaskCard
-        task={alpha}
-        columnId={COLUMN_TODO_ID}
-        index={0}
-        onEdit={vi.fn()}
-        onDelete={vi.fn()}
-      />
+      <DraggableTaskCard task={alpha} columnId={COLUMN_TODO_ID} index={0} onEdit={vi.fn()} onDelete={vi.fn()} />
     </BoardDndContext>,
   )
 }
@@ -72,9 +62,7 @@ describe('BoardDndContext accessibility', () => {
 
     const activator = getCardActivator(container)
     expect(activator).toHaveAttribute('aria-roledescription', 'ziehbar')
-    expect(activator).toHaveAccessibleDescription(
-      expect.stringContaining('Drücke die Leertaste oder die Eingabetaste'),
-    )
+    expect(activator).toHaveAccessibleDescription(expect.stringContaining('Drücke die Leertaste oder die Eingabetaste'))
   })
 
   it('updates_the_instructions_when_the_locale_changes', () => {
@@ -84,9 +72,7 @@ describe('BoardDndContext accessibility', () => {
 
     const activator = getCardActivator(container)
     expect(activator).toHaveAttribute('aria-roledescription', 'arrastrable')
-    expect(activator).toHaveAccessibleDescription(
-      expect.stringContaining('Para coger una tarjeta o una columna'),
-    )
+    expect(activator).toHaveAccessibleDescription(expect.stringContaining('Para coger una tarjeta o una columna'))
   })
 
   it('announces_a_keyboard_pick_up_in_the_current_locale', async () => {
@@ -97,8 +83,6 @@ describe('BoardDndContext accessibility', () => {
 
     fireEvent.keyDown(activator, { code: 'Space', key: ' ' })
 
-    await waitFor(() =>
-      expect(screen.getByRole('status')).toHaveTextContent('Has cogido la tarea "Alpha".'),
-    )
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Has cogido la tarea "Alpha".'))
   })
 })

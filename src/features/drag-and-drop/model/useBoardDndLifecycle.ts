@@ -16,10 +16,7 @@ import {
   type TasksByColumn,
 } from './boardDndHandlers'
 
-function ensureColumnTaskEntries(
-  tasks: TasksByColumn,
-  columns: Column[],
-): TasksByColumn {
+function ensureColumnTaskEntries(tasks: TasksByColumn, columns: Column[]): TasksByColumn {
   const entries = { ...tasks }
   let missing = false
 
@@ -100,11 +97,7 @@ export function useBoardDndLifecycle() {
         return
       }
 
-      const nextTasks = resolveTasksAfterDragEnd(
-        previousTasksRef.current,
-        event,
-        currentTasks,
-      )
+      const nextTasks = resolveTasksAfterDragEnd(previousTasksRef.current, event, currentTasks)
 
       if (nextTasks !== currentTasks) {
         useKanbanStore.setState({
@@ -125,11 +118,7 @@ export function useBoardDndLifecycle() {
         return
       }
 
-      const nextColumns = resolveColumnsAfterDragEnd(
-        previousColumnsRef.current,
-        event,
-        currentColumns,
-      )
+      const nextColumns = resolveColumnsAfterDragEnd(previousColumnsRef.current, event, currentColumns)
 
       if (nextColumns !== currentColumns) {
         useKanbanStore.setState({

@@ -6,7 +6,7 @@ import { buildShell } from './shell.ts'
 // into index.html and emits the agent files; the dev server serves the same files.
 export function agentFilesPlugin(): Plugin {
   return {
-    name: 'kanban-agent-files',
+    name: 'agent-files',
     enforce: 'post',
     configureServer(server) {
       const files = new Map(buildAgentFiles().map((file) => [file.path, file]))

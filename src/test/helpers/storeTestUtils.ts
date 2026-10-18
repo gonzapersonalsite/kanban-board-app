@@ -7,9 +7,7 @@ export function createTestKanbanStore() {
   return create<KanbanState>()(kanbanStoreCreator)
 }
 
-export function resetKanbanStore(
-  store: ReturnType<typeof createTestKanbanStore>,
-) {
+export function resetKanbanStore(store: ReturnType<typeof createTestKanbanStore>) {
   const fixture = createKanbanFixture()
   store.setState({
     boards: fixture.boards,
@@ -20,12 +18,7 @@ export function resetKanbanStore(
 }
 
 export function resetPersistedKanbanStore(
-  setState: (
-    partial: Pick<
-      KanbanState,
-      'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'
-    >,
-  ) => void,
+  setState: (partial: Pick<KanbanState, 'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'>) => void,
 ) {
   const fixture = createKanbanFixture()
   setState({

@@ -7,9 +7,7 @@ interface ColumnDragOverlayContentProps {
   source: DragOverEvent['operation']['source'] | null
 }
 
-export function ColumnDragOverlayContent({
-  source,
-}: ColumnDragOverlayContentProps) {
+export function ColumnDragOverlayContent({ source }: ColumnDragOverlayContentProps) {
   if (!source || source.type !== 'column') return null
 
   const columnId = String(source.id)

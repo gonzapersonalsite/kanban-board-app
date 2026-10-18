@@ -65,17 +65,13 @@ describe('boardDndAnnouncements', () => {
     useKanbanStore.getState().reorderColumns(0, 2)
     const event = dragEvent<DragEndEvent>({ id: COLUMN_TODO_ID, type: 'column' })
 
-    expect(boardDndAnnouncements.dragend(event)).toBe(
-      'Column "To Do" was dropped at position 3 of 3.',
-    )
+    expect(boardDndAnnouncements.dragend(event)).toBe('Column "To Do" was dropped at position 3 of 3.')
   })
 
   it('announces_a_cancelled_move', () => {
     const event = dragEvent<DragEndEvent>({ id: COLUMN_PROGRESS_ID, type: 'column' }, null, true)
 
-    expect(boardDndAnnouncements.dragend(event)).toBe(
-      'Move canceled. "In Progress" is back in its original position.',
-    )
+    expect(boardDndAnnouncements.dragend(event)).toBe('Move canceled. "In Progress" is back in its original position.')
   })
 
   it('uses_the_current_locale_when_the_event_fires', () => {
@@ -96,9 +92,7 @@ describe('withBoardDndAnnouncements', () => {
   it('hands_the_announcements_to_every_default_plugin', () => {
     class FirstPlugin {}
     class SecondPlugin {}
-    const defaults = [FirstPlugin, SecondPlugin] as unknown as Parameters<
-      typeof withBoardDndAnnouncements
-    >[0]
+    const defaults = [FirstPlugin, SecondPlugin] as unknown as Parameters<typeof withBoardDndAnnouncements>[0]
 
     const plugins = withBoardDndAnnouncements(defaults)
 

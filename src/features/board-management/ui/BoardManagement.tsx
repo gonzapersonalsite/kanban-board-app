@@ -11,10 +11,7 @@ interface BoardManagementProps {
   className?: string
 }
 
-export function BoardManagement({
-  onBoardChange,
-  className,
-}: BoardManagementProps) {
+export function BoardManagement({ onBoardChange, className }: BoardManagementProps) {
   const { t } = useTranslation()
   const boardManagement = useBoardManagement(onBoardChange)
 
@@ -28,11 +25,7 @@ export function BoardManagement({
         actions={
           <>
             <Tooltip text={t('board.add')}>
-              <IconButton
-                icon={<Plus />}
-                label={t('board.add')}
-                onClick={boardManagement.openCreateDialog}
-              />
+              <IconButton icon={<Plus />} label={t('board.add')} onClick={boardManagement.openCreateDialog} />
             </Tooltip>
             <Tooltip text={t('board.rename')}>
               <IconButton
@@ -62,16 +55,10 @@ export function BoardManagement({
         placeholder={t('board.title_placeholder')}
         error={boardManagement.error}
         cancelLabel={t('board.cancel_action')}
-        submitLabel={
-          boardManagement.isRenameMode
-            ? t('board.save_action')
-            : t('board.create_action')
-        }
+        submitLabel={boardManagement.isRenameMode ? t('board.save_action') : t('board.create_action')}
         onChange={boardManagement.handleTitleChange}
         onClose={boardManagement.closeEditorDialog}
-        onSubmit={() =>
-          boardManagement.handleSaveDialog(t('validation.title_required'))
-        }
+        onSubmit={() => boardManagement.handleSaveDialog(t('validation.title_required'))}
       />
       <BoardDeleteDialog
         open={boardManagement.isDeleteOpen && !!boardManagement.activeBoard}

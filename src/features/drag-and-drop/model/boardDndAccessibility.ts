@@ -1,10 +1,5 @@
 import type { ComponentProps } from 'react'
-import type {
-  DragDropProvider,
-  DragEndEvent,
-  DragOverEvent,
-  DragStartEvent,
-} from '@dnd-kit/react'
+import type { DragDropProvider, DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/react'
 import { selectActiveBoardColumns, selectActiveBoardTasks } from '@/entities/board'
 import { useKanbanStore, type KanbanState } from '@/shared/api'
 import { useI18nStore } from '@/shared/i18n'
@@ -37,9 +32,7 @@ const DRAGGABLE_KINDS: Record<DraggableType, DraggableKind> = {
     findTitle: (state, id) => {
       const columnId = findTaskColumnId(state, id)
 
-      return columnId
-        ? selectActiveBoardTasks(state)[columnId].find((task) => task.id === id)?.title
-        : undefined
+      return columnId ? selectActiveBoardTasks(state)[columnId].find((task) => task.id === id)?.title : undefined
     },
     describeDrop: (state, id) => {
       const column = findColumnTitle(state, findTaskColumnId(state, id))
@@ -81,9 +74,7 @@ function describeSource(source: DragSource): DraggedItem | undefined {
 function findTargetColumnTitle(target: DropTarget): string | undefined {
   const columnId = target?.data?.columnId ?? target?.id
 
-  return columnId === undefined
-    ? undefined
-    : findColumnTitle(useKanbanStore.getState(), String(columnId))
+  return columnId === undefined ? undefined : findColumnTitle(useKanbanStore.getState(), String(columnId))
 }
 
 function translate(key: string, params: MessageParams): string {
@@ -136,7 +127,5 @@ const ANNOUNCEMENT_OPTIONS = { announcements: boardDndAnnouncements }
 // keys. Instructions and role description are set on the draggables themselves, which
 // the plugin leaves untouched when they are already present.
 export function withBoardDndAnnouncements(defaults: PluginList): PluginList {
-  return defaults.map((plugin) =>
-    typeof plugin === 'function' ? { plugin, options: ANNOUNCEMENT_OPTIONS } : plugin,
-  )
+  return defaults.map((plugin) => (typeof plugin === 'function' ? { plugin, options: ANNOUNCEMENT_OPTIONS } : plugin))
 }

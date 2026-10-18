@@ -62,11 +62,7 @@ export function TaskDialog({
         </label>
         <label className={styles.label}>
           {t('task_dialog.due_date_label')}
-          <Input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-          />
+          <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
         </label>
         <div className={styles.actions}>
           <Button type="button" variant="ghost" onClick={handleClose}>

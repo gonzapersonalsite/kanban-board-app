@@ -6,10 +6,7 @@ import {
   normalizeKanbanSnapshot,
   serializeKanbanSnapshot,
 } from './snapshot'
-import {
-  KANBAN_SNAPSHOT_SCHEMA_VERSION,
-  KanbanSnapshotError,
-} from './types'
+import { KANBAN_SNAPSHOT_SCHEMA_VERSION, KanbanSnapshotError } from './types'
 
 describe('kanban snapshot contract', () => {
   it('creates_versioned_snapshot_from_portable_state', () => {
@@ -151,12 +148,7 @@ describe('kanban snapshot contract', () => {
         columnsByBoard: {},
         tasksByBoard: {},
       }),
-    ).toThrowError(
-      new KanbanSnapshotError(
-        'unsupported_schema_version',
-        'Unsupported snapshot schema version: 2',
-      ),
-    )
+    ).toThrowError(new KanbanSnapshotError('unsupported_schema_version', 'Unsupported snapshot schema version: 2'))
   })
 
   it('throws_invalid_snapshot_when_active_board_does_not_exist', () => {

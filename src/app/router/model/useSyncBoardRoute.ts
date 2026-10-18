@@ -1,11 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useKanbanStore } from '@/shared/api'
-import {
-  buildBoardPath,
-  resolveRouteBoardId,
-  type BoardViewRoute,
-} from '@/entities/board'
+import { buildBoardPath, resolveRouteBoardId, type BoardViewRoute } from '@/entities/board'
 
 export function useSyncBoardRoute(view: BoardViewRoute): boolean {
   const navigate = useNavigate()

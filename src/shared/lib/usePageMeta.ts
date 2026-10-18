@@ -28,11 +28,7 @@ export function usePageMeta({ title, description }: PageMetaOptions) {
 
 function getMetaContent(name: string): string | undefined {
   const attr = name.startsWith('og:') ? 'property' : 'name'
-  return (
-    document
-      .querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`)
-      ?.getAttribute('content') ?? undefined
-  )
+  return document.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`)?.getAttribute('content') ?? undefined
 }
 
 function setMeta(name: string, content?: string) {

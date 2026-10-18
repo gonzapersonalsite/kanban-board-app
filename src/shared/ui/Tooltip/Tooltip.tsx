@@ -42,8 +42,7 @@ export function Tooltip({ text, children }: TooltipProps) {
 
     const triggerRect = triggerRef.current.getBoundingClientRect()
     const tooltipRect = tooltipRef.current.getBoundingClientRect()
-    const fitsAbove =
-      triggerRect.top >= tooltipRect.height + TOOLTIP_GAP + VIEWPORT_PADDING
+    const fitsAbove = triggerRect.top >= tooltipRect.height + TOOLTIP_GAP + VIEWPORT_PADDING
 
     const centeredLeft = triggerRect.left + triggerRect.width / 2
     const clampedLeft = Math.min(
@@ -52,22 +51,14 @@ export function Tooltip({ text, children }: TooltipProps) {
     )
 
     setCoords({
-      top: fitsAbove
-        ? triggerRect.top - TOOLTIP_GAP
-        : triggerRect.bottom + TOOLTIP_GAP,
+      top: fitsAbove ? triggerRect.top - TOOLTIP_GAP : triggerRect.bottom + TOOLTIP_GAP,
       left: clampedLeft,
       placement: fitsAbove ? 'top' : 'bottom',
     })
   }, [text, visible])
 
   return (
-    <span
-      className={styles.wrapper}
-      onMouseEnter={show}
-      onMouseLeave={hide}
-      onFocus={show}
-      onBlur={hide}
-    >
+    <span className={styles.wrapper} onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide}>
       <span ref={triggerRef} aria-describedby={id} className={styles.trigger}>
         {children}
       </span>

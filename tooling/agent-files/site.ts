@@ -11,3 +11,13 @@ export const SITE_NAME = 'Kanban Board'
 // (usePageMeta), which crawlers never see.
 export const SITE_DESCRIPTION =
   'A Trello-style Kanban board that runs fully in the browser: multiple boards, drag and drop, calendar view and JSON backup. No backend and no account: your data stays in your browser.'
+
+export const REPOSITORY_URL = 'https://github.com/gonzapersonalsite/kanban-board-app'
+
+// Only the root: the board and calendar addresses name the boards each visitor keeps in their own browser.
+export const ROUTES: readonly string[] = ['/']
+
+export const DOCUMENTS: readonly (readonly [string, string])[] = [
+  ['README.md', 'features, stack and how to run it.'],
+  ['docs/ARCHITECTURE.md', 'the Feature-Sliced Design rules of the code and what enforces each one.'],
+]

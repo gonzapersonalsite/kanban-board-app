@@ -1,14 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  BOARD_MAIN_ID,
-  COLUMN_PROGRESS_ID,
-  COLUMN_TODO_ID,
-  createKanbanFixture,
-} from '@/test/fixtures/kanbanFixtures'
-import {
-  createTestKanbanStore,
-  resetKanbanStore,
-} from '@/test/helpers/storeTestUtils'
+import { BOARD_MAIN_ID, COLUMN_PROGRESS_ID, COLUMN_TODO_ID, createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
+import { createTestKanbanStore, resetKanbanStore } from '@/test/helpers/storeTestUtils'
 
 vi.mock('nanoid', () => ({
   nanoid: vi.fn(() => 'generated-column-id'),
@@ -26,9 +18,7 @@ describe('columnSlice', () => {
       store.getState().addColumn('  Review  ')
 
       const state = store.getState()
-      const created = state.columnsByBoard[BOARD_MAIN_ID].find(
-        (column) => column.id === 'generated-column-id',
-      )
+      const created = state.columnsByBoard[BOARD_MAIN_ID].find((column) => column.id === 'generated-column-id')
 
       expect(created).toEqual({ id: 'generated-column-id', title: 'Review' })
       expect(state.tasksByBoard[BOARD_MAIN_ID]['generated-column-id']).toEqual([])
@@ -47,9 +37,7 @@ describe('columnSlice', () => {
     it('updates_the_matching_column_title', () => {
       store.getState().updateColumn(COLUMN_TODO_ID, '  Backlog  ')
 
-      const updated = store.getState().columnsByBoard[BOARD_MAIN_ID].find(
-        (column) => column.id === COLUMN_TODO_ID,
-      )
+      const updated = store.getState().columnsByBoard[BOARD_MAIN_ID].find((column) => column.id === COLUMN_TODO_ID)
 
       expect(updated?.title).toBe('Backlog')
     })
@@ -68,9 +56,7 @@ describe('columnSlice', () => {
       store.getState().deleteColumn(COLUMN_TODO_ID)
 
       const state = store.getState()
-      expect(
-        state.columnsByBoard[BOARD_MAIN_ID].some((column) => column.id === COLUMN_TODO_ID),
-      ).toBe(false)
+      expect(state.columnsByBoard[BOARD_MAIN_ID].some((column) => column.id === COLUMN_TODO_ID)).toBe(false)
       expect(state.tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toBeUndefined()
     })
 
@@ -81,9 +67,7 @@ describe('columnSlice', () => {
 
       const state = store.getState()
       expect(state.columnsByBoard[BOARD_MAIN_ID]).toEqual(
-        before.columnsByBoard[BOARD_MAIN_ID].filter(
-          (column) => column.id !== COLUMN_TODO_ID,
-        ),
+        before.columnsByBoard[BOARD_MAIN_ID].filter((column) => column.id !== COLUMN_TODO_ID),
       )
       expect(state.tasksByBoard[BOARD_MAIN_ID][COLUMN_PROGRESS_ID]).toEqual(
         before.tasksByBoard[BOARD_MAIN_ID][COLUMN_PROGRESS_ID],

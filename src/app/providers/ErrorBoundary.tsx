@@ -10,10 +10,7 @@ interface ErrorBoundaryState {
   hasError: boolean
 }
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props)
     this.state = { hasError: false }
@@ -38,14 +35,8 @@ export class ErrorBoundary extends Component<
           <div className={styles.card}>
             <AlertTriangle className={styles.icon} aria-hidden="true" />
             <h1 className={styles.title}>Something went wrong</h1>
-            <p className={styles.description}>
-              An unexpected error occurred. Please try reloading the page.
-            </p>
-            <button
-              type="button"
-              className={styles.button}
-              onClick={this.handleReload}
-            >
+            <p className={styles.description}>An unexpected error occurred. Please try reloading the page.</p>
+            <button type="button" className={styles.button} onClick={this.handleReload}>
               Reload page
             </button>
           </div>

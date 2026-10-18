@@ -1,0 +1,9 @@
+# Prettier formats the product's code and nothing else: the documents are
+# prose, and the lockfile is pnpm's. Everything at the root is left out, then
+# the code is let back in.
+/*
+!/src/
+!/tooling/
+!/*.ts
+!/*.js
+!/index.html

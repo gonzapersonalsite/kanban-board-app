@@ -1,9 +1,9 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { buildAgentFiles } from './generate'
-import { REPOSITORY_URL } from './llmsTxt'
-import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from './site'
+import { buildAgentFiles } from './generate.ts'
+import { absoluteUrl, DOCUMENTS, REPOSITORY_URL, ROUTES, SITE_DESCRIPTION, SITE_NAME } from './site.ts'
+import { buildSitemap } from './sitemap.ts'
 
 const ROOT = join(import.meta.dirname, '..', '..')
 
@@ -33,13 +33,20 @@ describe('buildAgentFiles', () => {
     expect(lines).toContain(`Sitemap: ${absoluteUrl('/sitemap.xml')}`)
   })
 
-  it('does_list_only_the_site_root_when_the_sitemap_is_built', () => {
+  it('does_list_the_public_routes_of_site_ts_when_the_sitemap_is_built', () => {
     const sitemap = sourceOf('/sitemap.xml')
 
     const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map((match) => match[1])
 
     expect(sitemap.startsWith('<?xml version="1.0" encoding="UTF-8"?>\n')).toBe(true)
-    expect(locations).toEqual([absoluteUrl('/')])
+    expect(locations).toEqual(ROUTES.map((route) => absoluteUrl(route)))
+  })
+
+  it('does_escape_xml_entities_in_sitemap_locations_when_routes_contain_reserved_characters', () => {
+    const sitemap = buildSitemap(['/tasks?filter=pending&sort=asc'])
+
+    expect(sitemap).toContain(`<loc>${absoluteUrl('/tasks?filter=pending&amp;sort=asc')}</loc>`)
+    expect(DOCUMENTS.length).toBeGreaterThanOrEqual(2)
   })
 
   it('does_summarize_the_site_with_the_texts_of_site_ts_when_llms_txt_is_built', () => {
@@ -61,7 +68,11 @@ describe('buildAgentFiles', () => {
       .filter((link) => link.startsWith(documentPrefix))
       .map((link) => link.slice(documentPrefix.length))
 
-    expect(documents).toEqual(['README.md', 'docs/ARCHITECTURE.md'])
+    // The README is always there; the architecture document arrives with the scaffold's layer.
+    expect(documents).toEqual([
+      'README.md',
+      ...(existsSync(join(ROOT, 'docs', 'ARCHITECTURE.md')) ? ['docs/ARCHITECTURE.md'] : []),
+    ])
     expect(documents.filter((path) => !existsSync(join(ROOT, path)))).toEqual([])
   })
 

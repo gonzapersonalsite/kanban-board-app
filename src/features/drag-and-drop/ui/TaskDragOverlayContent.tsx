@@ -8,9 +8,7 @@ interface TaskDragOverlayContentProps {
   source: DragOverEvent['operation']['source'] | null
 }
 
-export function TaskDragOverlayContent({
-  source,
-}: TaskDragOverlayContentProps) {
+export function TaskDragOverlayContent({ source }: TaskDragOverlayContentProps) {
   if (!source || source.type !== 'task') return null
 
   const taskId = String(source.id)

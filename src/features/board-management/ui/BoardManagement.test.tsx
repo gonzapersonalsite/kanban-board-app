@@ -17,9 +17,7 @@ describe('BoardManagement', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /^create$/i }))
 
-    expect(useKanbanStore.getState().boards.some((board) => board.title === 'Planning')).toBe(
-      true,
-    )
+    expect(useKanbanStore.getState().boards.some((board) => board.title === 'Planning')).toBe(true)
     expect(useKanbanStore.getState().activeBoardId).toBe(
       useKanbanStore.getState().boards.find((board) => board.title === 'Planning')?.id,
     )
@@ -58,16 +56,12 @@ describe('BoardManagement', () => {
     act(() => {
       useKanbanStore.getState().addBoard('Secondary')
     })
-    const secondaryBoardId = useKanbanStore
-      .getState()
-      .boards.find((board) => board.title === 'Secondary')!.id
+    const secondaryBoardId = useKanbanStore.getState().boards.find((board) => board.title === 'Secondary')!.id
 
     fireEvent.click(screen.getByRole('button', { name: /delete board/i }))
     fireEvent.click(screen.getByRole('button', { name: /^delete$/i }))
 
-    expect(useKanbanStore.getState().boards.some((board) => board.id === secondaryBoardId)).toBe(
-      false,
-    )
+    expect(useKanbanStore.getState().boards.some((board) => board.id === secondaryBoardId)).toBe(false)
     expect(useKanbanStore.getState().activeBoardId).toBe(BOARD_MAIN_ID)
   })
 })

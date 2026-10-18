@@ -44,9 +44,7 @@ describe('BoardSelector', () => {
       />,
     )
 
-    const secondaryBoardId = useKanbanStore
-      .getState()
-      .boards.find((board) => board.title === 'Secondary')!.id
+    const secondaryBoardId = useKanbanStore.getState().boards.find((board) => board.title === 'Secondary')!.id
 
     fireEvent.change(screen.getByRole('combobox', { name: /switch board/i }), {
       target: { value: secondaryBoardId },

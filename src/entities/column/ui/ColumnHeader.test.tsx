@@ -9,14 +9,7 @@ describe('ColumnHeader', () => {
   it('calls_onRename_with_trimmed_title_after_edit', () => {
     const onRename = vi.fn()
 
-    render(
-      <ColumnHeader
-        column={column}
-        onRename={onRename}
-        onDelete={vi.fn()}
-        canDelete={false}
-      />,
-    )
+    render(<ColumnHeader column={column} onRename={onRename} onDelete={vi.fn()} canDelete={false} />)
 
     fireEvent.click(screen.getByRole('button', { name: /rename column/i }))
     fireEvent.change(screen.getByDisplayValue('To Do'), {
@@ -29,27 +22,13 @@ describe('ColumnHeader', () => {
 
   it('shows_delete_action_only_when_column_can_be_deleted', () => {
     const { rerender } = render(
-      <ColumnHeader
-        column={column}
-        onRename={vi.fn()}
-        onDelete={vi.fn()}
-        canDelete={false}
-      />,
+      <ColumnHeader column={column} onRename={vi.fn()} onDelete={vi.fn()} canDelete={false} />,
     )
 
     expect(screen.queryByRole('button', { name: /delete column/i })).toBeNull()
 
-    rerender(
-      <ColumnHeader
-        column={column}
-        onRename={vi.fn()}
-        onDelete={vi.fn()}
-        canDelete
-      />,
-    )
+    rerender(<ColumnHeader column={column} onRename={vi.fn()} onDelete={vi.fn()} canDelete />)
 
-    expect(
-      screen.getByRole('button', { name: /delete column "to do"/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /delete column "to do"/i })).toBeInTheDocument()
   })
 })

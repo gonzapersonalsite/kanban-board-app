@@ -142,6 +142,15 @@ describe('the layers of Feature-Sliced Design', () => {
     expect(reports).toEqual([])
   })
 
+  it('accepts_a_scoped_package_whose_name_starts_like_a_layer_which_is_not_the_alias', async () => {
+    // Only '@/...' is the alias; '@app/tokens' is a package, not the app layer.
+    const code = "import { tokens } from '@app/tokens'\nexport const theme = tokens\n"
+
+    const reports = await reportsOn('src/entities/board/model/selectors.ts', code)
+
+    expect(reports).toEqual([])
+  })
+
   it('accepts_the_entry_point_in_the_app_layer', async () => {
     const code =
       "import { createRoot } from 'react-dom/client'\nimport App from './App'\ncreateRoot(document.body).render(<App />)\n"
@@ -153,7 +162,8 @@ describe('the layers of Feature-Sliced Design', () => {
 
   it('leaves_the_build_tooling_and_the_configuration_at_the_root_out_of_the_layers', async () => {
     const tooling = "import { buildShell } from './shell'\nexport const shell = buildShell\n"
-    const configuration = "import { agentFilesPlugin } from './tooling/agent-files/vitePlugin'\nexport const plugin = agentFilesPlugin\n"
+    const configuration =
+      "import { agentFilesPlugin } from './tooling/agent-files/vitePlugin'\nexport const plugin = agentFilesPlugin\n"
 
     const reports = [
       ...(await reportsOn('tooling/agent-files/vitePlugin.ts', tooling)),
@@ -604,7 +614,8 @@ describe('the test support in src/test', () => {
     ['a_logic_segment', 'src/entities/board/model/selectors.ts'],
     ['the_app_layer', 'src/app/App.tsx'],
   ])('rejects_an_import_of_it_from_%s', async (_case, path) => {
-    const code = "import { createKanbanFixture } from '@/test/fixtures/kanbanFixtures'\nexport const fixture = createKanbanFixture\n"
+    const code =
+      "import { createKanbanFixture } from '@/test/fixtures/kanbanFixtures'\nexport const fixture = createKanbanFixture\n"
 
     const broken = await rulesBrokenBy(path, code)
 
@@ -739,23 +750,9 @@ describe('exceptions live in the configuration', () => {
     )
   })
 
-  it('counts_a_warning_as_an_error_in_the_lint_and_the_pre_commit_hook', () => {
+  it('counts_a_warning_as_an_error_in_the_lint', () => {
     const manifest = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'))
 
-    // The hook reads, besides .ts and .tsx, the extensions that src rejects.
-    const commands = [manifest.scripts.lint, manifest['lint-staged']['*.{ts,tsx,js,jsx,mjs,cjs,mts,cts}']]
-
-    expect(commands.every((command?: string) => command?.includes('--max-warnings=0'))).toBe(true)
-  })
-})
-
-describe('the pre-commit hook', () => {
-  it('runs_the_lint_staged_of_the_lockfile_through_pnpm_exec', () => {
-    // npx downloads and runs a package it does not find installed; pnpm exec runs only what the lockfile installed.
-    const hook = readFileSync(new URL('./.husky/pre-commit', import.meta.url), 'utf8')
-
-    const commands = hook.split(/\r?\n/).filter((line) => line.trim() !== '')
-
-    expect(commands).toEqual(['pnpm exec lint-staged'])
+    expect(manifest.scripts.lint).toContain('--max-warnings=0')
   })
 })

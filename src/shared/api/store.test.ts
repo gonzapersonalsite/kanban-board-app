@@ -99,9 +99,7 @@ describe('sample board lifecycle', () => {
       firstColumn: 'To do',
       firstTask: 'Plan the next sprint',
     })
-    expect(after.tasksByBoard[after.activeBoardId!][firstColumnId].at(-1)?.title).toBe(
-      'My own task',
-    )
+    expect(after.tasksByBoard[after.activeBoardId!][firstColumnId].at(-1)?.title).toBe('My own task')
     expect(persisted.state.tasksByBoard).toEqual(after.tasksByBoard)
   })
 

@@ -40,17 +40,9 @@ interface TaskCardProps {
   accentColor?: string
 }
 
-export function TaskCard({
-  task,
-  onEdit,
-  onDelete,
-  isDragging = false,
-  accentColor,
-}: TaskCardProps) {
+export function TaskCard({ task, onEdit, onDelete, isDragging = false, accentColor }: TaskCardProps) {
   const { t } = useTranslation()
-  const classes = [styles.card, isDragging ? styles.dragging : '']
-    .filter(Boolean)
-    .join(' ')
+  const classes = [styles.card, isDragging ? styles.dragging : ''].filter(Boolean).join(' ')
 
   return (
     <div
@@ -62,11 +54,7 @@ export function TaskCard({
         <h3 className={styles.title}>{task.title}</h3>
         <div className={styles.actions}>
           <Tooltip text={t('task.edit', { title: task.title })}>
-            <IconButton
-              icon={<Pencil />}
-              label={t('task.edit', { title: task.title })}
-              onClick={onEdit}
-            />
+            <IconButton icon={<Pencil />} label={t('task.edit', { title: task.title })} onClick={onEdit} />
           </Tooltip>
           <Tooltip text={t('task.delete', { title: task.title })}>
             <IconButton
@@ -78,9 +66,7 @@ export function TaskCard({
           </Tooltip>
         </div>
       </div>
-      {task.description && (
-        <p className={styles.description}>{task.description}</p>
-      )}
+      {task.description && <p className={styles.description}>{task.description}</p>}
       {task.dueDate && <DueDateBadge dueDate={task.dueDate} />}
     </div>
   )

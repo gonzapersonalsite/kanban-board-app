@@ -6,10 +6,7 @@ import {
   TASK_ALPHA_ID,
   TASK_BETA_ID,
 } from '@/test/fixtures/kanbanFixtures'
-import {
-  createTestKanbanStore,
-  resetKanbanStore,
-} from '@/test/helpers/storeTestUtils'
+import { createTestKanbanStore, resetKanbanStore } from '@/test/helpers/storeTestUtils'
 
 vi.mock('nanoid', () => ({
   nanoid: vi.fn(() => 'generated-task-id'),
@@ -39,9 +36,7 @@ describe('taskSlice', () => {
 
       store.getState().addTask(COLUMN_TODO_ID, '   ')
 
-      expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toHaveLength(
-        before,
-      )
+      expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toHaveLength(before)
     })
   })
 
@@ -52,9 +47,9 @@ describe('taskSlice', () => {
         description: 'Updated description',
       })
 
-      const updated = store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].find(
-        (task) => task.id === TASK_ALPHA_ID,
-      )
+      const updated = store
+        .getState()
+        .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].find((task) => task.id === TASK_ALPHA_ID)
 
       expect(updated).toMatchObject({
         id: TASK_ALPHA_ID,
@@ -78,9 +73,9 @@ describe('taskSlice', () => {
     it('removes_the_task_from_the_column', () => {
       store.getState().deleteTask(COLUMN_TODO_ID, TASK_BETA_ID)
 
-      expect(
-        store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id),
-      ).toEqual([TASK_ALPHA_ID])
+      expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id)).toEqual([
+        TASK_ALPHA_ID,
+      ])
     })
   })
 
@@ -88,9 +83,10 @@ describe('taskSlice', () => {
     it('moves_a_task_within_the_same_column', () => {
       store.getState().reorderTask(COLUMN_TODO_ID, 1, 0)
 
-      expect(
-        store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id),
-      ).toEqual([TASK_BETA_ID, TASK_ALPHA_ID])
+      expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id)).toEqual([
+        TASK_BETA_ID,
+        TASK_ALPHA_ID,
+      ])
     })
 
     it('ignores_reorder_when_column_is_empty', () => {

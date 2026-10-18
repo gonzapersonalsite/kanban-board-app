@@ -15,11 +15,7 @@ export function DataExportSection() {
         <p className={styles.description}>{t('data_portability.description')}</p>
       </div>
       <div className={styles.actions}>
-        <Button
-          size="sm"
-          className={styles.actionButton}
-          onClick={downloadBackup}
-        >
+        <Button size="sm" className={styles.actionButton} onClick={downloadBackup}>
           <Download aria-hidden="true" />
           <span>{t('data_portability.download')}</span>
         </Button>

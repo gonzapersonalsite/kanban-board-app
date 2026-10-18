@@ -70,15 +70,12 @@ describe('BoardDndContext', () => {
     dragHandlers.onDragStart?.()
     dragHandlers.onDragOver?.(dragFixtures.moveAlphaToProgress())
 
-    expect(
-      useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id),
-    ).toEqual([TASK_BETA_ID])
-    expect(
-      useKanbanStore
-        .getState()
-        .tasksByBoard[BOARD_MAIN_ID][COLUMN_PROGRESS_ID]
-        .map((task) => task.id),
-    ).toContain(TASK_ALPHA_ID)
+    expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].map((task) => task.id)).toEqual([
+      TASK_BETA_ID,
+    ])
+    expect(useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_PROGRESS_ID].map((task) => task.id)).toContain(
+      TASK_ALPHA_ID,
+    )
   })
 
   it('restores_previous_tasks_when_drag_is_canceled', () => {

@@ -2,11 +2,7 @@ import { useState } from 'react'
 import { Settings2 } from 'lucide-react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from '@/shared/i18n'
-import {
-  buildBoardPath,
-  resolveFallbackBoardId,
-  useBoards,
-} from '@/entities/board'
+import { buildBoardPath, resolveFallbackBoardId, useBoards } from '@/entities/board'
 import { BoardManagement } from '@/features/board-management'
 import { DataExportSection, DataImportSection } from '@/features/data-portability'
 import { LanguageSwitcher } from '@/features/language-switcher'
@@ -50,31 +46,19 @@ export function Header() {
         <div className={styles.brandMark}>
           <AppIcon />
         </div>
-        <BoardManagement
-          className={styles.boardSelector}
-          onBoardChange={handleBoardChange}
-        />
+        <BoardManagement className={styles.boardSelector} onBoardChange={handleBoardChange} />
       </div>
       <div className={styles.secondary}>
         <nav className={styles.nav}>
           {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={styles.navLink}
-            >
+            <NavLink key={item.to} to={item.to} end={item.end} className={styles.navLink}>
               {t(item.label)}
             </NavLink>
           ))}
         </nav>
         <div className={styles.settingsAction}>
           <Tooltip text={t('header.settings')}>
-            <IconButton
-              icon={<Settings2 />}
-              label={t('header.settings')}
-              onClick={() => setIsSettingsOpen(true)}
-            />
+            <IconButton icon={<Settings2 />} label={t('header.settings')} onClick={() => setIsSettingsOpen(true)} />
           </Tooltip>
         </div>
       </div>

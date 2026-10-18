@@ -13,11 +13,7 @@ import type {
 } from './types'
 import { useI18nStore } from '@/shared/i18n'
 
-const SEED_COLUMN_TITLE_KEYS = [
-  'seed.column_todo',
-  'seed.column_in_progress',
-  'seed.column_done',
-] as const
+const SEED_COLUMN_TITLE_KEYS = ['seed.column_todo', 'seed.column_in_progress', 'seed.column_done'] as const
 
 export function getDefaultBoardTitle(): string {
   return useI18nStore.getState().t('board.default_title')
@@ -29,10 +25,7 @@ export function getSeedColumns(): Column[] {
   return SEED_COLUMN_TITLE_KEYS.map((key) => ({ id: nanoid(), title: t(key) }))
 }
 
-export function normalizeTasksByColumn(
-  columns: Column[],
-  tasks: TasksByColumn = {},
-): TasksByColumn {
+export function normalizeTasksByColumn(columns: Column[], tasks: TasksByColumn = {}): TasksByColumn {
   const normalized: TasksByColumn = {}
 
   for (const column of columns) {
@@ -66,11 +59,7 @@ interface SampleTaskSeed {
 // current visit while nothing is persisted, so the calendar usually shows overdue, today
 // and upcoming cards (a card can fall outside the grid near a month boundary).
 const SAMPLE_TASKS_BY_SEED_COLUMN: SampleTaskSeed[][] = [
-  [
-    { key: 'plan_sprint', dueInDays: 3 },
-    { key: 'onboarding_emails', dueInDays: 8 },
-    { key: 'accessibility_audit' },
-  ],
+  [{ key: 'plan_sprint', dueInDays: 3 }, { key: 'onboarding_emails', dueInDays: 8 }, { key: 'accessibility_audit' }],
   [
     { key: 'landing_redesign', dueInDays: 0 },
     { key: 'safari_login_fix', dueInDays: -1 },
@@ -161,17 +150,13 @@ export function getActiveBoardId(state: Pick<KanbanState, 'activeBoardId'>): Boa
   return state.activeBoardId
 }
 
-export function getActiveBoardColumns(
-  state: Pick<KanbanState, 'activeBoardId' | 'columnsByBoard'>,
-): Column[] {
+export function getActiveBoardColumns(state: Pick<KanbanState, 'activeBoardId' | 'columnsByBoard'>): Column[] {
   const boardId = getActiveBoardId(state)
 
   return boardId ? (state.columnsByBoard[boardId] ?? []) : []
 }
 
-export function getActiveBoardTasks(
-  state: Pick<KanbanState, 'activeBoardId' | 'tasksByBoard'>,
-): TasksByColumn {
+export function getActiveBoardTasks(state: Pick<KanbanState, 'activeBoardId' | 'tasksByBoard'>): TasksByColumn {
   const boardId = getActiveBoardId(state)
 
   return boardId ? (state.tasksByBoard[boardId] ?? {}) : {}
@@ -188,21 +173,14 @@ export function setActiveBoardColumns(
   }
 }
 
-export function setActiveBoardTasks(
-  tasksByBoard: TasksByBoard,
-  boardId: BoardId,
-  tasks: TasksByColumn,
-): TasksByBoard {
+export function setActiveBoardTasks(tasksByBoard: TasksByBoard, boardId: BoardId, tasks: TasksByColumn): TasksByBoard {
   return {
     ...tasksByBoard,
     [boardId]: tasks,
   }
 }
 
-export function removeBoardTasksByColumns(
-  tasks: TasksByColumn,
-  columnIds: ColumnId[],
-): TasksByColumn {
+export function removeBoardTasksByColumns(tasks: TasksByColumn, columnIds: ColumnId[]): TasksByColumn {
   const nextTasks = { ...tasks }
 
   for (const columnId of columnIds) {
@@ -212,9 +190,7 @@ export function removeBoardTasksByColumns(
   return nextTasks
 }
 
-export function normalizeTaskMap(
-  input: unknown,
-): Record<ColumnId, Task[]> {
+export function normalizeTaskMap(input: unknown): Record<ColumnId, Task[]> {
   if (!input || typeof input !== 'object') {
     return {}
   }
@@ -222,9 +198,6 @@ export function normalizeTaskMap(
   const entries = Object.entries(input as Record<string, unknown>)
 
   return Object.fromEntries(
-    entries.map(([columnId, tasks]) => [
-      columnId,
-      Array.isArray(tasks) ? [...(tasks as Task[])] : [],
-    ]),
+    entries.map(([columnId, tasks]) => [columnId, Array.isArray(tasks) ? [...(tasks as Task[])] : []]),
   ) as Record<ColumnId, Task[]>
 }

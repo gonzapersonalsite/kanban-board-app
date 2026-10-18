@@ -11,13 +11,7 @@ interface BoardSelectorProps {
   className?: string
 }
 
-export function BoardSelector({
-  boards,
-  activeBoardId,
-  onBoardChange,
-  actions,
-  className,
-}: BoardSelectorProps) {
+export function BoardSelector({ boards, activeBoardId, onBoardChange, actions, className }: BoardSelectorProps) {
   const { t } = useTranslation()
 
   return (

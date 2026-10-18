@@ -8,7 +8,9 @@
   font-size: var(--font-size-body);
   color: var(--color-text);
   background: var(--color-surface);
-  transition: border-color 120ms ease, box-shadow 120ms ease;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
 }
 
 .input::placeholder {

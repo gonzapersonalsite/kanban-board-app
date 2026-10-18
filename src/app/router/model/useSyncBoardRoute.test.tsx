@@ -20,10 +20,7 @@ describe('useSyncBoardRoute', () => {
     render(
       <MemoryRouter initialEntries={[`/board/${BOARD_MAIN_ID}`]}>
         <Routes>
-          <Route
-            path="/board/:boardId"
-            element={<RouteSyncProbe view="board" />}
-          />
+          <Route path="/board/:boardId" element={<RouteSyncProbe view="board" />} />
         </Routes>
       </MemoryRouter>,
     )

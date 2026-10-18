@@ -51,18 +51,10 @@ export function Dialog({ open, onClose, title, children, closeLabel = 'Close dia
   if (!open) return null
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={styles.dialog}
-      onClose={onClose}
-    >
+    <dialog ref={dialogRef} className={styles.dialog} onClose={onClose}>
       <div className={styles.header}>
         <h2 className={styles.title}>{title}</h2>
-        <IconButton
-          icon={<X />}
-          label={closeLabel}
-          onClick={onClose}
-        />
+        <IconButton icon={<X />} label={closeLabel} onClick={onClose} />
       </div>
       <div className={styles.body}>{children}</div>
     </dialog>

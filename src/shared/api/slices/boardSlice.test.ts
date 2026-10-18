@@ -1,12 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import {
-  BOARD_MAIN_ID,
-  createKanbanFixture,
-} from '@/test/fixtures/kanbanFixtures'
-import {
-  createTestKanbanStore,
-  resetKanbanStore,
-} from '@/test/helpers/storeTestUtils'
+import { BOARD_MAIN_ID, createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
+import { createTestKanbanStore, resetKanbanStore } from '@/test/helpers/storeTestUtils'
 
 describe('boardSlice', () => {
   const store = createTestKanbanStore()
@@ -36,9 +30,7 @@ describe('boardSlice', () => {
     it('updates_the_matching_board_title', () => {
       store.getState().updateBoard(BOARD_MAIN_ID, '  Backlog Board  ')
 
-      expect(store.getState().boards.find((board) => board.id === BOARD_MAIN_ID)?.title).toBe(
-        'Backlog Board',
-      )
+      expect(store.getState().boards.find((board) => board.id === BOARD_MAIN_ID)?.title).toBe('Backlog Board')
     })
 
     it('ignores_blank_titles', () => {

@@ -6,15 +6,9 @@ import { useSyncBoardRoute } from '../model/useSyncBoardRoute'
 import { AppShellRoute, RouteContentFallback } from './AppShellRoute'
 import styles from './RouteErrorBoundary.module.css'
 
-const HomePage = lazy(() =>
-  import('@/pages/home').then((m) => ({ default: m.HomePage })),
-)
-const CalendarPage = lazy(() =>
-  import('@/pages/calendar').then((m) => ({ default: m.CalendarPage })),
-)
-const NotFoundPage = lazy(() =>
-  import('@/pages/not-found').then((m) => ({ default: m.NotFoundPage })),
-)
+const HomePage = lazy(() => import('@/pages/home').then((m) => ({ default: m.HomePage })))
+const CalendarPage = lazy(() => import('@/pages/calendar').then((m) => ({ default: m.CalendarPage })))
+const NotFoundPage = lazy(() => import('@/pages/not-found').then((m) => ({ default: m.NotFoundPage })))
 
 function RouteErrorBoundary() {
   const error = useRouteError()

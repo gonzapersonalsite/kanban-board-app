@@ -17,13 +17,7 @@ function renderFirstSampleTask() {
 
   const { container } = render(
     <BoardDndContext>
-      <DraggableTaskCard
-        task={firstTask}
-        columnId={firstColumn.id}
-        index={0}
-        onEdit={vi.fn()}
-        onDelete={vi.fn()}
-      />
+      <DraggableTaskCard task={firstTask} columnId={firstColumn.id} index={0} onEdit={vi.fn()} onDelete={vi.fn()} />
     </BoardDndContext>,
   )
 

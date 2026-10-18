@@ -39,9 +39,7 @@ export function createBoardSlice(
       }
 
       set((state) => ({
-        boards: state.boards.map((board) =>
-          board.id === id ? { ...board, title: trimmed } : board,
-        ),
+        boards: state.boards.map((board) => (board.id === id ? { ...board, title: trimmed } : board)),
       }))
     },
 

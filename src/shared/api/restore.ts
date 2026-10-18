@@ -18,10 +18,7 @@ export class KanbanRestoreError extends Error {
 }
 
 export function restoreKanbanState(snapshot: unknown): PortableKanbanState {
-  return restoreKanbanStateInStore(
-    (nextState) => useKanbanStore.setState(nextState),
-    snapshot,
-  )
+  return restoreKanbanStateInStore((nextState) => useKanbanStore.setState(nextState), snapshot)
 }
 
 export function restoreKanbanStateInStore(
@@ -35,9 +32,7 @@ export function restoreKanbanStateInStore(
   return restoredState
 }
 
-export function normalizePortableKanbanState(
-  input: unknown,
-): PortableKanbanState {
+export function normalizePortableKanbanState(input: unknown): PortableKanbanState {
   const candidate = toRecord(input, 'Restore state must be an object.')
   const boards = normalizeBoards(candidate.boards)
   const activeBoardId = normalizeActiveBoardId(candidate.activeBoardId, boards)
@@ -75,29 +70,22 @@ function normalizeBoards(value: unknown): Board[] {
 }
 
 function normalizeActiveBoardId(value: unknown, boards: Board[]): BoardId {
-  const activeBoardId = normalizeNonEmptyString(
-    value,
-    'Restore state activeBoardId must be a string.',
-  )
+  const activeBoardId = normalizeNonEmptyString(value, 'Restore state activeBoardId must be a string.')
 
   if (!boards.some((board) => board.id === activeBoardId)) {
-    throw new KanbanRestoreError(
-      `Restore state activeBoardId "${activeBoardId}" does not exist in boards.`,
-    )
+    throw new KanbanRestoreError(`Restore state activeBoardId "${activeBoardId}" does not exist in boards.`)
   }
 
   return activeBoardId
 }
 
-function normalizeColumnsByBoard(
-  value: unknown,
-  boards: Board[],
-): Record<BoardId, Column[]> {
+function normalizeColumnsByBoard(value: unknown, boards: Board[]): Record<BoardId, Column[]> {
   const record = toRecord(value, 'Restore state columnsByBoard must be an object.')
 
-  return Object.fromEntries(
-    boards.map((board) => [board.id, normalizeColumns(record[board.id], board.id)]),
-  ) as Record<BoardId, Column[]>
+  return Object.fromEntries(boards.map((board) => [board.id, normalizeColumns(record[board.id], board.id)])) as Record<
+    BoardId,
+    Column[]
+  >
 }
 
 function normalizeColumns(value: unknown, boardId: BoardId): Column[] {
@@ -112,23 +100,15 @@ function normalizeColumns(value: unknown, boardId: BoardId): Column[] {
   const seenColumnIds = new Set<string>()
 
   return value.map((column, index) => {
-    const candidate = toRecord(
-      column,
-      `Column at index ${index} for board "${boardId}" must be an object.`,
-    )
+    const candidate = toRecord(column, `Column at index ${index} for board "${boardId}" must be an object.`)
     const id = normalizeNonEmptyString(
       candidate.id,
       `Column at index ${index} for board "${boardId}" is missing an id.`,
     )
-    const title = normalizeNonEmptyString(
-      candidate.title,
-      `Column "${id}" for board "${boardId}" must have a title.`,
-    )
+    const title = normalizeNonEmptyString(candidate.title, `Column "${id}" for board "${boardId}" must have a title.`)
 
     if (seenColumnIds.has(id)) {
-      throw new KanbanRestoreError(
-        `Column id "${id}" is duplicated in board "${boardId}".`,
-      )
+      throw new KanbanRestoreError(`Column id "${id}" is duplicated in board "${boardId}".`)
     }
 
     seenColumnIds.add(id)
@@ -152,11 +132,7 @@ function normalizeTasksByBoard(
   ) as TasksByBoard
 }
 
-function normalizeTasksByColumn(
-  value: unknown,
-  boardId: BoardId,
-  columns: Column[],
-): TasksByColumn {
+function normalizeTasksByColumn(value: unknown, boardId: BoardId, columns: Column[]): TasksByColumn {
   if (value === undefined) {
     return Object.fromEntries(columns.map((column) => [column.id, []])) as TasksByColumn
   }
@@ -164,10 +140,7 @@ function normalizeTasksByColumn(
   const record = toRecord(value, `Tasks for board "${boardId}" must be an object.`)
 
   return Object.fromEntries(
-    columns.map((column) => [
-      column.id,
-      normalizeTasks(record[column.id], boardId, column.id),
-    ]),
+    columns.map((column) => [column.id, normalizeTasks(record[column.id], boardId, column.id)]),
   ) as TasksByColumn
 }
 
@@ -177,9 +150,7 @@ function normalizeTasks(value: unknown, boardId: BoardId, columnId: ColumnId): T
   }
 
   if (!Array.isArray(value)) {
-    throw new KanbanRestoreError(
-      `Tasks for column "${columnId}" in board "${boardId}" must be an array.`,
-    )
+    throw new KanbanRestoreError(`Tasks for column "${columnId}" in board "${boardId}" must be an array.`)
   }
 
   const seenTaskIds = new Set<string>()
@@ -193,10 +164,7 @@ function normalizeTasks(value: unknown, boardId: BoardId, columnId: ColumnId): T
       candidate.id,
       `Task at index ${index} for column "${columnId}" in board "${boardId}" is missing an id.`,
     )
-    const title = normalizeNonEmptyString(
-      candidate.title,
-      `Task "${id}" in column "${columnId}" must have a title.`,
-    )
+    const title = normalizeNonEmptyString(candidate.title, `Task "${id}" in column "${columnId}" must have a title.`)
     const description = normalizeString(
       candidate.description,
       `Task "${id}" in column "${columnId}" must have a description string.`,
@@ -204,9 +172,7 @@ function normalizeTasks(value: unknown, boardId: BoardId, columnId: ColumnId): T
     const dueDate = normalizeOptionalString(candidate.dueDate)
 
     if (seenTaskIds.has(id)) {
-      throw new KanbanRestoreError(
-        `Task id "${id}" is duplicated in column "${columnId}" of board "${boardId}".`,
-      )
+      throw new KanbanRestoreError(`Task id "${id}" is duplicated in column "${columnId}" of board "${boardId}".`)
     }
 
     seenTaskIds.add(id)

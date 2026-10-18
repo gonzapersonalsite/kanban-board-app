@@ -6,10 +6,7 @@ export function buildBoardPath(view: BoardViewRoute, boardId: BoardId): string {
   return `/${view}/${boardId}`
 }
 
-export function resolveFallbackBoardId(
-  boards: Board[],
-  activeBoardId: BoardId | null,
-): BoardId | null {
+export function resolveFallbackBoardId(boards: Board[], activeBoardId: BoardId | null): BoardId | null {
   if (activeBoardId && boards.some((board) => board.id === activeBoardId)) {
     return activeBoardId
   }

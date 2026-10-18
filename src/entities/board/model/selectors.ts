@@ -6,15 +6,10 @@ export interface ActiveBoardState {
   tasks: TasksByColumn
 }
 
-type BoardSelectionState = Pick<
-  KanbanState,
-  'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'
->
+type BoardSelectionState = Pick<KanbanState, 'boards' | 'activeBoardId' | 'columnsByBoard' | 'tasksByBoard'>
 
 export const selectActiveBoard = (state: BoardSelectionState): Board | null =>
-  state.activeBoardId
-    ? state.boards.find((board) => board.id === state.activeBoardId) ?? null
-    : null
+  state.activeBoardId ? (state.boards.find((board) => board.id === state.activeBoardId) ?? null) : null
 
 export const selectActiveBoardColumns = (state: BoardSelectionState): Column[] =>
   state.activeBoardId ? (state.columnsByBoard[state.activeBoardId] ?? []) : []

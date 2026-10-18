@@ -37,11 +37,7 @@ export function createDndSlice(): StateCreator<KanbanState, [], [], DndSlice> {
         columns.splice(clamped, 0, moved)
 
         return {
-          columnsByBoard: setActiveBoardColumns(
-            state.columnsByBoard,
-            boardId,
-            columns,
-          ),
+          columnsByBoard: setActiveBoardColumns(state.columnsByBoard, boardId, columns),
         }
       }),
 
@@ -63,10 +59,7 @@ export function createDndSlice(): StateCreator<KanbanState, [], [], DndSlice> {
         }
 
         const [task] = sourceTasks.splice(taskIndex, 1)
-        const destTasks =
-          sourceColId === destColId
-            ? sourceTasks
-            : [...(boardTasks[destColId] ?? [])]
+        const destTasks = sourceColId === destColId ? sourceTasks : [...(boardTasks[destColId] ?? [])]
 
         destTasks.splice(newIndex, 0, task)
 

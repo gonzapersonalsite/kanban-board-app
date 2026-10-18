@@ -12,12 +12,7 @@ interface ColumnHeaderProps {
   canDelete: boolean
 }
 
-export function ColumnHeader({
-  column,
-  onRename,
-  onDelete,
-  canDelete,
-}: ColumnHeaderProps) {
+export function ColumnHeader({ column, onRename, onDelete, canDelete }: ColumnHeaderProps) {
   const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false)
   const [draftTitle, setDraftTitle] = useState(column.title)

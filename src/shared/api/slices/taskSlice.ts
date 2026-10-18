@@ -1,11 +1,7 @@
 import { nanoid } from 'nanoid'
 import type { StateCreator } from 'zustand'
 import type { KanbanState, Task, TaskSlice } from './types'
-import {
-  getActiveBoardId,
-  getActiveBoardTasks,
-  setActiveBoardTasks,
-} from './helpers'
+import { getActiveBoardId, getActiveBoardTasks, setActiveBoardTasks } from './helpers'
 import { useI18nStore } from '@/shared/i18n'
 import { useToastStore } from '@/shared/toast'
 
@@ -70,9 +66,7 @@ export function createTaskSlice(
         return {
           tasksByBoard: setActiveBoardTasks(state.tasksByBoard, boardId, {
             ...boardTasks,
-            [columnId]: columnTasks.map((task) =>
-              task.id === taskId ? { ...task, ...data } : task,
-            ),
+            [columnId]: columnTasks.map((task) => (task.id === taskId ? { ...task, ...data } : task)),
           }),
         }
       }),
@@ -89,9 +83,7 @@ export function createTaskSlice(
         return {
           tasksByBoard: setActiveBoardTasks(state.tasksByBoard, boardId, {
             ...boardTasks,
-            [columnId]: (boardTasks[columnId] ?? []).filter(
-              (task) => task.id !== taskId,
-            ),
+            [columnId]: (boardTasks[columnId] ?? []).filter((task) => task.id !== taskId),
           }),
         }
       })

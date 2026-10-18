@@ -6,9 +6,7 @@ import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
 import { BOARD_MAIN_ID } from '@/test/fixtures/kanbanFixtures'
 
 vi.mock('@dnd-kit/react', () => ({
-  DragDropProvider: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  DragDropProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DragOverlay: () => null,
   useDroppable: () => ({ ref: () => undefined, isDropTarget: false }),
   useDragOperation: () => ({ source: null, target: null }),
@@ -63,9 +61,7 @@ describe('AppRouter', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Persistent Header')).toBeInTheDocument()
-      expect(
-        screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`),
-      ).toBeInTheDocument()
+      expect(screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
     })
   })
 
@@ -79,18 +75,14 @@ describe('AppRouter', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Persistent Header')).toBeInTheDocument()
-      expect(
-        screen.getByText(`Calendar Page:/calendar/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`),
-      ).toBeInTheDocument()
+      expect(screen.getByText(`Calendar Page:/calendar/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
     })
   })
 
   it('syncs_store_with_a_valid_board_route', async () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
     useKanbanStore.getState().addBoard('Secondary')
-    const secondaryBoardId = useKanbanStore
-      .getState()
-      .boards.find((board) => board.title === 'Secondary')!.id
+    const secondaryBoardId = useKanbanStore.getState().boards.find((board) => board.title === 'Secondary')!.id
     useKanbanStore.getState().setActiveBoard(BOARD_MAIN_ID)
     window.history.pushState({}, '', `/board/${secondaryBoardId}`)
     vi.resetModules()
@@ -99,9 +91,7 @@ describe('AppRouter', () => {
     render(<AppRouter />)
 
     await waitFor(() => {
-      expect(
-        screen.getByText(`Home Page:/board/${secondaryBoardId}:${secondaryBoardId}`),
-      ).toBeInTheDocument()
+      expect(screen.getByText(`Home Page:/board/${secondaryBoardId}:${secondaryBoardId}`)).toBeInTheDocument()
     })
   })
 
@@ -114,9 +104,7 @@ describe('AppRouter', () => {
     render(<AppRouter />)
 
     await waitFor(() => {
-      expect(
-        screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`),
-      ).toBeInTheDocument()
+      expect(screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
     })
   })
 })

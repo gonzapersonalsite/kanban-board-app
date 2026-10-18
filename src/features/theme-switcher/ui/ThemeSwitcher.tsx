@@ -10,9 +10,7 @@ export function ThemeSwitcher() {
     <button
       className={styles.button}
       onClick={toggleTheme}
-      aria-label={
-        theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
-      }
+      aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
     >
       {theme === 'light' ? <Moon /> : <Sun />}
     </button>

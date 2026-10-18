@@ -1,12 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { useTaskDialog } from '@/features/task-management/model/useTaskDialog'
-import {
-  BOARD_MAIN_ID,
-  COLUMN_TODO_ID,
-  TASK_ALPHA_ID,
-  fixtureTasks,
-} from '@/test/fixtures/kanbanFixtures'
+import { BOARD_MAIN_ID, COLUMN_TODO_ID, TASK_ALPHA_ID, fixtureTasks } from '@/test/fixtures/kanbanFixtures'
 import { setupKanbanStore } from '@/test/setup/kanbanStoreSetup'
 import { useKanbanStore } from '@/shared/api'
 
@@ -43,8 +38,7 @@ describe('useTaskDialog', () => {
 
       const updated = useKanbanStore
         .getState()
-        .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]
-        .find((item) => item.id === TASK_ALPHA_ID)
+        .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].find((item) => item.id === TASK_ALPHA_ID)
 
       expect(updated).toMatchObject({
         id: TASK_ALPHA_ID,
@@ -64,10 +58,7 @@ describe('useTaskDialog', () => {
       })
 
       expect(
-        useKanbanStore
-          .getState()
-          .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]
-          .some((task) => task.id === TASK_ALPHA_ID),
+        useKanbanStore.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].some((task) => task.id === TASK_ALPHA_ID),
       ).toBe(false)
     })
   })

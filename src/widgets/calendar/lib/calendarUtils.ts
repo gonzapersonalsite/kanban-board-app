@@ -31,7 +31,13 @@ export function getMonthGrid(year: number, month: number): CalendarDay[] {
   for (let i = startOffset - 1; i >= 0; i--) {
     const d = prevMonthDays - i
     const date = new Date(year, month - 1, d)
-    days.push({ year: date.getFullYear(), month: date.getMonth(), date: d, dateStr: dateToStr(date), isCurrentMonth: false })
+    days.push({
+      year: date.getFullYear(),
+      month: date.getMonth(),
+      date: d,
+      dateStr: dateToStr(date),
+      isCurrentMonth: false,
+    })
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
@@ -43,7 +49,13 @@ export function getMonthGrid(year: number, month: number): CalendarDay[] {
   if (rem < 7) {
     for (let d = 1; d <= rem; d++) {
       const date = new Date(year, month + 1, d)
-      days.push({ year: date.getFullYear(), month: date.getMonth(), date: d, dateStr: dateToStr(date), isCurrentMonth: false })
+      days.push({
+        year: date.getFullYear(),
+        month: date.getMonth(),
+        date: d,
+        dateStr: dateToStr(date),
+        isCurrentMonth: false,
+      })
     }
   }
 

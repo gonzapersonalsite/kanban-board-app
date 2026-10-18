@@ -6,10 +6,7 @@ interface ColumnShellProps {
   isHighlighted?: boolean
   isDragging?: boolean
   contentRef?: Ref<HTMLDivElement>
-  contentAriaProps?: Pick<
-    HTMLAttributes<HTMLDivElement>,
-    'aria-roledescription' | 'aria-describedby'
-  >
+  contentAriaProps?: Pick<HTMLAttributes<HTMLDivElement>, 'aria-roledescription' | 'aria-describedby'>
   accentColor?: string
 }
 
@@ -26,7 +23,10 @@ export function ColumnShell({
     .join(' ')
 
   return (
-    <div className={classes} style={accentColor ? { '--column-accent': accentColor } as React.CSSProperties : undefined}>
+    <div
+      className={classes}
+      style={accentColor ? ({ '--column-accent': accentColor } as React.CSSProperties) : undefined}
+    >
       <div ref={contentRef} className={styles.content} {...contentAriaProps}>
         {children}
       </div>

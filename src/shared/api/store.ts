@@ -74,10 +74,7 @@ type LegacyKanbanState = {
   tasks: TasksByColumn
 }
 
-export function migrateKanbanState(
-  persistedState: unknown,
-  version: number,
-): Partial<KanbanState> {
+export function migrateKanbanState(persistedState: unknown, version: number): Partial<KanbanState> {
   if (version >= 1 && isMultiBoardState(persistedState)) {
     return persistedState
   }
@@ -85,10 +82,7 @@ export function migrateKanbanState(
   if (isLegacyState(persistedState)) {
     const boardId = nanoid()
     const columns = persistedState.columns.map((column) => ({ ...column }))
-    const tasks = normalizeTasksByColumn(
-      columns,
-      normalizeTaskMap(persistedState.tasks),
-    )
+    const tasks = normalizeTasksByColumn(columns, normalizeTaskMap(persistedState.tasks))
 
     return {
       boards: [

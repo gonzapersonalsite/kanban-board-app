@@ -1,11 +1,7 @@
 import { renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { useBoard } from '@/widgets/board/model/useBoard'
-import {
-  COLUMN_DONE_ID,
-  COLUMN_TODO_ID,
-  TASK_ALPHA_ID,
-} from '@/test/fixtures/kanbanFixtures'
+import { COLUMN_DONE_ID, COLUMN_TODO_ID, TASK_ALPHA_ID } from '@/test/fixtures/kanbanFixtures'
 import { setupKanbanStore } from '@/test/setup/kanbanStoreSetup'
 
 describe('useBoard', () => {
@@ -45,9 +41,7 @@ describe('useBoard', () => {
 
       expect(result.current.taskDialog.openForEdit).toBeTypeOf('function')
       expect(result.current.taskDialog.handleSave).toBeTypeOf('function')
-      expect(result.current.getColumnTasks(COLUMN_TODO_ID)[0]?.id).toBe(
-        TASK_ALPHA_ID,
-      )
+      expect(result.current.getColumnTasks(COLUMN_TODO_ID)[0]?.id).toBe(TASK_ALPHA_ID)
     })
   })
 })

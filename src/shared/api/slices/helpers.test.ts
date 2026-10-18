@@ -56,9 +56,7 @@ describe('createInitialKanbanState', () => {
     const boardId = state.activeBoardId!
     const firstColumn = state.columnsByBoard[boardId][0]
     expect(state.boards[0].title).toBe('Mi tablero')
-    expect(state.tasksByBoard[boardId][firstColumn.id][0].title).toBe(
-      'Planificar el próximo sprint',
-    )
+    expect(state.tasksByBoard[boardId][firstColumn.id][0].title).toBe('Planificar el próximo sprint')
   })
 })
 
@@ -78,17 +76,13 @@ describe('localizeSampleBoard', () => {
     const localizedColumns = localized.columnsByBoard[boardId]
     const firstTask = localized.tasksByBoard[boardId][localizedColumns[0].id][0]
     const stripTexts = (tasks: typeof sample.tasksByBoard) =>
-      Object.values(tasks[boardId]).flat().map(({ id, dueDate }) => ({ id, dueDate }))
+      Object.values(tasks[boardId])
+        .flat()
+        .map(({ id, dueDate }) => ({ id, dueDate }))
     expect(localized.boards).toEqual([{ id: boardId, title: 'Mein Board' }])
     expect(localized.activeBoardId).toBe(boardId)
-    expect(localizedColumns.map((column) => column.id)).toEqual(
-      sampleColumns.map((column) => column.id),
-    )
-    expect(localizedColumns.map((column) => column.title)).toEqual([
-      'Offen',
-      'In Bearbeitung',
-      'Erledigt',
-    ])
+    expect(localizedColumns.map((column) => column.id)).toEqual(sampleColumns.map((column) => column.id))
+    expect(localizedColumns.map((column) => column.title)).toEqual(['Offen', 'In Bearbeitung', 'Erledigt'])
     expect(firstTask.title).toBe('Nächsten Sprint planen')
     expect(stripTexts(localized.tasksByBoard)).toEqual(stripTexts(sample.tasksByBoard))
   })

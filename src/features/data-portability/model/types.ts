@@ -11,10 +11,7 @@ export interface KanbanSnapshotV1 extends PortableKanbanState {
 
 export type KanbanSnapshot = KanbanSnapshotV1
 
-export type KanbanSnapshotErrorCode =
-  | 'invalid_json'
-  | 'unsupported_schema_version'
-  | 'invalid_snapshot'
+export type KanbanSnapshotErrorCode = 'invalid_json' | 'unsupported_schema_version' | 'invalid_snapshot'
 
 export class KanbanSnapshotError extends Error {
   readonly code: KanbanSnapshotErrorCode

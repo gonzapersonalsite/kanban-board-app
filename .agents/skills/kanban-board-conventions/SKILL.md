@@ -104,7 +104,7 @@ description: Project conventions of kanban-board-app (state and store architectu
 - Shared route chrome (`Header`, future persistent navigation, and other app-shell UI) MUST live in an `app/router` layout route with `<Outlet />`, never inside individual page components. Pages render only route-specific content.
 - Error boundaries are handled per-route in the future via `errorElement` on route definitions. For now, the app-level `<ErrorBoundary>` in `app/providers/` catches all errors.
 - Routing is board-scoped. Final routes are:
-  - `/` → redirects to `/board/:activeBoardId`
+  - root path → redirects to `/board/:activeBoardId`
   - `/board/:boardId` → board view
   - `/calendar` → redirects to `/calendar/:activeBoardId`
   - `/calendar/:boardId` → calendar view
@@ -116,9 +116,9 @@ description: Project conventions of kanban-board-app (state and store architectu
 
 - Social crawlers, search engines and AI agents read `index.html` without running JavaScript, so what they must see is written by the build: `tooling/agent-files/vitePlugin.ts`, registered in `vite.config.ts`. `usePageMeta` only updates the title and description for people browsing the app.
 - **One source:** `tooling/agent-files/site.ts` holds the site address (`SITE_URL`, `absoluteUrl`) and the name and description of the whole site. The app never needs its own address, so it lives with its only consumer, the build tooling, not in `src`; a change of domain changes `SITE_URL` and nothing else.
-- **Social preview:** `index.html` declares the Open Graph and Twitter tags with `og:url` `/` and root-relative image paths. The build writes the title, the description and the absolute addresses from `site.ts`, and refuses an image path that is not root-relative or a tag it writes that is missing or repeated; the values in `index.html` only serve the dev server. Twitter/X falls back to `og:title` and `og:description`, so `index.html` does not repeat them.
+- **Social preview:** `index.html` declares the Open Graph and Twitter tags with `og:url` pointing to the site root and root-relative image paths. The build writes the title, the description and the absolute addresses from `site.ts`, and refuses an image path that is not root-relative or a tag it writes that is missing or repeated; the values in `index.html` only serve the dev server. Twitter/X falls back to `og:title` and `og:description`, so `index.html` does not repeat them.
 - **Cover:** `public/og-cover.png`, a 1200×630 PNG whose type, size and alt text `index.html` declares. It shows the app name, tagline and stack over a board drawn with the dark theme tokens, rendered from an HTML page in headless Edge; name and tagline sit inside the central 630×630 square for previews that crop it square. Platforms cache previews by URL, so a changed image gets a new file name; after the deploy, refresh the preview with LinkedIn Post Inspector.
-- **Agent files:** the build emits `llms.txt` (a summary and links, in the llmstxt.org format), `robots.txt` (allows everything and names the sitemap) and `sitemap.xml` (only the root: the board and calendar addresses name the boards each visitor keeps in their own browser), and the dev server serves the same files. Vercel serves the built files before the SPA rewrite of `vercel.json`. None of them is written by hand in `public/`.
+- **Agent files:** the build emits llms.txt (a summary and links, in the llmstxt.org format), robots.txt (allows everything and names the sitemap) and sitemap.xml (only the root: the board and calendar addresses name the boards each visitor keeps in their own browser), and the dev server serves the same files. Vercel serves the built files before the SPA rewrite of `vercel.json`. None of them is written by hand in `public/`.
 - The tests next to each module of `tooling/agent-files/` check the generators, the shell against the real `index.html` and the cover's real type and size, and build and serve the app with the real `vite.config.ts`.
 
 ## Store Architecture
@@ -198,7 +198,7 @@ The data flow (how components reach the domain store, its persistence in `localS
 
 ## Development Workflow
 
-The commands, gates and hooks are in `AGENTS.md`, Development Workflow.
+The commands, gates (`gates.txt`, `python verify.py`) and hooks (`.githooks/`) are in `AGENTS.md` and `README.md`.
 
 ## Internationalization (i18n)
 
@@ -227,7 +227,7 @@ The commands, gates and hooks are in `AGENTS.md`, Development Workflow.
     return <h1>{t('app.title')}</h1>
   }
   ```
-- **Adding a locale**: Copy `en.json` → `fr.json`, translate all values. No code changes needed — `import.meta.glob` picks it up automatically.
+- **Adding a locale**: Copy `src/shared/i18n/config/en.json` to a new locale file in `src/shared/i18n/config/` (like `src/shared/i18n/config/es.json` or `src/shared/i18n/config/de.json`) and translate all values. No code changes needed — `import.meta.glob` picks it up automatically.
 - **Locale parity**: `shared/i18n/config/locales.test.ts` enforces that every locale has exactly the English flattened keys, the same `{{placeholders}}` in each message and no empty messages. Never add a key to one locale only.
 - **Copy style**: Spanish copy is Spain Spanish in sentence case (only the first word and proper nouns capitalised): `Añadir`, `Ajustes`, `copia de seguridad`; never Latin American variants such as `Agregar`. English copy is also sentence case (`New board`, `Add card`, `To do`) with US spelling (`canceled`, `color`, `prioritize`); only the product name `Kanban Board` keeps its capitals. `Kanban` is always capitalised as the name of the method (`Kanban board`, `tablero Kanban`, `Kanban-Board`). German copy uses the informal `du`. Keep the meaning of EN, ES and DE aligned.
 - **Sample task descriptions** (`seed.tasks.*.description`) MUST fit the card's two-line clamp in the narrowest desktop column (about 230px wide at a ~1250px viewport, roughly 55 characters in Inter) in every locale. Measure them in the browser after any change.

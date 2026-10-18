@@ -6,17 +6,11 @@ export type TasksByColumn = Record<ColumnId, Task[]>
 
 // Both appliers return the very same collection when the drag moves nothing (move() from
 // @dnd-kit/helpers does so); useBoardDndLifecycle relies on that to skip store writes.
-export function applyTaskDragOver(
-  tasks: TasksByColumn,
-  event: DragOverEvent,
-): TasksByColumn {
+export function applyTaskDragOver(tasks: TasksByColumn, event: DragOverEvent): TasksByColumn {
   return move(tasks, event) as TasksByColumn
 }
 
-export function applyColumnDragOver(
-  columns: Column[],
-  event: DragOverEvent,
-): Column[] {
+export function applyColumnDragOver(columns: Column[], event: DragOverEvent): Column[] {
   return move(columns, event) as Column[]
 }
 

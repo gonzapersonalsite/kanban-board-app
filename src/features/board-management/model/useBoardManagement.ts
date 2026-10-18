@@ -5,8 +5,7 @@ import { useBoards } from '@/entities/board'
 type DialogMode = 'create' | 'rename' | null
 
 export function useBoardManagement(onBoardChange?: (boardId: string) => void) {
-  const { boards, activeBoardId, activeBoard, addBoard, updateBoard, deleteBoard, setActiveBoard } =
-    useBoards()
+  const { boards, activeBoardId, activeBoard, addBoard, updateBoard, deleteBoard, setActiveBoard } = useBoards()
   const [dialogMode, setDialogMode] = useState<DialogMode>(null)
   const [draftTitle, setDraftTitle] = useState('')
   const [error, setError] = useState<string | null>(null)

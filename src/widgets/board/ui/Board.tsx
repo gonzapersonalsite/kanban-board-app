@@ -1,10 +1,5 @@
 import { GripVertical } from 'lucide-react'
-import {
-  BoardDndContext,
-  SortableColumn,
-  DraggableTaskCard,
-  useIsTaskDragging,
-} from '@/features/drag-and-drop'
+import { BoardDndContext, SortableColumn, DraggableTaskCard, useIsTaskDragging } from '@/features/drag-and-drop'
 import { AddColumnForm } from '@/features/column-management'
 import { AddTaskForm, TaskDialog } from '@/features/task-management'
 import { ColumnHeader } from '@/entities/column'
@@ -12,16 +7,7 @@ import { useBoard } from '../model/useBoard'
 import { EmptyColumnMessage } from './EmptyColumnMessage'
 import styles from './Board.module.css'
 
-const COLUMN_ACCENT_COLORS = [
-  '#6366f1',
-  '#8b5cf6',
-  '#a78bfa',
-  '#c084fc',
-  '#e879f9',
-  '#f472b6',
-  '#38bdf8',
-  '#818cf8',
-]
+const COLUMN_ACCENT_COLORS = ['#6366f1', '#8b5cf6', '#a78bfa', '#c084fc', '#e879f9', '#f472b6', '#38bdf8', '#818cf8']
 
 function BoardContent() {
   const board = useBoard()
@@ -57,14 +43,10 @@ function BoardContent() {
                   index={taskIndex}
                   accentColor={COLUMN_ACCENT_COLORS[index % COLUMN_ACCENT_COLORS.length]}
                   onEdit={() => board.taskDialog.openForEdit(task, col.id)}
-                  onDelete={() =>
-                    board.taskDialog.handleDelete(col.id, task.id)
-                  }
+                  onDelete={() => board.taskDialog.handleDelete(col.id, task.id)}
                 />
               ))}
-              {!board.hasTasks(col.id) && !isTaskDragging && (
-                <EmptyColumnMessage />
-              )}
+              {!board.hasTasks(col.id) && !isTaskDragging && <EmptyColumnMessage />}
               <AddTaskForm columnId={col.id} />
             </div>
           </SortableColumn>

@@ -21,15 +21,11 @@ export const fixtureTasks: Record<ColumnId, Task[]> = {
     { id: TASK_ALPHA_ID, title: 'Alpha', description: 'First task', dueDate: '2026-07-15' },
     { id: TASK_BETA_ID, title: 'Beta', description: '' },
   ],
-  [COLUMN_PROGRESS_ID]: [
-    { id: TASK_GAMMA_ID, title: 'Gamma', description: 'In progress' },
-  ],
+  [COLUMN_PROGRESS_ID]: [{ id: TASK_GAMMA_ID, title: 'Gamma', description: 'In progress' }],
   [COLUMN_DONE_ID]: [],
 }
 
-export const fixtureBoards: Board[] = [
-  { id: BOARD_MAIN_ID, title: 'My Board' },
-]
+export const fixtureBoards: Board[] = [{ id: BOARD_MAIN_ID, title: 'My Board' }]
 
 export const fixtureColumnsByBoard: Record<BoardId, Column[]> = {
   [BOARD_MAIN_ID]: fixtureColumns,

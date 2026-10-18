@@ -20,12 +20,7 @@ export function NotFoundPage() {
     <div className={styles.page}>
       <h1 className={styles.code}>404</h1>
       <p className={styles.message}>{t('not_found.message')}</p>
-      <Button
-        variant="primary"
-        onClick={() =>
-          navigate(fallbackBoardId ? `/board/${fallbackBoardId}` : '/')
-        }
-      >
+      <Button variant="primary" onClick={() => navigate(fallbackBoardId ? `/board/${fallbackBoardId}` : '/')}>
         {t('not_found.back_home')}
       </Button>
     </div>

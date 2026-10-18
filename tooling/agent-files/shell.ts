@@ -21,7 +21,9 @@ const replaceTitle =
 const updateMeta =
   (attribute: 'name' | 'property', name: string, update: (content: string) => string): HtmlEdit =>
   (html) => {
-    const matches = [...html.matchAll(new RegExp(`<meta ${attribute}="${name}" content="([^"]*)"\\s*/>`, 'g'))]
+    // Prettier may wrap a long tag over several lines, so the spaces between its parts are any
+    // whitespace, and the closing slash is optional.
+    const matches = [...html.matchAll(new RegExp(`<meta\\s+${attribute}="${name}"\\s+content="([^"]*)"\\s*/?>`, 'g'))]
     if (matches.length !== 1) {
       throw new Error(`agent-files: expected exactly one meta ${name}, found ${matches.length}`)
     }
