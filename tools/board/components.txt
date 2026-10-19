@@ -30,7 +30,7 @@
 
 component layer:react-vite | 39bead6c761666ac5f5648e83bf89a4265d07aaf | -
 file layer:react-vite | .agents/skills/react-fsd-maintainer/SKILL.md | 045163da21e77643ae8f5dcd46e325acc1e1dc7ed9e5e84fbe3b1e2d84668789
-file layer:react-vite | docs/ARCHITECTURE.md | e6156efe01823774e85756534b5382673844c6174384a5b43f99aec270043f21
+file layer:react-vite | docs/ARCHITECTURE.md | kept
 item layer:react-vite | tools/board/documents.txt | document | - | 05e1d7309f9c1a39ca140a0a9aeaa8ffdb57018014a252a7eb7651873d7477f4
 item layer:react-vite | tools/board/documents.txt | document | - | 07df23320c3b7c7f9b854594bfb1621e3fefa79238f9d8e7ebaaf45306849898
 item layer:react-vite | tools/board/documents.txt | document | - | 36d605d0f13340fff6ba755fa1d903953f9e81258582c314510b60c40eb48da2
@@ -56,8 +56,8 @@ item layer:react-vite | AGENTS.md | skill | - | bb28bd982e9aace3172c57e39bb4fe46
 
 component stack:react-fsd | 39bead6c761666ac5f5648e83bf89a4265d07aaf | project=kanban-board-app
 file stack:react-fsd | eslint-fsd-gaps.js | 83799d2aaa68feb59cf5904edfba042789d22b5b8ee8639acfa392bdc49737af
-file stack:react-fsd | eslint.config.js | 885c7ba64ad19d81f882db7970b2ddc4d9b6c5589fc5d5182942a2a326ca3072
-file stack:react-fsd | eslint.config.test.ts | 4713c91e7b69d62ba4aa228bb1fcb77f1d3763c5c8a519324858b58a2490b439
+file stack:react-fsd | eslint.config.js | kept
+file stack:react-fsd | eslint.config.test.ts | kept
 file stack:react-fsd | src/shared/api/httpClient.test.ts | kept
 file stack:react-fsd | src/shared/api/httpClient.ts | kept
 file stack:react-fsd | tooling/agent-files/generate.test.ts | 2448375c56772d146ebddf51c296ec29476188c90e02f394957aec96acadc6b2
