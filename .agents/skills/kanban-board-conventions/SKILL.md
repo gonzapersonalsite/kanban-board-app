@@ -204,7 +204,7 @@ Los comandos, puertas (`gates.txt`, `python verify.py`) y hooks (`.githooks/`) e
 
 - **Segmento i18n**: `src/shared/i18n/` — infraestructura transversal, cero lógica de negocio.
 - **Ficheros de traducción**: un JSON por idioma en `src/shared/i18n/config/`. Las claves planas se generan con la utilidad `flattenTranslations` al cargar.
-- **Descubrimiento de idiomas**: `import.meta.glob` descubre automáticamente todos los ficheros `*.json` del directorio de configuración. Añadir un idioma nuevo = añadir un fichero JSON nuevo.
+- **Descubrimiento de idiomas**: `import.meta.glob`, en `src/shared/i18n/config/locales.ts` junto a los JSON (un glob solo lee la carpeta de su fichero), descubre automáticamente todos los ficheros `*.json` del directorio de configuración. Añadir un idioma nuevo = añadir un fichero JSON nuevo.
 - **Estado**: store de Zustand en `src/shared/i18n/model/store.ts` con middleware `persist` (clave: `i18n-locale`). Solo se persiste `locale`; las traducciones se vuelven a derivar al rehidratar.
 - **Reactividad**: los componentes usan el hook `useTranslation()` (no un selector directo del store) para garantizar re-renderizados reactivos al cambiar de idioma. `useTranslation()` se suscribe a `state.locale` y devuelve una clausura `t` fresca en cada render.
 - **API**: `useTranslation()` devuelve `{ t, locale, setLocale, availableLocales }`:

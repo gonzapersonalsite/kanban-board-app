@@ -2,8 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { Locale, TranslationMap } from './types'
 import { flattenTranslations, interpolate } from '../lib/translations'
-
-const localeModules = import.meta.glob<Record<string, unknown>>('../config/*.json', { eager: true, import: 'default' })
+import { localeModules } from '../config/locales'
 
 function extractLocale(filePath: string): Locale {
   const match = filePath.match(/\/([a-z]{2}(?:-[A-Z]{2})?)\.json$/)

@@ -14,13 +14,18 @@ código de la aplicación: estas reglas, y el lint que las sostiene, leen solo
 **Cada regla dice qué la hace cumplir.** Las que hace cumplir el lint tienen en
 `eslint.config.test.ts` el caso más pequeño que las rompe, y ese test falla si
 alguien relaja la regla en `eslint.config.js`. Las reglas de fsd-lint 1.2.1
-no leen las reexportaciones (`export … from`), y `fsd/forbidden-imports`
-tampoco lee el `import()` dinámico: sobre ellas sostiene los mismos límites una
-regla local, `fsd-gaps/boundaries` (`eslint-fsd-gaps.js`), que sobra cuando
-fsd-lint los lea. Ninguna regla lee un `import()` cuya ruta no esté escrita
-entre comillas (una plantilla de texto, aunque no tenga huecos, o una
-variable), ni un tipo que importa (`typeof import('…')` o `import('…').Tipo`):
-lo que se importa así es convención, y `eslint.config.test.ts` tiene sus casos.
+no leen las reexportaciones (`export … from`) ni `import.meta.glob`, y
+`fsd/forbidden-imports` tampoco lee el `import()` dinámico: sobre ellos sostiene
+los mismos límites una regla local, `fsd-gaps/boundaries`
+(`eslint-fsd-gaps.js`), que sobra cuando fsd-lint los lea. Por debajo de
+`app`, que puede globar cualquier capa, un `import.meta.glob` solo se admite
+con patrones escritos entre comillas que empiezan por `./` y no tienen ningún
+`..`, y, si lleva opciones, en un objeto literal con sus claves escritas y sin
+`base`: cualquier otro es un error, porque el lint no puede leer adónde llega.
+Ninguna regla lee un `import()` cuya ruta no esté escrita entre comillas (una
+plantilla de texto, aunque no tenga huecos, o una variable), ni un tipo que
+importa (`typeof import('…')` o `import('…').Tipo`): lo que se importa así es
+convención, y `eslint.config.test.ts` tiene sus casos.
 Un comentario no apaga ninguna regla: el lint da por aviso un `eslint-disable`,
 y un aviso es rojo (`--max-warnings=0` en `pnpm run lint`, exigido por
 `python verify.py`), así que una excepción vive en `eslint.config.js`, junto a
@@ -43,12 +48,20 @@ descrito más abajo:
 | `shared` | Lo que no sabe nada de una pantalla concreta: el store de dominio (ver abajo), i18n, tema, toasts, utilidades y el kit de UI |
 
 - **Una capa solo importa de las que tiene debajo.** Lo hacen cumplir
-  `fsd/forbidden-imports` y, en una reexportación o un `import()` dinámico,
-  `fsd-gaps/boundaries`.
+  `fsd/forbidden-imports` y, en una reexportación, un `import()` dinámico o un
+  `import.meta.glob`, `fsd-gaps/boundaries`.
 - **Dos slices de la misma capa no se importan entre sí.** Si los dos necesitan
   algo, ese algo baja a una capa inferior. Lo hacen cumplir
   `fsd/no-cross-slice-dependency` y, en una reexportación,
   `fsd-gaps/boundaries`.
+- **La única excepción es la de Feature-Sliced Design entre entidades, `@x`.**
+  La entidad B expone a la entidad A lo que A necesita de ella en
+  `src/entities/B/@x/A.ts`, y solo A lo importa, con esa forma:
+  `@/entities/B/@x/A`. Solo en `entities` y solo así: desde otra entidad, desde
+  otra capa o por una ruta relativa es un error de fsd-lint, y reexportarlo,
+  que se lo daría a todo el que use A, de `fsd-gaps/boundaries`. Una ruta que
+  sigue más allá del fichero `@x` (`@/entities/B/@x/A/model`) la acepta
+  fsd-lint, y no usarla es convención.
 - **No hay más capas.** Un fichero de código fuera de esas seis carpetas y de
   `src/test`, o suelto en la raíz de `src`, es un error de
   `no-restricted-syntax`: carpetas como `services`, `hooks` o `utils` en la
@@ -103,10 +116,16 @@ segmentos que tengan algo:
 | `lib` | Utilidades internas del slice |
 | `config` | Constantes y ficheros de datos del slice |
 
+- **En una capa con slices no hay ficheros sueltos**, por convención: ninguna
+  regla rechaza uno en su raíz (`src/entities/<fichero>.ts`), y desde ahí un
+  `import.meta.glob('./*/model/*.ts')`, que no sale de su carpeta, llega a
+  todos los slices de la capa, aunque importar uno de ellos desde el mismo
+  fichero sea un error. `eslint.config.test.ts` tiene su caso.
 - **Desde fuera, a un slice solo se entra por su `<slice>/index.ts`**, que
   exporta a propósito lo que es público y nada más: ni un fichero interno ni
-  un segmento (`@/entities/<slice>`, nunca `@/entities/<slice>/model`). Lo
-  hacen cumplir `fsd/no-public-api-sidestep` y, en una reexportación,
+  un segmento (`@/entities/<slice>`, nunca `@/entities/<slice>/model`), salvo
+  la entidad a la que otra expone su `@x` (arriba, en «Capas»). Lo hacen
+  cumplir `fsd/no-public-api-sidestep` y, en una reexportación,
   `fsd-gaps/boundaries`, para `pages`, `widgets`, `features` y `entities`. A
   `shared` y `app` se entra por segmento (`@/shared/api`, `@/app/router`), por
   convención; la única excepción, en el soporte de tests, está en
@@ -129,14 +148,43 @@ segmentos que tengan algo:
   nunca mediante un componente: `useToastStore` (`@/shared/toast`) para las
   notificaciones y `useI18nStore` (`@/shared/i18n`) para los textos.
   Convención.
-- **Los tests van al lado de lo que prueban**, como `<fichero>.test.ts` o
-  `<fichero>.test.tsx`, por convención, y las reglas de imports de
-  Feature-Sliced Design no se les aplican: un test puede entrar en el slice que
-  prueba.
+- **Un test es un `<fichero>.test.ts` o un `<fichero>.test.tsx`, y está donde
+  lo corre Vitest.** Es el único sufijo que el lint lee como test, de una sola
+  lista de `eslint.config.js`, y el único que buscan los proyectos de
+  `vite.config.ts`. Con una extensión de código, las que Vitest lee por defecto
+  (`.ts`, `.tsx`, `.js`, `.jsx`, `.mts`, `.cts`, `.mjs` y `.cjs`), son errores
+  de `tests/no-stray-file` (`eslint-tests.js`) un `.spec` y un `.stories`, que
+  la lista por defecto de fsd-lint daría por tests y libraría de sus reglas, y
+  un `.test` que no busca ningún proyecto (buscan `src/**/*.test.{ts,tsx}`, en
+  `app`, y los `*.test.ts` de la raíz y `tooling/**/*.test.ts`, en `tooling`);
+  con otra extensión (`<fichero>.spec.json`, `<Componente>.stories.mdx`) no son
+  código y el lint no los lee. Dónde busca Vitest está escrito dos veces: en los
+  proyectos de `vite.config.ts` y, para el lint, en `VITEST_TESTS` de
+  `eslint.config.js`. `eslint.config.test.ts` lee esos proyectos en el
+  `vite.config.ts` real y comprueba, en rutas representativas, que Vitest corre
+  un fichero justo cuando el lint lo lee como test, con una ruta de test para
+  cada sitio donde busca: un proyecto nuevo se declara en `vite.config.ts` y,
+  en el mismo cambio, su `include` en `VITEST_TESTS` y una ruta suya entre las
+  representativas. Que vaya al lado de lo que prueba es convención. Las reglas
+  de imports de Feature-Sliced Design no se aplican a los tests: un test puede
+  entrar en el slice que prueba.
 - **Todo test corre y comprueba algo.** `.skip`, `.todo`, `skipIf` y `runIf`
-  son errores de `no-restricted-properties` en los tests y en `src/test`;
-  Vitest rechaza un `.only` (`allowOnly: false`) y hace fallar un test que no
-  comprueba nada (`expect.requireAssertions`), los dos en `vite.config.ts`.
+  son errores de `no-restricted-properties` en los tests y en `src/test`, y
+  allí `tests/no-skip-option` lee el objeto literal que va de segundo argumento
+  de `it`, `test`, `describe` o `suite`, llamados por ese nombre, también tras
+  un modificador o una tabla (`describe.concurrent('…', { skip: true }, …)`,
+  `it.each([…])`, ``it.each`…` ``, ``test.for`…` ``) y bajo `as`, `satisfies`,
+  `<T>` o `!`: es un error suyo una clave `skip` o `todo` con un valor que no
+  sea `false`, escrita como nombre o como texto (entre comillas, entre
+  corchetes o en una plantilla sin huecos). Lo que esa regla no lee lo deja en
+  rojo la puerta `tests`, que no admite ningún caso que el informe de Vitest dé
+  por saltado (`--forbid-skipped`); entre otros, cada uno con su caso en
+  `eslint.config.test.ts`: unas opciones en una variable o traídas con `...`,
+  una clave calculada de otro modo (`[CLAVE]`), un `it` importado con otro
+  nombre o leído de un objeto (`vitest.it`) y un `it` sin función, que Vitest
+  da por `todo`. Vitest rechaza un `.only` (`allowOnly: false`) y hace fallar
+  un test que no comprueba nada (`expect.requireAssertions`), los dos en
+  `vite.config.ts`.
 
 ## Dónde va el código nuevo
 
@@ -164,13 +212,24 @@ Convención; el lint solo impide que una capa use lo que tiene encima.
   los hooks de su slice o los selectores y `useBoards` de `src/entities/board`.
   Los componentes nunca llaman a `localStorage` ni a `nanoid` directamente y
   nunca mutan el estado fuera de una acción del store. Convención.
-- **La aplicación no envía peticiones de red**: sus datos se quedan en el
-  navegador, y una copia de seguridad es un fichero local. Fuera de
-  `src/shared/api`, `fetch`, `XMLHttpRequest`, `window.fetch`,
-  `globalThis.fetch` y `self.fetch` son errores de `no-restricted-globals` y
-  `no-restricted-properties`; los tests y el soporte de tests quedan fuera. Un
-  cliente de red, si algún día se decide, vive en `src/shared/api` y es una
-  decisión del dueño.
+- **La aplicación no usa la red**: sus datos se quedan en el navegador, y una
+  copia de seguridad es un fichero local. Fuera de `src/shared/api` el lint
+  rechaza exactamente esto: `fetch`, `XMLHttpRequest`, `WebSocket` y
+  `EventSource` como globales (`no-restricted-globals`), también para leer una
+  constante (`WebSocket.OPEN`); esos cuatro leídos de `window`, `globalThis` o
+  `self` (`new window.XMLHttpRequest()`, `const { fetch } = window`), y
+  `sendBeacon` de cualquier objeto (`navigator.sendBeacon`,
+  `window.navigator.sendBeacon`), los dos con `no-restricted-properties`. Una
+  petición y una conexión o una baliza tienen cada una su mensaje. Los tests y
+  el soporte de tests quedan fuera. Todo lo demás es convención; entre otros,
+  cada uno con su caso en `eslint.config.test.ts`: esos cuatro leídos de otra
+  ventana (`top`, `parent`, `frames`, `window.window`,
+  `document.defaultView`) o con `Reflect.get(window, 'fetch')`, un elemento
+  que carga una dirección (`new Image().src`, `new Audio('/ping')`), un
+  `import()` de una URL y otras APIs que llegan a la red (`Worker`,
+  `SharedWorker`, `navigator.serviceWorker.register`, `RTCPeerConnection`,
+  `WebTransport`, `WebSocketStream`, `fetchLater`). Un cliente de red, si algún
+  día se decide, vive en `src/shared/api` y es una decisión del dueño.
 - **Las reglas de negocio viven en `model`**, como funciones puras siempre que
   puedan (los selectores de tablero, los aplicadores de drag-and-drop, las
   validaciones de instantáneas de copia de seguridad), **o en las acciones del
@@ -181,7 +240,8 @@ Convención; el lint solo impide que una capa use lo que tiene encima.
 
 - **Lo que ven los crawlers y los agentes sale del build, con una sola
   fuente.** `tooling/agent-files/site.ts` nombra la dirección del sitio, sus
-  textos, el repositorio, la portada y las rutas del sitemap; el plugin
+  textos, el repositorio y las rutas del sitemap, e `index.html` la portada
+  por su ruta, con su tipo, su tamaño y su texto alternativo; el plugin
   cableado en `vite.config.ts` reescribe en el build el título, la descripción
   y las direcciones absolutas de la vista previa social de `index.html`, y
   emite llms.txt, robots.txt y sitemap.xml (el servidor de desarrollo sirve

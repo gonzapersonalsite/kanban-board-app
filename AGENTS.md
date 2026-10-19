@@ -74,12 +74,13 @@ diciéndolo; se vuelve a correr hasta que una corrida no lo cambie.
 ahí y ningún documento las enumera. Cada puerta corre en su propio proceso y se
 vigila desde fuera, así que una colgada sale roja y una que falla no impide el
 veredicto de las demás. Su fila declara los segundos que tarda, o `-` si aún no
-están medidos; al pasar de su tope, el vigilante mata la puerta y lo que lanzó,
-y el informe dice solo lo que comprobó. Cómo se calcula el tope y cuándo se
-vuelve a medir una puerta, en la cabecera de `gates.txt`. Añadir una puerta es
-añadir una fila. Para correr **una sola**, su etiqueta va después de `--`; sirve
-para iterar, no para verificar. Los hooks de `.githooks/` se activan una vez por
-clon con `git config core.hooksPath .githooks`
+están medidos; al pasar de su tope, el vigilante mata la puerta y los procesos
+de su job de Windows o de su grupo de procesos, no lo que un daemon arrancó para
+ella (un contenedor de Docker), y el informe dice solo lo que comprobó. Cómo se
+calcula el tope y cuándo se vuelve a medir una puerta, en la cabecera de
+`gates.txt`. Añadir una puerta es añadir una fila. Para correr **una sola**, su
+etiqueta va después de `--`; sirve para iterar, no para verificar. Los hooks de
+`.githooks/` se activan una vez por clon con `git config core.hooksPath .githooks`
 (`#hook-activation-is-a-per-clone-step`), y en el índice de git son
 ejecutables, que una puerta comprueba. `pre-push` corre las puertas en la
 máquina que empuja y solo deja salir lo que verificaron: HEAD, con el árbol sin
@@ -91,6 +92,9 @@ commit (regla dura 3).
 (`#lesson-a-script-error-is-not-red`). El veredicto es el exit code y la última
 línea del log, nunca una impresión parcial: una tubería (`... | tail`) devuelve
 el código de `tail`, y un comando encadenado solo enseña la salida del último.
+Por eso una fila de `gates.txt` es un solo comando: `verify.py` rechaza la que
+encadena con `|`, `||`, un `&` suelto, `;` o un salto de línea fuera de
+comillas dobles; `&&` y las redirecciones valen.
 
 **Un test de regresión no vale hasta haberlo visto fallar** con el defecto
 original reintroducido, y el defecto tiene que ser _ejecutable_: cambiar un
@@ -198,10 +202,10 @@ No son preferencias de estilo: son propiedades que un cambio no puede degradar.
   dura 4: se propone, el dueño decide, y solo existe si queda registrada.
 - **Las dependencias son exactamente las que fija `pnpm-lock.yaml`**: la puerta `dependencies` las instala sin red desde el almacén y la caché de pnpm de la máquina, y falla si el lockfile no casa con `package.json` o si a la máquina le falta algo de lo que fija. Cambiar una dependencia cambia los dos en el mismo cambio, y en una máquina nueva la primera instalación necesita red. Puerta: `dependencies`.
 - **El formato del código lo fija Prettier** (`.prettierrc.json`), y no se discute en la revisión: lo que la puerta rechaza se arregla con `pnpm run format`. Puerta: `format`.
-- **La arquitectura Feature-Sliced Design la hace cumplir el lint, no la revisión**: capas que solo importan hacia abajo, slices que no se importan entre sí y a los que solo se entra por su índice, nada de UI en `model`, `api` ni `lib`, la red solo desde `src/shared/api/`, en `src/` solo las seis capas y solo `.ts` y `.tsx`, ningún test saltado y ningún comentario que apague una regla. Cada regla tiene en `eslint.config.test.ts` el caso que la hace saltar, y `docs/ARCHITECTURE.md` cuenta el resto; un aviso de ESLint es un error. Puerta: `lint`.
+- **La arquitectura Feature-Sliced Design la hace cumplir el lint, no la revisión**: capas que solo importan hacia abajo, slices que no se importan entre sí y a los que solo se entra por su índice, nada de UI en `model`, `api` ni `lib`, `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` y `sendBeacon` solo desde `src/shared/api/`, en `src/` solo las seis capas y solo `.ts` y `.tsx`, un test solo como `<fichero>.test.ts` o `<fichero>.test.tsx` y donde lo corre Vitest, ningún test saltado y ningún comentario que apague una regla. Cada regla tiene en `eslint.config.test.ts` el caso que la hace saltar, y `docs/ARCHITECTURE.md` cuenta el resto; un aviso de ESLint es un error. Puerta: `lint`.
 - **TypeScript estricto**: `tsc -b` comprueba el código, sus tests y la configuración con `strict` y sin locales ni parámetros sin usar. Puerta: `typecheck`.
-- **Toda regla de negocio tiene su test al lado de su fichero**, con Vitest y Testing Library, en el mismo cambio: la puerta `tests` lo corre con las guardas, y un test que no comprueba nada o un `.only` commiteado la dejan en rojo (`requireAssertions` y `allowOnly` en `vite.config.ts`). Puerta: `tests`.
-- **La superficie para agentes y buscadores es parte del producto**: la dirección del sitio, sus textos, la portada y lo que el build emite para crawlers y agentes salen de `tooling/agent-files/site.ts`, y cambiar cualquiera de ellos actualiza sus tests en el mismo cambio. Puerta: `tests`.
+- **Toda regla de negocio tiene su test al lado de su fichero**, con Vitest y Testing Library, en el mismo cambio: la puerta `tests` lo corre con las guardas, y un test que no comprueba nada o un `.only` commiteado la dejan en rojo (`requireAssertions` y `allowOnly` en `vite.config.ts`), como cualquier caso que el informe de Vitest dé por saltado (`--forbid-skipped`). Puerta: `tests`.
+- **La superficie para agentes y buscadores es parte del producto**: la dirección del sitio, sus textos y lo que el build emite para crawlers y agentes salen de `tooling/agent-files/site.ts`, la portada y su texto alternativo de `index.html`, y cambiar cualquiera de ellos actualiza sus tests en el mismo cambio. Puerta: `tests`.
 
 **Una capa de tecnología** es lo que la tecnología del producto añade al
 andamio, y solo puede añadir esto: filas de `gates.txt` con sus segundos de

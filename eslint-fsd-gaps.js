@@ -2,14 +2,57 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 // What eslint-plugin-fsd-lint 1.2.1 does not read, held by a rule of this repository:
-// none of its rules visits a re-export (export … from), and its forbidden-imports rule
-// does not visit a dynamic import(). This rule holds the same boundaries over them, the
-// way fsd-lint holds them over an import, and goes away when fsd-lint reads them.
+// none of its rules visits a re-export (export … from) or Vite's import.meta.glob, and its
+// forbidden-imports rule does not visit a dynamic import(). This rule holds the same
+// boundaries over them, the way fsd-lint holds them over an import, and goes away when
+// fsd-lint reads them.
 
 // The public API of a slice: its folder, or its index file, named as fsd-lint names it:
 // bare or with .ts, .tsx, .js or .jsx (TypeScript resolves an index.js to the index.ts).
 const PUBLIC_INDEX = /^index(\.[jt]sx?)?$/
 const isPublicApi = (inside) => inside.length === 0 || (inside.length === 1 && PUBLIC_INDEX.test(inside[0]))
+
+/** Whether a callee is Vite's import.meta.glob. */
+function isImportMetaGlob(callee) {
+  return (
+    callee.type === 'MemberExpression' &&
+    !callee.computed &&
+    callee.object.type === 'MetaProperty' &&
+    callee.object.meta.name === 'import' &&
+    callee.object.property.name === 'meta' &&
+    callee.property.name === 'glob'
+  )
+}
+
+// A glob is not resolved here: it is read only when it cannot leave the folder of its file. Each pattern
+// is then a string literal that starts with './' and holds no '..' anywhere, since braces and extglobs
+// are not expanded here, and the options, if any, an object literal whose keys are written out and none
+// of them base.
+const staysInItsFolder = (pattern) =>
+  pattern?.type === 'Literal' &&
+  typeof pattern.value === 'string' &&
+  pattern.value.startsWith('./') &&
+  !pattern.value.includes('..')
+
+/** The name of a property written out, as an identifier or a literal; null for a spread or a computed one. */
+function keyOf(property) {
+  if (property.type !== 'Property') return null
+  if (property.key.type === 'Identifier' && !property.computed) return property.key.name
+  if (property.key.type === 'Literal') return String(property.key.value)
+  return null
+}
+
+/** Whether a call of import.meta.glob, with one pattern or a list of them, is seen not to leave its folder. */
+function isReadableGlob(node) {
+  const [patterns, options] = node.arguments
+  const listed = patterns?.type === 'ArrayExpression' ? patterns.elements : [patterns]
+  if (!listed.every(staysInItsFolder)) return false
+  if (options === undefined) return true
+  return (
+    options.type === 'ObjectExpression' &&
+    options.properties.every((property) => keyOf(property) !== null && keyOf(property) !== 'base')
+  )
+}
 
 /**
  * Where a path of src/, relative to it and with '/' separators, falls: its layer, its
@@ -61,6 +104,8 @@ const boundaries = {
         "'{{specifier}}' leaves its slice by a relative path: re-export it through the alias and the public API of its slice.",
       dynamicImportFromAbove:
         "{{layer}} cannot import '{{specifier}}', a layer above it, not even with import(): move what both need down to a lower layer, or pass it down from above.",
+      unreadableGlob:
+        "{{layer}} globs only inside the folder of its file: import.meta.glob takes string literals that start with './' and hold no '..', and its options, if any, as an object literal with its keys written out and no base; the lint cannot tell where anything else reaches, a layer above included.",
     },
   },
   create(context) {
@@ -121,6 +166,11 @@ const boundaries = {
         if (typeof specifier !== 'string') return
         const target = targetOf(specifier)
         if (target !== null && isAbove(target.to)) report(node, 'dynamicImportFromAbove', specifier)
+      },
+      CallExpression(node) {
+        // app, the top layer, has no layer above it to reach: it may glob any of them.
+        if (rank(from) === 0 || !isImportMetaGlob(node.callee) || isReadableGlob(node)) return
+        context.report({ node, messageId: 'unreadableGlob', data: { layer: from.layer } })
       },
     }
   },
