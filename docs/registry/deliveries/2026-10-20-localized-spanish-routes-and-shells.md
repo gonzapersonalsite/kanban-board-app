@@ -23,9 +23,11 @@ phase: F1
 - `index.html` y `tooling/agent-files/{site.ts,shell.ts,vitePlugin.ts,llmsTxt.ts}`:
   emisión del shell raíz en español (`index.html`) y de los shells de inglés
   (`/en`) y alemán (`/de`) con `<html lang>`, `<title>`, `description`,
-  `og:locale`, `og:title`, `og:description`, `og:url`, `canonical` y `hreflang`
-  (`es`, `en`, `de`, `x-default`), y rutas localizadas en sitemap.xml y
-  llms.txt.
+  `og:locale`, `og:title`, `og:description`, `og:url`, `canonical`, `hreflang`
+  (`es`, `en`, `de`, `x-default`) e indicador accesible de carga inicial
+  (`.app-startup` con marca y `<progress>` localizado que React sustituye al
+  montarse, sincronizado con el commit `27df3cf` de `templates` en
+  `tools/board/components.txt`), y rutas localizadas en sitemap.xml y llms.txt.
 - Tests actualizados y añadidos en `src/shared/i18n/model/store.test.ts`,
   `src/entities/board/model/routing.test.ts`, `src/app/router/ui/AppRouter.test.tsx`,
   `tooling/agent-files/shell.test.ts` y `tooling/agent-files/vitePlugin.test.ts`.

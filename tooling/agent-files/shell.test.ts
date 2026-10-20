@@ -21,19 +21,24 @@ const linkHref = (html: string, rel: string, hreflang?: string): string[] => {
 
 describe('buildShell', () => {
   it('does_write_the_spanish_default_shell_and_prefixed_english_and_german_shells_from_site_ts', () => {
-    const template = INDEX_HTML.replace(/<title>[^<]*<\/title>/, '<title>dev title</title>').replace(
-      /(<meta\s+(?:name="description"|property="og:title"|property="og:description")\s+content=")[^"]*"/g,
-      '$1dev value"',
-    )
+    const template = INDEX_HTML.replace(/<title>[^<]*<\/title>/, '<title>dev title</title>')
+      .replace(/<p class="app-startup-brand">[^<]*<\/p>/, '<p class="app-startup-brand">dev brand</p>')
+      .replace(
+        /(<meta\s+(?:name="description"|property="og:title"|property="og:description")\s+content=")[^"]*"/g,
+        '$1dev value"',
+      )
 
     const esShell = buildShell(template, 'es')
     const enShell = buildShell(template, 'en')
     const deShell = buildShell(template, 'de')
     const esConfig = SHELL_LOCALES.find((shell) => shell.locale === 'es')!
+    const enConfig = SHELL_LOCALES.find((shell) => shell.locale === 'en')!
     const deConfig = SHELL_LOCALES.find((shell) => shell.locale === 'de')!
 
     expect(esShell).toContain('<html lang="es">')
     expect(esShell.match(/<title>[^<]*<\/title>/g)).toEqual([`<title>${esConfig.title}</title>`])
+    expect(esShell).toContain(`<p class="app-startup-brand">${esConfig.title}</p>`)
+    expect(esShell).toContain(`<progress aria-label="${esConfig.loadingLabel}"></progress>`)
     expect(metaContent(esShell, 'property', 'og:locale')).toEqual(['es_ES'])
     expect(metaContent(esShell, 'property', 'og:title')).toEqual([esConfig.title])
     expect(metaContent(esShell, 'name', 'description')).toEqual([esConfig.description])
@@ -42,6 +47,8 @@ describe('buildShell', () => {
 
     expect(enShell).toContain('<html lang="en">')
     expect(enShell.match(/<title>[^<]*<\/title>/g)).toEqual([`<title>${SITE_NAME}</title>`])
+    expect(enShell).toContain(`<p class="app-startup-brand">${SITE_NAME}</p>`)
+    expect(enShell).toContain(`<progress aria-label="${enConfig.loadingLabel}"></progress>`)
     expect(metaContent(enShell, 'property', 'og:locale')).toEqual(['en_US'])
     expect(metaContent(enShell, 'property', 'og:title')).toEqual([SITE_NAME])
     expect(metaContent(enShell, 'name', 'description')).toEqual([SITE_DESCRIPTION])
@@ -51,6 +58,8 @@ describe('buildShell', () => {
 
     expect(deShell).toContain('<html lang="de">')
     expect(deShell.match(/<title>[^<]*<\/title>/g)).toEqual([`<title>${deConfig.title}</title>`])
+    expect(deShell).toContain(`<p class="app-startup-brand">${deConfig.title}</p>`)
+    expect(deShell).toContain(`<progress aria-label="${deConfig.loadingLabel}"></progress>`)
     expect(metaContent(deShell, 'property', 'og:locale')).toEqual(['de_DE'])
     expect(metaContent(deShell, 'property', 'og:url')).toEqual([`${SITE_URL}/de`])
     expect(linkHref(deShell, 'canonical')).toEqual([`${SITE_URL}/de`])
@@ -113,11 +122,23 @@ describe('buildShell', () => {
   it('does_refuse_the_template_when_a_tag_it_writes_is_missing_or_repeated', () => {
     const withoutUrl = INDEX_HTML.replace(/<meta property="og:url"[^>]*>/, '')
     const twoTitles = INDEX_HTML.replace('</head>', '<title>again</title></head>')
+    const withoutBrand = INDEX_HTML.replace(/<p class="app-startup-brand">[\s\S]*?<\/p>/, '')
+    const withoutProgress = INDEX_HTML.replace(/<progress[\s\S]*?<\/progress>/, '')
+    const emptyProgressLabel = INDEX_HTML.replace(
+      /<progress aria-label="[^"]*"><\/progress>/,
+      '<progress aria-label=" "></progress>',
+    )
 
     const buildWithoutUrl = () => buildShell(withoutUrl)
     const buildWithTwoTitles = () => buildShell(twoTitles)
+    const buildWithoutBrand = () => buildShell(withoutBrand)
+    const buildWithoutProgress = () => buildShell(withoutProgress)
+    const buildEmptyProgressLabel = () => buildShell(emptyProgressLabel)
 
     expect(buildWithoutUrl).toThrow(/expected exactly one meta og:url, found 0/)
     expect(buildWithTwoTitles).toThrow(/expected exactly one <title>, found 2/)
+    expect(buildWithoutBrand).toThrow(/expected exactly one \.app-startup-brand, found 0/)
+    expect(buildWithoutProgress).toThrow(/expected exactly one startup <progress>, found 0/)
+    expect(buildEmptyProgressLabel).toThrow(/startup <progress> must have a non-empty aria-label/)
   })
 })

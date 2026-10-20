@@ -54,7 +54,7 @@ item layer:react-vite | .gitignore | ignore | - | 887f42eeae4276a8ba8ed3e14ec656
 item layer:react-vite | .gitignore | ignore | - | f1a9a09b226cf8e98a4286200c5d9ebd5c28924707ac3317947f8ecf06ab167b
 item layer:react-vite | AGENTS.md | skill | - | bb28bd982e9aace3172c57e39bb4fe46a147a970f10b80aa9b82db0dcf4dfb98
 
-component stack:react-fsd | 16f19536e03771a0a45e746d289b9f8c1bd613b8 | project=kanban-board-app
+component stack:react-fsd | 27df3cfdb3a1dbbdaf19ea4425ca99c92528ad74 | project=kanban-board-app
 file stack:react-fsd | eslint-fsd-gaps.js | 6dd65ffed2260e2e23397314ccbbc0aec9488b268bcd4157da2103c017dad866
 file stack:react-fsd | eslint-tests.js | 038eecc2d66babdf271b7dc52a2b5970c394c037567d6ebdf4670fea0918edc4
 file stack:react-fsd | eslint.config.js | 53e528cde4ab52eec0b5646aba47981bcba23076fe2c1e91974c8ae04191ad38
@@ -65,11 +65,11 @@ file stack:react-fsd | tooling/agent-files/generate.test.ts | 2448375c56772d146e
 file stack:react-fsd | tooling/agent-files/generate.ts | b03cc0de604d5237309ca09123d2d481e6800167dd9df161e6d21409f219e261
 file stack:react-fsd | tooling/agent-files/llmsTxt.ts | e2459eae0d411310aa3ba832456cae3680c91eec79c398ca89c804c8bc3501ad
 file stack:react-fsd | tooling/agent-files/robotsTxt.ts | 1a1dbc208690beab70ad471319836a35d5d918aaa3574125fe6a4c9cf7a83257
-file stack:react-fsd | tooling/agent-files/shell.test.ts | f058cdcdf0e5b148ee3b38aee711ad26f5244f17a709ec55f25dd702167b6c0b
-file stack:react-fsd | tooling/agent-files/shell.ts | ad204adb009a11e763dd916f8c8ff01179739a5a9128363017e546a0298d9a92
+file stack:react-fsd | tooling/agent-files/shell.test.ts | ba86b7e9df03d65bb34f0ad81f5557d9b34c01f9dac6dc9cef9e9a0cb42e890c
+file stack:react-fsd | tooling/agent-files/shell.ts | 6fc8b751a147d9b4d366ca5137575d9766b98deb576092f4d53891c844c40d19
 file stack:react-fsd | tooling/agent-files/sitemap.ts | 95ea04cbe7d8fa897c9ec96055c95f66a93475db745f12692386d4c6fcdbea59
 file stack:react-fsd | tooling/agent-files/vitePlugin.test.ts | c8b0c890697d7e230f9889ed2b48baad18de881d29b74813829a7743417f00a9
-file stack:react-fsd | tooling/agent-files/vitePlugin.ts | 4a40898eb16b5e1a80a658a1c6af9c53993858110ba49b8a6d49d3aab397367b
+file stack:react-fsd | tooling/agent-files/vitePlugin.ts | 4a40898eb16b5e1a80a658a1c6af9c53993858110ba49b8a6d49b3aab397367b
 file stack:react-fsd | vitest.setup.ts | kept
 
-applied 16f19536e03771a0a45e746d289b9f8c1bd613b8
+applied 27df3cfdb3a1dbbdaf19ea4425ca99c92528ad74

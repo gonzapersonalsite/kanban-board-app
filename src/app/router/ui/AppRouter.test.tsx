@@ -1,9 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { useLocation, useParams } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { useKanbanStore } from '@/shared/api'
 import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
 import { BOARD_MAIN_ID } from '@/test/fixtures/kanbanFixtures'
+import indexHtml from '../../../../index.html?raw'
 
 vi.mock('@dnd-kit/react', () => ({
   DragDropProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -166,6 +167,26 @@ describe('AppRouter', () => {
     })
 
     await waitFor(() => {
+      expect(screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
+    })
+  })
+
+  it('replaces_the_initial_html_startup_indicator_when_react_mounts', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
+    resetPersistedKanbanStore(useKanbanStore.setState)
+    window.history.pushState({}, '', `/board/${BOARD_MAIN_ID}`)
+    vi.resetModules()
+    const { AppRouter } = await import('./AppRouter')
+    const doc = new DOMParser().parseFromString(indexHtml, 'text/html')
+    const root = doc.getElementById('root')!
+    document.body.append(root)
+
+    expect(within(root).getByRole('progressbar', { name: 'Cargando Tablero Kanban' })).toBeInTheDocument()
+
+    render(<AppRouter />, { container: root })
+
+    await waitFor(() => {
+      expect(root.querySelector('.app-startup')).toBeNull()
       expect(screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
     })
   })
