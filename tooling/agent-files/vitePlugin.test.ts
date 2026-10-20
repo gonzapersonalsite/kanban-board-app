@@ -55,6 +55,11 @@ describe('agentFilesPlugin in vite.config.ts', () => {
         expect(assets.get(file.path.slice(1)), file.path).toBe(file.source)
       }
       const index = assets.get('index.html') ?? ''
+      const enIndex = assets.get('en/index.html') ?? ''
+      const deIndex = assets.get('de/index.html') ?? ''
+      expect(index).toContain('<html lang="es">')
+      expect(enIndex).toContain('<html lang="en">')
+      expect(deIndex).toContain('<html lang="de">')
       for (const name of ['og:url', 'og:image', 'twitter:image']) {
         const address = new RegExp(`<meta (?:name|property)="${name}" content="([^"]*)"`).exec(index)?.[1]
         expect(address?.startsWith(`${SITE_URL}/`), name).toBe(true)

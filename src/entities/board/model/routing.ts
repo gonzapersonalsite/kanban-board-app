@@ -1,9 +1,10 @@
 import type { Board, BoardId } from '@/shared/api'
+import { DEFAULT_LOCALE, localizePath, type Locale } from '@/shared/i18n'
 
 export type BoardViewRoute = 'board' | 'calendar'
 
-export function buildBoardPath(view: BoardViewRoute, boardId: BoardId): string {
-  return `/${view}/${boardId}`
+export function buildBoardPath(view: BoardViewRoute, boardId: BoardId, locale: Locale = DEFAULT_LOCALE): string {
+  return localizePath(`/${view}/${boardId}`, locale)
 }
 
 export function resolveFallbackBoardId(boards: Board[], activeBoardId: BoardId | null): BoardId | null {

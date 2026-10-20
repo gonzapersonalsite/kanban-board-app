@@ -1,6 +1,6 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { useLocation, useParams } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { useKanbanStore } from '@/shared/api'
 import { resetPersistedKanbanStore } from '@/test/helpers/storeTestUtils'
 import { BOARD_MAIN_ID } from '@/test/fixtures/kanbanFixtures'
@@ -51,7 +51,13 @@ vi.mock('@/widgets/header', () => ({
 }))
 
 describe('AppRouter', () => {
-  it('redirects_root_to_the_active_board_route', async () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    window.history.pushState({}, '', '/')
+  })
+
+  it('redirects_root_to_the_spanish_active_board_route_by_default', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
     resetPersistedKanbanStore(useKanbanStore.setState)
     window.history.pushState({}, '', '/')
     vi.resetModules()
@@ -65,7 +71,23 @@ describe('AppRouter', () => {
     })
   })
 
+  it('redirects_root_to_the_prefixed_board_route_when_browser_language_is_english', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('en-US')
+    resetPersistedKanbanStore(useKanbanStore.setState)
+    window.history.pushState({}, '', '/')
+    vi.resetModules()
+    const { AppRouter } = await import('./AppRouter')
+
+    render(<AppRouter />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Persistent Header')).toBeInTheDocument()
+      expect(screen.getByText(`Home Page:/en/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
+    })
+  })
+
   it('redirects_calendar_root_to_the_active_board_calendar_route', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
     resetPersistedKanbanStore(useKanbanStore.setState)
     window.history.pushState({}, '', '/calendar')
     vi.resetModules()
@@ -79,7 +101,22 @@ describe('AppRouter', () => {
     })
   })
 
+  it('redirects_prefixed_locale_roots_to_their_localized_board_and_calendar_routes', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
+    resetPersistedKanbanStore(useKanbanStore.setState)
+    window.history.pushState({}, '', '/de/calendar')
+    vi.resetModules()
+    const { AppRouter } = await import('./AppRouter')
+
+    render(<AppRouter />)
+
+    await waitFor(() => {
+      expect(screen.getByText(`Calendar Page:/de/calendar/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
+    })
+  })
+
   it('syncs_store_with_a_valid_board_route', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
     resetPersistedKanbanStore(useKanbanStore.setState)
     useKanbanStore.getState().addBoard('Secondary')
     const secondaryBoardId = useKanbanStore.getState().boards.find((board) => board.title === 'Secondary')!.id
@@ -96,12 +133,37 @@ describe('AppRouter', () => {
   })
 
   it('redirects_an_invalid_board_route_to_a_valid_fallback', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
     resetPersistedKanbanStore(useKanbanStore.setState)
     window.history.pushState({}, '', '/board/missing-board')
     vi.resetModules()
     const { AppRouter } = await import('./AppRouter')
 
     render(<AppRouter />)
+
+    await waitFor(() => {
+      expect(screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
+    })
+  })
+
+  it('applies_lang_query_override_cleans_url_and_syncs_pathname_on_locale_changes', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
+    resetPersistedKanbanStore(useKanbanStore.setState)
+    window.history.pushState({}, '', `/board/${BOARD_MAIN_ID}?lang=de`)
+    vi.resetModules()
+    const { useI18nStore } = await import('@/shared/i18n')
+    const { AppRouter } = await import('./AppRouter')
+
+    render(<AppRouter />)
+
+    await waitFor(() => {
+      expect(screen.getByText(`Home Page:/de/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
+      expect(useI18nStore.getState().locale).toBe('de')
+    })
+
+    act(() => {
+      useI18nStore.getState().setLocale('es')
+    })
 
     await waitFor(() => {
       expect(screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()

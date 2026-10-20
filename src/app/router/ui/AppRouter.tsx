@@ -1,6 +1,7 @@
 import { lazy } from 'react'
-import { createBrowserRouter, Navigate, RouterProvider, useRouteError } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouterProvider, useLocation, useRouteError } from 'react-router-dom'
 import { useKanbanStore } from '@/shared/api'
+import { PREFIXED_LOCALES, extractPathLocale, resolveSupportedLocale, useI18nStore } from '@/shared/i18n'
 import { buildBoardPath, resolveFallbackBoardId, type BoardViewRoute } from '@/entities/board'
 import { useSyncBoardRoute } from '../model/useSyncBoardRoute'
 import { AppShellRoute, RouteContentFallback } from './AppShellRoute'
@@ -25,6 +26,8 @@ function RouteErrorBoundary() {
 }
 
 function ActiveBoardRedirect({ view }: { view: BoardViewRoute }) {
+  const location = useLocation()
+  const locale = useI18nStore((state) => state.locale)
   const boards = useKanbanStore((state) => state.boards)
   const activeBoardId = useKanbanStore((state) => state.activeBoardId)
   const targetBoardId = resolveFallbackBoardId(boards, activeBoardId)
@@ -33,7 +36,10 @@ function ActiveBoardRedirect({ view }: { view: BoardViewRoute }) {
     return null
   }
 
-  return <Navigate to={buildBoardPath(view, targetBoardId)} replace />
+  const queryLocale = resolveSupportedLocale(new URLSearchParams(location.search).get('lang'))
+  const targetLocale = queryLocale ?? extractPathLocale(location.pathname) ?? locale
+
+  return <Navigate to={buildBoardPath(view, targetBoardId, targetLocale)} replace />
 }
 
 function BoardPageRoute() {
@@ -56,32 +62,40 @@ function CalendarPageRoute() {
   return <CalendarPage />
 }
 
+const boardRoutes = [
+  {
+    index: true,
+    element: <ActiveBoardRedirect view="board" />,
+  },
+  {
+    path: 'board/:boardId',
+    element: <BoardPageRoute />,
+  },
+  {
+    path: 'calendar',
+    element: <ActiveBoardRedirect view="calendar" />,
+  },
+  {
+    path: 'calendar/:boardId',
+    element: <CalendarPageRoute />,
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
+  },
+]
+
 const router = createBrowserRouter([
   {
     path: '/',
     errorElement: <RouteErrorBoundary />,
     element: <AppShellRoute />,
     children: [
-      {
-        index: true,
-        element: <ActiveBoardRedirect view="board" />,
-      },
-      {
-        path: 'board/:boardId',
-        element: <BoardPageRoute />,
-      },
-      {
-        path: 'calendar',
-        element: <ActiveBoardRedirect view="calendar" />,
-      },
-      {
-        path: 'calendar/:boardId',
-        element: <CalendarPageRoute />,
-      },
-      {
-        path: '*',
-        element: <NotFoundPage />,
-      },
+      ...boardRoutes,
+      ...PREFIXED_LOCALES.map((locale) => ({
+        path: locale,
+        children: boardRoutes,
+      })),
     ],
   },
 ])

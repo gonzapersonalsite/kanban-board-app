@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Header } from '@/widgets/header'
+import { useSyncLocaleRoute } from '../model/useSyncLocaleRoute'
 import styles from './AppShellRoute.module.css'
 
 export function RouteContentFallback() {
@@ -16,6 +17,8 @@ export function RouteContentFallback() {
 }
 
 export function AppShellRoute() {
+  useSyncLocaleRoute()
+
   return (
     <div className={styles.shell}>
       <Header />

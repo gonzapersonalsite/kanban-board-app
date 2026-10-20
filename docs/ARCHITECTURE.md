@@ -240,16 +240,17 @@ Convención; el lint solo impide que una capa use lo que tiene encima.
 
 - **Lo que ven los crawlers y los agentes sale del build, con una sola
   fuente.** `tooling/agent-files/site.ts` nombra la dirección del sitio, sus
-  textos, el repositorio y las rutas del sitemap, e `index.html` la portada
-  por su ruta, con su tipo, su tamaño y su texto alternativo; el plugin
-  cableado en `vite.config.ts` reescribe en el build el título, la descripción
-  y las direcciones absolutas de la vista previa social de `index.html`, y
-  emite llms.txt, robots.txt y sitemap.xml (el servidor de desarrollo sirve
-  los mismos ficheros por middleware). Los tests de `tooling/agent-files`
-  cruzan cada valor con el fichero real —el tipo y el tamaño declarados de la
-  portada `public/og-cover.png` incluidos— y comprueban que el plugin sigue
-  cableado en la configuración real: quitarlo de `vite.config.ts` los deja en
-  rojo.
+  textos por idioma (`es` en la ruta raíz, `en` en `/en` y `de` en `/de`), el
+  repositorio y las rutas del sitemap, e `index.html` la portada por su ruta,
+  con su tipo, su tamaño y su texto alternativo; el plugin cableado en
+  `vite.config.ts` reescribe en el build el título, la descripción, el idioma
+  y las direcciones absolutas de `index.html`, emite los shells localizados
+  de inglés y alemán y emite llms.txt, robots.txt y
+  sitemap.xml (el servidor de desarrollo sirve los mismos ficheros por
+  middleware). Los tests de `tooling/agent-files` cruzan cada valor con el
+  fichero real —el tipo y el tamaño declarados de la portada
+  `public/og-cover.png` incluidos— y comprueban que el plugin sigue cableado en
+  la configuración real: quitarlo de `vite.config.ts` los deja en rojo.
 
 ## Nombres
 

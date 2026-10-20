@@ -14,7 +14,7 @@ A Trello-style Kanban board built with React, TypeScript and Feature-Sliced Desi
 - **Cards**: title, description and optional due date, with overdue / due today / upcoming badges.
 - **Calendar view**: monthly calendar of the active board's cards by due date.
 - **Backup and restore**: export all boards to a versioned JSON file (download, or share where supported) and import it back after reviewing a summary.
-- **Languages**: English, Spanish and German, detected from the browser and switchable at any time.
+- **Languages**: Spanish (default at the root route), English (`/en`) and German (`/de`), detected from `?lang=`, URL prefix, saved preference or browser language and switchable at any time.
 - **Light and dark themes**, following the system preference by default.
 
 ## Stack

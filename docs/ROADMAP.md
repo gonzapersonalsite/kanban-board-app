@@ -11,7 +11,7 @@ por identidad).
 - **El orden de trabajo, en una línea.** Los números son IDENTIDAD, no
   secuencia; aquí solo entran fases con número:
 
-  **F0 ✔**
+  **F0 ✔ → F1 ✔**
 
   Esta línea es la única que enuncia la secuencia y lleva el cursor: en negrita,
   las fases unidas por `→` (o por `·`, que separa igual), y nada que no sea una
@@ -46,5 +46,9 @@ por identidad).
   dura 5 de `../AGENTS.md`).
 
 ## F0 — Línea base de la aplicación Kanban Board (DONE)
+
+- Cuerpo y entregas archivados en `archive/ROADMAP.md`.
+
+## F1 — Español como idioma raíz por defecto y rutas prefijadas en `/en` y `/de` (DONE)
 
 - Cuerpo y entregas archivados en `archive/ROADMAP.md`.

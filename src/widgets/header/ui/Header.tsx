@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Settings2 } from 'lucide-react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { useTranslation } from '@/shared/i18n'
+import { DEFAULT_LOCALE, extractPathLocale, stripLocalePrefix, useTranslation } from '@/shared/i18n'
 import { buildBoardPath, resolveFallbackBoardId, useBoards } from '@/entities/board'
 import { BoardManagement } from '@/features/board-management'
 import { DataExportSection, DataImportSection } from '@/features/data-portability'
@@ -17,18 +17,19 @@ export function Header() {
   const { boards, activeBoardId } = useBoards()
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
-  const currentView = location.pathname.startsWith('/calendar') ? 'calendar' : 'board'
+  const routeLocale = extractPathLocale(location.pathname) ?? DEFAULT_LOCALE
+  const currentView = stripLocalePrefix(location.pathname).startsWith('/calendar') ? 'calendar' : 'board'
   const currentBoardId = resolveFallbackBoardId(boards, activeBoardId)
 
   const navItems = currentBoardId
     ? [
-        { to: buildBoardPath('board', currentBoardId), label: 'nav.board', end: false },
-        { to: buildBoardPath('calendar', currentBoardId), label: 'nav.calendar', end: false },
+        { to: buildBoardPath('board', currentBoardId, routeLocale), label: 'nav.board', end: false },
+        { to: buildBoardPath('calendar', currentBoardId, routeLocale), label: 'nav.calendar', end: false },
       ]
     : []
 
   const handleBoardChange = (boardId: string) => {
-    navigate(buildBoardPath(currentView, boardId))
+    navigate(buildBoardPath(currentView, boardId, routeLocale))
   }
 
   const handleImportComplete = (activeBoardId: string | null) => {
@@ -36,7 +37,7 @@ export function Header() {
       return
     }
 
-    navigate(buildBoardPath(currentView, activeBoardId), { replace: true })
+    navigate(buildBoardPath(currentView, activeBoardId, routeLocale), { replace: true })
     setIsSettingsOpen(false)
   }
 
