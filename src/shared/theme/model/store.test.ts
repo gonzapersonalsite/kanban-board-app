@@ -1,7 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import indexHtml from '../../../../index.html?raw'
 import type { Theme } from './types'
 
 const THEME_STORAGE_KEY = 'theme-preference'
+const prePaintScript = indexHtml.match(/<script>([\s\S]*?)<\/script>/)?.[1] ?? ''
+
+function runPrePaintScript() {
+  new Function(prePaintScript)()
+}
 
 function stubSystemColorScheme(scheme: Theme) {
   vi.stubGlobal('matchMedia', (query: string) => ({
@@ -26,11 +32,65 @@ async function startThemeStore() {
 describe('useThemeStore', () => {
   beforeEach(() => {
     localStorage.clear()
+    document.head.innerHTML = ''
     document.documentElement.removeAttribute('data-theme')
+    document.documentElement.removeAttribute('style')
   })
 
   afterEach(() => {
+    vi.restoreAllMocks()
     vi.unstubAllGlobals()
+  })
+
+  describe('index.html pre-paint script', () => {
+    it.each<Theme>(['light', 'dark'])('applies_the_saved_%s_theme_before_the_app_loads', (theme) => {
+      stubSystemColorScheme(theme === 'light' ? 'dark' : 'light')
+      storeTheme(theme)
+
+      runPrePaintScript()
+
+      expect(document.documentElement.getAttribute('data-theme')).toBe(theme)
+      expect(document.documentElement.style.colorScheme).toBe(theme)
+    })
+
+    it.each<Theme>(['light', 'dark'])(
+      'follows_the_%s_system_preference_when_nothing_valid_is_stored_before_the_app_loads',
+      (scheme) => {
+        stubSystemColorScheme(scheme)
+        localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ state: { theme: 'sepia' }, version: 0 }))
+
+        runPrePaintScript()
+
+        expect(document.documentElement.getAttribute('data-theme')).toBe(scheme)
+        expect(document.documentElement.style.colorScheme).toBe(scheme)
+      },
+    )
+
+    it('follows_the_system_preference_when_site_data_is_blocked', () => {
+      stubSystemColorScheme('dark')
+      vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new DOMException('blocked', 'SecurityError')
+      })
+
+      runPrePaintScript()
+
+      expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
+      expect(document.documentElement.style.colorScheme).toBe('dark')
+    })
+
+    it('promotes_the_font_stylesheet_from_print_to_all_when_it_finishes_loading', () => {
+      stubSystemColorScheme('light')
+      document.head.innerHTML =
+        '<link id="app-fonts" rel="stylesheet" href="https://fonts.googleapis.com/css2" media="print" />'
+      const fontsLink = document.getElementById('app-fonts') as HTMLLinkElement
+
+      runPrePaintScript()
+      expect(fontsLink.media).toBe('print')
+
+      fontsLink.dispatchEvent(new Event('load'))
+
+      expect(fontsLink.media).toBe('all')
+    })
   })
 
   describe('first visit', () => {
@@ -41,6 +101,7 @@ describe('useThemeStore', () => {
 
       expect(useThemeStore.getState().theme).toBe(scheme)
       expect(document.documentElement.getAttribute('data-theme')).toBe(scheme)
+      expect(document.documentElement.style.colorScheme).toBe(scheme)
     })
 
     it('keeps_following_the_system_until_the_visitor_chooses_a_theme', async () => {
@@ -59,6 +120,7 @@ describe('useThemeStore', () => {
 
       expect(useThemeStore.getState().theme).toBe('light')
       expect(document.documentElement.getAttribute('data-theme')).toBe('light')
+      expect(document.documentElement.style.colorScheme).toBe('light')
       expect(JSON.parse(localStorage.getItem(THEME_STORAGE_KEY) ?? '{}').state).toEqual({ theme: 'light' })
     })
   })
@@ -72,6 +134,7 @@ describe('useThemeStore', () => {
 
       expect(useThemeStore.getState().theme).toBe('light')
       expect(document.documentElement.getAttribute('data-theme')).toBe('light')
+      expect(document.documentElement.style.colorScheme).toBe('light')
     })
   })
 })

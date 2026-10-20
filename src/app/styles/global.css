@@ -1,8 +1,7 @@
-/* ─── Google Fonts ──────────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
-
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 :root {
+  color-scheme: light;
+
   /* Colors — Indigo + warm undertones */
   --color-primary: #6366f1;
   --color-primary-hover: #4f46e5;
@@ -64,6 +63,7 @@
 
 /* ─── Dark mode ───────────────────────────────────────────────────────────── */
 [data-theme='dark'] {
+  color-scheme: dark;
   --color-primary: #818cf8;
   --color-primary-hover: #6366f1;
   --color-danger: #f87171;
@@ -121,6 +121,7 @@ body {
   margin: 0;
   font-family: var(--font-family);
   font-size: var(--font-size-body);
+  font-size-adjust: from-font;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

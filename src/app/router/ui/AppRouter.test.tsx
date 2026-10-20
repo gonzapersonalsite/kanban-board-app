@@ -187,7 +187,61 @@ describe('AppRouter', () => {
 
     await waitFor(() => {
       expect(root.querySelector('.app-startup')).toBeNull()
+      expect(screen.getByText(`Home Page:${`/board/${BOARD_MAIN_ID}`}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
+    })
+  })
+
+  it('renders_the_board_route_skeleton_on_board_routes_and_calendar_route_skeleton_on_calendar_routes_while_resolving', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
+    const { MemoryRouter } = await import('react-router-dom')
+    const { BoardRouteSkeleton, CalendarRouteSkeleton, RouteContentFallback } = await import('./AppShellRoute')
+
+    const { unmount } = render(
+      <MemoryRouter initialEntries={['/board/board-1']}>
+        <RouteContentFallback />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByTestId('board-route-skeleton')).toBeInTheDocument()
+    expect(screen.queryByTestId('calendar-route-skeleton')).toBeNull()
+    unmount()
+
+    render(
+      <MemoryRouter initialEntries={['/en/calendar/board-1']}>
+        <RouteContentFallback />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByTestId('calendar-route-skeleton')).toBeInTheDocument()
+    expect(screen.queryByTestId('board-route-skeleton')).toBeNull()
+    expect(BoardRouteSkeleton).toBeTypeOf('function')
+    expect(CalendarRouteSkeleton).toBeTypeOf('function')
+  })
+
+  it('prefetches_lazy_route_chunks_when_the_browser_is_idle', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
+    const requestIdleCallback = vi.fn<(callback: IdleRequestCallback) => number>().mockReturnValue(1)
+    const cancelIdleCallback = vi.fn()
+    vi.stubGlobal('requestIdleCallback', requestIdleCallback)
+    vi.stubGlobal('cancelIdleCallback', cancelIdleCallback)
+    resetPersistedKanbanStore(useKanbanStore.setState)
+    window.history.pushState({}, '', `/board/${BOARD_MAIN_ID}`)
+    vi.resetModules()
+    const { AppRouter } = await import('./AppRouter')
+
+    const { unmount } = render(<AppRouter />)
+
+    await waitFor(() => {
       expect(screen.getByText(`Home Page:/board/${BOARD_MAIN_ID}:${BOARD_MAIN_ID}`)).toBeInTheDocument()
     })
+    expect(requestIdleCallback).toHaveBeenCalledTimes(1)
+
+    act(() => {
+      requestIdleCallback.mock.calls[0][0]({ didTimeout: false, timeRemaining: () => 50 })
+    })
+
+    unmount()
+    expect(cancelIdleCallback).toHaveBeenCalledWith(1)
+    vi.unstubAllGlobals()
   })
 })

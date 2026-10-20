@@ -1,15 +1,55 @@
-import { lazy } from 'react'
+import { Suspense, lazy, useEffect, type ComponentType } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider, useLocation, useRouteError } from 'react-router-dom'
 import { useKanbanStore } from '@/shared/api'
 import { PREFIXED_LOCALES, extractPathLocale, resolveSupportedLocale, useI18nStore } from '@/shared/i18n'
 import { buildBoardPath, resolveFallbackBoardId, type BoardViewRoute } from '@/entities/board'
 import { useSyncBoardRoute } from '../model/useSyncBoardRoute'
-import { AppShellRoute, RouteContentFallback } from './AppShellRoute'
+import { AppShellRoute, BoardRouteSkeleton, CalendarRouteSkeleton } from './AppShellRoute'
 import styles from './RouteErrorBoundary.module.css'
 
-const HomePage = lazy(() => import('@/pages/home').then((m) => ({ default: m.HomePage })))
-const CalendarPage = lazy(() => import('@/pages/calendar').then((m) => ({ default: m.CalendarPage })))
-const NotFoundPage = lazy(() => import('@/pages/not-found').then((m) => ({ default: m.NotFoundPage })))
+type PageModule = { default: ComponentType }
+type PageId = 'board' | 'calendar' | 'notFound'
+
+// Each page chunk is loaded from one place: React.lazy renders it and the idle prefetch warms it.
+const PAGE_LOADERS: Record<PageId, () => Promise<PageModule>> = {
+  board: () => import('@/pages/home').then((m) => ({ default: m.HomePage })),
+  calendar: () => import('@/pages/calendar').then((m) => ({ default: m.CalendarPage })),
+  notFound: () => import('@/pages/not-found').then((m) => ({ default: m.NotFoundPage })),
+}
+
+const HomePage = lazy(PAGE_LOADERS.board)
+const CalendarPage = lazy(PAGE_LOADERS.calendar)
+const NotFoundPage = lazy(PAGE_LOADERS.notFound)
+
+function usePrefetchPages() {
+  useEffect(() => {
+    let cancelled = false
+    const run = () => {
+      if (cancelled) {
+        return
+      }
+      ;(Object.entries(PAGE_LOADERS) as [PageId, () => Promise<PageModule>][]).forEach(([page, load]) => {
+        void load().catch((error: unknown) => {
+          console.warn({ event: 'page-prefetch-failed', page, error })
+        })
+      })
+    }
+
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(run, { timeout: 4000 })
+      return () => {
+        cancelled = true
+        window.cancelIdleCallback(id)
+      }
+    }
+
+    const timer = window.setTimeout(run, 2000)
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+    }
+  }, [])
+}
 
 function RouteErrorBoundary() {
   const error = useRouteError()
@@ -33,7 +73,7 @@ function ActiveBoardRedirect({ view }: { view: BoardViewRoute }) {
   const targetBoardId = resolveFallbackBoardId(boards, activeBoardId)
 
   if (!targetBoardId) {
-    return null
+    return view === 'calendar' ? <CalendarRouteSkeleton /> : <BoardRouteSkeleton />
   }
 
   const queryLocale = resolveSupportedLocale(new URLSearchParams(location.search).get('lang'))
@@ -46,20 +86,28 @@ function BoardPageRoute() {
   const isReady = useSyncBoardRoute('board')
 
   if (!isReady) {
-    return <RouteContentFallback />
+    return <BoardRouteSkeleton />
   }
 
-  return <HomePage />
+  return (
+    <Suspense fallback={<BoardRouteSkeleton />}>
+      <HomePage />
+    </Suspense>
+  )
 }
 
 function CalendarPageRoute() {
   const isReady = useSyncBoardRoute('calendar')
 
   if (!isReady) {
-    return <RouteContentFallback />
+    return <CalendarRouteSkeleton />
   }
 
-  return <CalendarPage />
+  return (
+    <Suspense fallback={<CalendarRouteSkeleton />}>
+      <CalendarPage />
+    </Suspense>
+  )
 }
 
 const boardRoutes = [
@@ -101,5 +149,7 @@ const router = createBrowserRouter([
 ])
 
 export function AppRouter() {
+  usePrefetchPages()
+
   return <RouterProvider router={router} />
 }

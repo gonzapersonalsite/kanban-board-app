@@ -99,8 +99,8 @@ description: Convenciones de kanban-board-app (arquitectura de estado y store, d
 - **react-router-dom** (v7) es la ÚNICA librería de enrutado. NO instales el router de Next.js, TanStack Router ni ninguna alternativa.
 - Todas las definiciones de rutas viven en `src/app/router/ui/AppRouter.tsx` usando `createBrowserRouter` y `RouterProvider`.
 - La API pública se exporta desde `src/app/router/index.ts` como `AppRouter`.
-- Las páginas DEBEN cargarse de forma diferida con `React.lazy()` en el nivel de ruta para dividir el bundle.
-- Los componentes de ruta se envuelven en `<Suspense>`; el fallback actual es `null` (añade un `<LoadingFallback />` compartido de `src/shared/ui/` cuando sea no trivial).
+- Las páginas DEBEN cargarse de forma diferida con `React.lazy()` en el nivel de ruta para dividir el bundle, y `AppRouter` pre-carga los chunks en reposo (`requestIdleCallback` con respaldo `setTimeout`).
+- Cada ruta envuelve su página diferida en `<Suspense>` con su esqueleto específico de vista (`BoardRouteSkeleton` para tablero y `CalendarRouteSkeleton` para calendario en `src/app/router/ui/AppShellRoute.tsx`), que respeta la geometría real de la pantalla y `prefers-reduced-motion`.
 - El marco compartido de las rutas (`Header`, futura navegación persistente y demás UI del shell) DEBE vivir en una ruta de layout de `src/app/router` con `<Outlet />`, nunca dentro de páginas individuales. Las páginas solo renderizan el contenido específico de su ruta.
 - Los límites de error están manejados actualmente por el `<ErrorBoundary>` de nivel de aplicación en `src/app/providers/`.
 - Las rutas tienen alcance de tablero e idioma (español por defecto en la ruta raíz, inglés bajo `/en` y alemán bajo `/de`):
@@ -266,7 +266,7 @@ Pautas:
 
 - **Segmento de infraestructura**: `src/shared/theme/` — store + tipos, cero UI. Sigue el mismo patrón que `src/shared/i18n/`.
 - **Estado**: store de Zustand en `src/shared/theme/model/store.ts` con middleware `persist` (clave: `theme-preference`). Persiste únicamente el valor `theme` (`'light' | 'dark'`).
-- **Inicialización**: al rehidratar, el store aplica el atributo `data-theme` en `document.documentElement`. Si no hay valor persistido, recurre a la media query `prefers-color-scheme` sin guardarlo, de modo que el tema sigue al sistema hasta que el visitante lo cambie manualmente.
+- **Inicialización**: un script en línea en `<head>` de `index.html` aplica `data-theme` y `style.colorScheme` en `document.documentElement` antes del primer pintado (leyendo `theme-preference` de `localStorage` o `prefers-color-scheme`) para que el cargador inicial `.app-startup` y el fondo de la página coincidan desde el primer fotograma sin destello blanco; al rehidratar, el store mantiene ambos sincronizados. Si no hay valor persistido, recurre a la media query `prefers-color-scheme` sin guardarlo, de modo que el tema sigue al sistema hasta que el visitante lo cambie manualmente.
 - Zustand llama a `merge` con `undefined` cuando no hay nada guardado (primera visita), y `persist` traga en silencio cualquier excepción que lance `merge`. El `merge` de ambos stores de infraestructura (tema e i18n) DEBE manejar un estado persistido ausente; `src/shared/theme/model/store.test.ts` prueba que una primera visita sigue la preferencia oscura y clara del sistema.
 - **Feature de UI**: `src/features/theme-switcher/` — renderiza el botón de alternancia sol/luna (iconos `Sun`/`Moon` de lucide-react). Importa `useThemeStore` de `@/shared/theme`.
 - **Patrón de importación**:

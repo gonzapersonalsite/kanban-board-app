@@ -8,6 +8,7 @@ function prefersDark(): boolean {
 
 function applyTheme(theme: Theme): void {
   document.documentElement.setAttribute('data-theme', theme)
+  document.documentElement.style.colorScheme = theme
 }
 
 export const useThemeStore = create<ThemeStore>()(

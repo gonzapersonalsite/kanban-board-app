@@ -35,17 +35,73 @@
       name="twitter:image:alt"
       content="Kanban Board: the app name, the tagline “A Trello-style board that runs fully in your browser” and its stack, React, TypeScript, Zustand and Feature-Sliced Design, over a dark board of columns and cards."
     />
-    <!-- Available before the app CSS/JS. Scoped to the temporary root content that React replaces. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      id="app-fonts"
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+      media="print"
+    />
+    <!-- Theme and non-blocking fonts: paint the saved or system theme before the app loads so dark
+         visitors never see a white screen and .app-startup is visible from the first frame
+         (store.test.ts runs this script). -->
+    <script>
+      ;(function () {
+        var theme = null
+        try {
+          var raw = localStorage.getItem('theme-preference')
+          var parsed = raw ? JSON.parse(raw) : null
+          var stored = parsed && parsed.state ? parsed.state.theme : null
+          if (stored === 'light' || stored === 'dark') {
+            theme = stored
+          }
+        } catch (blocked) {
+          // Site data is blocked or malformed: follow the system.
+        }
+        if (theme === null) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        document.documentElement.setAttribute('data-theme', theme)
+        document.documentElement.style.colorScheme = theme
+        var fonts = document.getElementById('app-fonts')
+        if (fonts) {
+          if (fonts.sheet) {
+            fonts.media = 'all'
+          } else {
+            fonts.addEventListener('load', function () {
+              fonts.media = 'all'
+            })
+          }
+        }
+      })()
+    </script>
+    <!-- Available before the app CSS/JS. Scoped to the initial shell and temporary root content that React replaces. -->
     <style>
+      html {
+        color-scheme: light;
+        background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 50%, #f5f3ff 100%) fixed;
+        background-color: #f0f4ff;
+        color: #18181b;
+      }
+      html[data-theme='dark'] {
+        color-scheme: dark;
+        background: linear-gradient(135deg, #0f0d1a 0%, #18181b 50%, #1e1b4b 100%) fixed;
+        background-color: #0f0d1a;
+        color: #fafafa;
+      }
+      body {
+        margin: 0;
+      }
       .app-startup {
         box-sizing: border-box;
-        min-height: calc(100svh - 16px);
+        min-height: 100svh;
         display: grid;
         align-content: center;
         justify-items: center;
         gap: 1.5rem;
         padding: 2rem 1rem;
-        color: CanvasText;
+        color: inherit;
         font:
           1rem/1.5 system-ui,
           sans-serif;
@@ -63,10 +119,13 @@
         width: 2rem;
         height: 2rem;
         border: 3px solid color-mix(in srgb, currentColor 20%, transparent);
-        border-top-color: currentColor;
+        border-top-color: #6366f1;
         border-radius: 50%;
         background: transparent;
         color: inherit;
+      }
+      html[data-theme='dark'] .app-startup progress {
+        border-top-color: #818cf8;
       }
       .app-startup progress::-webkit-progress-bar {
         display: none;
@@ -94,6 +153,10 @@
       }
     </style>
     <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+      />
       <style>
         .app-startup {
           display: none;

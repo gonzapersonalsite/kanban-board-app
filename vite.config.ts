@@ -10,6 +10,25 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    chunkSizeWarningLimit: 500,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            // React and the router change only on upgrades, so this chunk stays cached across deploys.
+            {
+              name: 'react-vendor',
+              test: /[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom)[\\/]/,
+              priority: 20,
+            },
+          ],
+        },
+      },
+    },
+  },
   test: {
     // Both projects below inherit these.
     // A test that checks nothing fails instead of passing in silence.

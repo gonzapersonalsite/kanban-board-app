@@ -12,55 +12,233 @@
   flex-direction: column;
 }
 
-.fallback {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 16px max(16px, var(--safe-left)) 16px max(16px, var(--safe-right));
-}
-
-.fallbackCard {
-  width: min(100%, 36rem);
-  display: grid;
-  gap: 12px;
-  padding: 20px;
-  border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-xl);
-  background: var(--color-card-bg);
-  box-shadow: var(--shadow-md);
-}
-
-.fallbackLinePrimary,
-.fallbackLineSecondary,
-.fallbackLineTertiary {
+.shimmer {
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    rgba(99, 102, 241, 0.08) 0%,
-    rgba(99, 102, 241, 0.18) 50%,
-    rgba(99, 102, 241, 0.08) 100%
+    rgba(99, 102, 241, 0.1) 0%,
+    rgba(99, 102, 241, 0.22) 50%,
+    rgba(99, 102, 241, 0.1) 100%
   );
 }
 
-.fallbackLinePrimary {
+@keyframes skeletonPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .shimmer {
+    animation: skeletonPulse 1.5s ease-in-out infinite;
+  }
+}
+
+/* ─── Board route skeleton (matches Board.module.css & ColumnShell.module.css) ─ */
+.boardSkeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 18px;
+  align-items: start;
+  align-content: start;
+  padding-block: 16px;
+  padding-inline: max(16px, var(--safe-left)) max(16px, var(--safe-right));
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.boardColumn {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
+  border-top: 3px solid var(--column-accent, var(--color-border));
+  box-shadow: var(--shadow-sm);
+  padding: 12px;
+  gap: 12px;
+}
+
+.boardColumnHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 2px;
+}
+
+.boardColumnTitle {
   height: 16px;
-  width: 42%;
+  width: 48%;
 }
 
-.fallbackLineSecondary {
-  height: 12px;
+.boardColumnBadge {
+  height: 20px;
+  width: 28px;
+}
+
+.boardTaskList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.boardTaskCard {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-left: 3px solid var(--column-accent, var(--color-border));
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px var(--color-card-shadow);
+  display: grid;
+  gap: 8px;
+}
+
+.boardTaskTitle {
+  height: 14px;
+  width: 68%;
+}
+
+.boardTaskDescription {
+  height: 11px;
+  width: 92%;
+}
+
+.boardTaskMeta {
+  height: 10px;
+  width: 36%;
+}
+
+.boardAddTask {
+  height: var(--control-size-sm);
   width: 100%;
+  border-radius: var(--radius-md);
+  margin-top: 4px;
 }
 
-.fallbackLineTertiary {
+.boardAddColumn {
+  display: flex;
+  align-items: center;
+  min-height: var(--control-size-md);
+  padding: 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card-bg);
+}
+
+.boardAddColumnBar {
+  height: 14px;
+  width: 45%;
+}
+
+/* ─── Calendar route skeleton (matches CalendarGrid.module.css) ─────────────── */
+.calendarSkeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px max(16px, var(--safe-left)) 16px max(16px, var(--safe-right));
+  overflow: auto;
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.calendarNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendarNavBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+}
+
+.calendarMonthLabel {
+  width: 160px;
+  height: 22px;
+}
+
+.calendarTodayBtn {
+  width: 68px;
+  height: 32px;
+  border-radius: var(--radius-md);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  flex: 1;
+  background: var(--color-card-border);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.calendarDayHeader {
+  background: var(--color-card-bg);
+  padding: 8px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendarDayNameBar {
+  width: 28px;
+  height: 11px;
+}
+
+.calendarDayCell {
+  background: var(--color-card-bg);
+  min-height: 80px;
+  min-width: 0;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calendarDayNumber {
+  width: 20px;
+  height: 14px;
+}
+
+.calendarCellTasks {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: auto;
+}
+
+.calendarTaskPill {
+  width: 100%;
   height: 12px;
-  width: 72%;
+  border-radius: var(--radius-sm);
 }
 
 @media (min-width: 768px) {
-  .fallback {
+  .calendarSkeleton {
     padding: 24px max(24px, var(--safe-left)) 24px max(24px, var(--safe-right));
+  }
+
+  .calendarDayCell {
+    min-height: 100px;
+    padding: 8px;
+  }
+
+  .calendarMonthLabel {
+    width: 200px;
   }
 }

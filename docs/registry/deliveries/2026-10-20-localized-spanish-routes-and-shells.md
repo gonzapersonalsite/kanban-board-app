@@ -15,32 +15,44 @@ phase: F1
   `document.documentElement.lang` y `meta[property="og:locale"]`.
 - `src/entities/board/model/routing.ts`, `src/app/router/model/useSyncBoardRoute.ts`,
   `src/app/router/model/useSyncLocaleRoute.ts`, `src/app/router/ui/AppShellRoute.tsx`,
-  `src/app/router/ui/AppRouter.tsx`, `src/widgets/header/ui/Header.tsx` y
-  `src/pages/not-found/ui/NotFoundPage.tsx`: rutas sin prefijo para español y
-  rutas prefijadas `/en` y `/de` generadas desde `PREFIXED_LOCALES`,
-  sincronización bidireccional entre URL e idioma activo y conservación de la
-  vista y del `:boardId`.
-- `index.html` y `tooling/agent-files/{site.ts,shell.ts,vitePlugin.ts,llmsTxt.ts}`:
+  `src/app/router/ui/AppShellRoute.module.css`, `src/app/router/ui/AppRouter.tsx`,
+  `src/widgets/header/ui/Header.tsx` y `src/pages/not-found/ui/NotFoundPage.tsx`:
+  rutas sin prefijo para español y rutas prefijadas `/en` y `/de` generadas desde
+  `PREFIXED_LOCALES`, sincronización bidireccional entre URL e idioma activo,
+  conservación de la vista y del `:boardId`, esqueletos de carga específicos por
+  vista (`BoardRouteSkeleton` y `CalendarRouteSkeleton`) con `<Suspense>` por
+  ruta y precarga en reposo (`requestIdleCallback`).
+- `index.html`, `src/app/styles/global.css`, `src/shared/theme/model/store.ts`,
+  `vite.config.ts`, `vercel.json` y
+  `tooling/agent-files/{site.ts,shell.ts,vitePlugin.ts,llmsTxt.ts}`:
   emisión del shell raíz en español (`index.html`) y de los shells de inglés
   (`/en`) y alemán (`/de`) con `<html lang>`, `<title>`, `description`,
   `og:locale`, `og:title`, `og:description`, `og:url`, `canonical`, `hreflang`
-  (`es`, `en`, `de`, `x-default`) e indicador accesible de carga inicial
-  (`.app-startup` con marca y `<progress>` localizado que React sustituye al
-  montarse, sincronizado con el commit `27df3cf` de `templates` en
-  `tools/board/components.txt`), y rutas localizadas en sitemap.xml y llms.txt.
+  (`es`, `en`, `de`, `x-default`), script pre-pintado de tema (`data-theme` y
+  `colorScheme`), carga no bloqueante de Google Fonts con `font-size-adjust:
+  from-font`, separación del chunk `react-vendor` y cabeceras `Cache-Control`
+  inmutables para `/assets/(.*)` y revalidables para los shells HTML, e indicador
+  accesible de carga inicial (`.app-startup` con marca y `<progress>` localizado
+  que React sustituye al montarse, sincronizado con el commit `27df3cf` de
+  `templates` en `tools/board/components.txt`), y rutas localizadas en
+  sitemap.xml y llms.txt.
 - Tests actualizados y añadidos en `src/shared/i18n/model/store.test.ts`,
+  `src/shared/theme/model/store.test.ts`,
   `src/entities/board/model/routing.test.ts`, `src/app/router/ui/AppRouter.test.tsx`,
   `tooling/agent-files/shell.test.ts` y `tooling/agent-files/vitePlugin.test.ts`.
 - Documentación actualizada en `README.md`, `docs/ARCHITECTURE.md`,
   `docs/ROADMAP.md`, `docs/archive/ROADMAP.md` y
   `.agents/skills/kanban-board-conventions/SKILL.md`.
 
-**Cómo se verificó.** Se inyectó un defecto ejecutable en `localizePath`
+**Cómo se verificó.** Se inyectaron defectos ejecutables en `localizePath`
 (`src/shared/i18n/model/store.ts`, invirtiendo `resolvedLocale === DEFAULT_LOCALE`
-a `resolvedLocale !== DEFAULT_LOCALE`), lo que hizo fallar 15 tests en la puerta
-`tests`; tras revertirlo con la edición inversa, se ejecutó `python verify.py`
-desde la raíz arrancando en verde (9 puertas, 0 en rojo sobre `HEAD`) y
-cerrando en verde con las 9 puertas en 0 en rojo.
+a `resolvedLocale !== DEFAULT_LOCALE`, lo que hizo fallar 15 tests en la puerta
+`tests`) y en `RouteContentFallback` (`src/app/router/ui/AppShellRoute.tsx`,
+invirtiendo la detección de ruta `/calendar`, lo que hizo fallar el test de
+esqueletos por vista en `AppRouter.test.tsx`); tras revertirlos con la edición
+inversa, se ejecutó `python verify.py` desde la raíz arrancando en verde (9
+puertas, 0 en rojo sobre `HEAD`) y cerrando en verde con las 9 puertas en 0 en
+rojo.
 
 **Pendiente.** Nada en este repositorio; todas las fases planificadas (`F0`,
 `F1`) están en `DONE`.
