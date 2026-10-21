@@ -278,21 +278,29 @@
 
 .danger {
   background: rgba(239, 68, 68, 0.14);
-  color: var(--color-danger);
+  color: #b91c1c;
+}
+
+:global([data-theme='dark']) .danger {
+  color: #fca5a5;
 }
 
 .warning {
   background: rgba(245, 158, 11, 0.15);
-  color: var(--color-warning);
+  color: #92400e;
+}
+
+:global([data-theme='dark']) .warning {
+  color: #fcd34d;
 }
 
 .success {
   background: rgba(16, 185, 129, 0.15);
-  color: #047857;
+  color: #065f46;
 }
 
 :global([data-theme='dark']) .success {
-  color: #34d399;
+  color: #6ee7b7;
 }
 
 .actions {
