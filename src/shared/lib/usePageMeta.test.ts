@@ -174,6 +174,7 @@ describe('usePageMeta', () => {
     const { unmount: unmount404 } = renderHook(() => usePageMeta({ title: '404', robots: 'noindex' }))
     expect(document.querySelector('link[rel="canonical"]')).toBeNull()
     expect(document.querySelector('link[rel="alternate"][hreflang="en"]')).toBeNull()
+    expect(document.querySelector('meta[property="og:url"]')).toBeNull()
     unmount404()
 
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(

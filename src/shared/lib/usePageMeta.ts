@@ -32,6 +32,7 @@ export function usePageMeta({ title, description, robots }: PageMetaOptions) {
     if (robots?.includes('noindex')) {
       canonicalLink?.remove()
       alternateLinks.forEach((link) => link.remove())
+      document.querySelector('meta[property="og:url"]')?.remove()
     } else if (canonicalLink && previousCanonicalHref) {
       try {
         const nextCanonical = new URL(window.location.pathname, previousCanonicalHref).toString()

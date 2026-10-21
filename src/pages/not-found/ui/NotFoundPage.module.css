@@ -125,7 +125,7 @@
   padding: 0 0.5rem;
   border-radius: var(--radius-md);
   background: rgba(99, 102, 241, 0.1);
-  color: var(--column-accent, var(--color-primary));
+  color: var(--color-text);
   font-size: var(--font-size-heading-md);
   font-weight: 800;
   line-height: 1;
@@ -283,12 +283,16 @@
 
 .warning {
   background: rgba(245, 158, 11, 0.15);
-  color: #d97706;
+  color: var(--color-warning);
 }
 
 .success {
   background: rgba(16, 185, 129, 0.15);
-  color: #059669;
+  color: #047857;
+}
+
+:global([data-theme='dark']) .success {
+  color: #34d399;
 }
 
 .actions {
