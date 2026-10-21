@@ -19,6 +19,7 @@ export function CalendarPage() {
 
   return (
     <div className={styles.page}>
+      <h1 className={styles.srOnly}>{t('seo.calendar.title')}</h1>
       <CalendarGrid onTaskClick={handleTaskClick} />
       {dialog.isOpen && (
         <TaskDialog

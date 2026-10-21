@@ -20,6 +20,7 @@ function BoardContent() {
           <SortableColumn
             key={col.id}
             columnId={col.id}
+            title={col.title}
             index={index}
             accentColor={COLUMN_ACCENT_COLORS[index % COLUMN_ACCENT_COLORS.length]}
           >

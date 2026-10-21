@@ -33,12 +33,13 @@ describe('SortableColumn', () => {
 
   it('renders_children', () => {
     render(
-      <SortableColumn columnId={COLUMN_TODO_ID} index={0}>
+      <SortableColumn columnId={COLUMN_TODO_ID} title="To Do" index={0}>
         <div>child-content</div>
       </SortableColumn>,
     )
 
     expect(screen.getByText('child-content')).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: 'To Do' })).toBeInTheDocument()
   })
 
   it('applies_highlighted_class_when_task_is_dragged_over', () => {
@@ -48,7 +49,7 @@ describe('SortableColumn', () => {
     })
 
     const { container } = render(
-      <SortableColumn columnId={COLUMN_TODO_ID} index={0}>
+      <SortableColumn columnId={COLUMN_TODO_ID} title="To Do" index={0}>
         <div>content</div>
       </SortableColumn>,
     )
@@ -64,7 +65,7 @@ describe('SortableColumn', () => {
     })
 
     const { container } = render(
-      <SortableColumn columnId={COLUMN_TODO_ID} index={0}>
+      <SortableColumn columnId={COLUMN_TODO_ID} title="To Do" index={0}>
         <div>content</div>
       </SortableColumn>,
     )
@@ -79,7 +80,7 @@ describe('SortableColumn', () => {
     })
 
     const { container } = render(
-      <SortableColumn columnId={COLUMN_TODO_ID} index={0}>
+      <SortableColumn columnId={COLUMN_TODO_ID} title="To Do" index={0}>
         <div>content</div>
       </SortableColumn>,
     )
@@ -91,7 +92,7 @@ describe('SortableColumn', () => {
     mockUseSortable.mockReturnValue({ ref: vi.fn(), isDragging: true })
 
     const { container } = render(
-      <SortableColumn columnId={COLUMN_TODO_ID} index={0}>
+      <SortableColumn columnId={COLUMN_TODO_ID} title="To Do" index={0}>
         <div>content</div>
       </SortableColumn>,
     )
@@ -101,7 +102,7 @@ describe('SortableColumn', () => {
 
   it('configures_useSortable_with_correct_params', () => {
     render(
-      <SortableColumn columnId={COLUMN_TODO_ID} index={1}>
+      <SortableColumn columnId={COLUMN_TODO_ID} title="To Do" index={1}>
         <div>content</div>
       </SortableColumn>,
     )

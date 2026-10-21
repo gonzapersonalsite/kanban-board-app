@@ -38,20 +38,23 @@ export function AddTaskForm({ columnId }: AddTaskFormProps) {
     }
   }
 
+  const errorId = `add-task-error-${columnId}`
+
   return (
     <div className={styles.form}>
       <Input
+        name={`new-task-${columnId}`}
         value={title}
         onChange={(e) => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={t('task.title_placeholder')}
         aria-label={t('task.title_aria')}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? 'add-task-error' : undefined}
+        aria-describedby={error ? errorId : undefined}
         className={styles.input}
       />
       {error && (
-        <p id="add-task-error" className={styles.error} role="alert">
+        <p id={errorId} className={styles.error} role="alert">
           {error}
         </p>
       )}

@@ -28,6 +28,8 @@ export function DraggableTaskCard({ task, columnId, index, onEdit, onDelete, acc
   return (
     <div
       ref={ref}
+      role="group"
+      aria-label={task.title}
       className={styles.wrapper}
       aria-roledescription={t('dnd.role_description')}
       aria-describedby={BOARD_DND_INSTRUCTIONS_ID}

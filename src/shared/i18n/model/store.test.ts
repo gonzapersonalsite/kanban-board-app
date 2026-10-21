@@ -63,6 +63,27 @@ describe('useI18nStore', () => {
       expect(document.documentElement.lang).toBe('es')
     })
 
+    it('synchronizes_canonical_and_og_url_with_the_active_locale', () => {
+      const canonical = document.createElement('link')
+      canonical.setAttribute('rel', 'canonical')
+      canonical.setAttribute('href', 'https://kanban-board-app-kappa.vercel.app/')
+      const ogUrl = document.createElement('meta')
+      ogUrl.setAttribute('property', 'og:url')
+      ogUrl.setAttribute('content', 'https://kanban-board-app-kappa.vercel.app/')
+      document.head.append(canonical, ogUrl)
+
+      useI18nStore.getState().setLocale('de')
+      expect(canonical).toHaveAttribute('href', 'https://kanban-board-app-kappa.vercel.app/de')
+      expect(ogUrl).toHaveAttribute('content', 'https://kanban-board-app-kappa.vercel.app/de')
+
+      useI18nStore.getState().setLocale('es')
+      expect(canonical).toHaveAttribute('href', 'https://kanban-board-app-kappa.vercel.app/')
+      expect(ogUrl).toHaveAttribute('content', 'https://kanban-board-app-kappa.vercel.app/')
+
+      canonical.remove()
+      ogUrl.remove()
+    })
+
     it('applies_the_persisted_locale_when_the_app_starts', async () => {
       localStorage.setItem('i18n-locale', JSON.stringify({ state: { locale: 'de' }, version: 0 }))
       document.documentElement.lang = 'es'

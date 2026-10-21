@@ -36,6 +36,7 @@ export function AddColumnForm() {
   return (
     <div className={styles.form}>
       <Input
+        name="new-column-title"
         value={title}
         onChange={(e) => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}

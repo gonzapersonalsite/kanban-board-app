@@ -124,11 +124,11 @@
 }
 
 .overdue {
-  color: #ef4444;
+  color: var(--color-danger);
 }
 
 .dueToday {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .upcoming {

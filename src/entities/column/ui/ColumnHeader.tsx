@@ -49,6 +49,8 @@ export function ColumnHeader({ column, onRename, onDelete, canDelete }: ColumnHe
       {isEditing ? (
         <div className={styles.editRow}>
           <Input
+            name={`column-title-${column.id}`}
+            aria-label={t('column.title_aria')}
             value={draftTitle}
             onChange={(e) => setDraftTitle(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -64,17 +66,19 @@ export function ColumnHeader({ column, onRename, onDelete, canDelete }: ColumnHe
         </div>
       ) : (
         <div className={styles.displayRow}>
-          <Tooltip text={t('column.rename')}>
-            <button
-              type="button"
-              className={styles.titleButton}
-              aria-label={t('column.rename')}
-              onClick={handleStartEdit}
-            >
-              <span className={styles.title}>{column.title}</span>
-              <Pencil className={styles.editIcon} />
-            </button>
-          </Tooltip>
+          <h2 className={styles.heading}>
+            <Tooltip text={t('column.rename')}>
+              <button
+                type="button"
+                className={styles.titleButton}
+                aria-label={`${column.title} — ${t('column.rename')}`}
+                onClick={handleStartEdit}
+              >
+                <span className={styles.title}>{column.title}</span>
+                <Pencil className={styles.editIcon} aria-hidden="true" />
+              </button>
+            </Tooltip>
+          </h2>
           {canDelete && (
             <Tooltip text={t('column.delete', { title: column.title })}>
               <IconButton

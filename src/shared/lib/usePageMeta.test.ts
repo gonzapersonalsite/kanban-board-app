@@ -136,4 +136,56 @@ describe('usePageMeta', () => {
     expect(document.querySelector('meta[name="robots"]')).toHaveAttribute('content', 'index,follow')
     meta.remove()
   })
+
+  it('updates_canonical_and_og_url_to_current_pathname_and_removes_canonical_on_noindex', () => {
+    const canonical = document.createElement('link')
+    canonical.setAttribute('rel', 'canonical')
+    canonical.setAttribute('href', 'https://kanban-board-app-kappa.vercel.app/')
+    document.head.appendChild(canonical)
+
+    const altEn = document.createElement('link')
+    altEn.setAttribute('rel', 'alternate')
+    altEn.setAttribute('hreflang', 'en')
+    altEn.setAttribute('href', 'https://kanban-board-app-kappa.vercel.app/en')
+    document.head.appendChild(altEn)
+
+    const ogUrl = document.createElement('meta')
+    ogUrl.setAttribute('property', 'og:url')
+    ogUrl.setAttribute('content', 'https://kanban-board-app-kappa.vercel.app/')
+    document.head.appendChild(ogUrl)
+
+    window.history.pushState({}, '', '/en/calendar/board-1')
+
+    const { unmount } = renderHook(() => usePageMeta({ title: 'Calendar' }))
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      'https://kanban-board-app-kappa.vercel.app/en/calendar/board-1',
+    )
+    expect(document.querySelector('link[rel="alternate"][hreflang="en"]')).toHaveAttribute(
+      'href',
+      'https://kanban-board-app-kappa.vercel.app/en/calendar/board-1',
+    )
+    expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
+      'content',
+      'https://kanban-board-app-kappa.vercel.app/en/calendar/board-1',
+    )
+    unmount()
+
+    const { unmount: unmount404 } = renderHook(() => usePageMeta({ title: '404', robots: 'noindex' }))
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull()
+    expect(document.querySelector('link[rel="alternate"][hreflang="en"]')).toBeNull()
+    unmount404()
+
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      'https://kanban-board-app-kappa.vercel.app/',
+    )
+    expect(document.querySelector('link[rel="alternate"][hreflang="en"]')).toHaveAttribute(
+      'href',
+      'https://kanban-board-app-kappa.vercel.app/en',
+    )
+    window.history.pushState({}, '', '/')
+    document.querySelectorAll('link[rel="canonical"], link[rel="alternate"][hreflang]').forEach((el) => el.remove())
+    ogUrl.remove()
+  })
 })

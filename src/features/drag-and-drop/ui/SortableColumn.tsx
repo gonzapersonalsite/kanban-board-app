@@ -8,12 +8,13 @@ import { BOARD_DND_INSTRUCTIONS_ID } from '../model/boardDndAccessibility'
 
 interface SortableColumnProps {
   columnId: ColumnId
+  title: string
   index: number
   children: ReactNode
   accentColor?: string
 }
 
-export function SortableColumn({ columnId, index, children, accentColor }: SortableColumnProps) {
+export function SortableColumn({ columnId, title, index, children, accentColor }: SortableColumnProps) {
   const { t } = useTranslation()
   const { ref, isDragging } = useSortable({
     id: columnId,
@@ -36,6 +37,8 @@ export function SortableColumn({ columnId, index, children, accentColor }: Sorta
       isDragging={isDragging}
       contentRef={ref}
       contentAriaProps={{
+        role: 'group',
+        'aria-label': title,
         'aria-roledescription': t('dnd.role_description'),
         'aria-describedby': BOARD_DND_INSTRUCTIONS_ID,
       }}

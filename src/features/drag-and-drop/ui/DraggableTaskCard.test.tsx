@@ -20,6 +20,7 @@ describe('DraggableTaskCard', () => {
   it('renders_task_card_with_task_data', () => {
     render(<DraggableTaskCard task={task} columnId={COLUMN_TODO_ID} index={0} onEdit={vi.fn()} onDelete={vi.fn()} />)
 
+    expect(screen.getByRole('group', { name: 'Alpha' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Alpha' })).toBeInTheDocument()
     expect(screen.getByText('First task')).toBeInTheDocument()
   })

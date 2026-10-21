@@ -3,26 +3,43 @@ import { createBrowserRouter, Navigate, RouterProvider, useLocation, useRouteErr
 import { useKanbanStore } from '@/shared/api'
 import { PREFIXED_LOCALES, extractPathLocale, resolveSupportedLocale, useI18nStore } from '@/shared/i18n'
 import { buildBoardPath, resolveFallbackBoardId, type BoardViewRoute } from '@/entities/board'
+import { HomePage } from '@/pages/home'
 import { useSyncBoardRoute } from '../model/useSyncBoardRoute'
 import { AppShellRoute, BoardRouteSkeleton, CalendarRouteSkeleton } from './AppShellRoute'
 import styles from './RouteErrorBoundary.module.css'
 
 type PageModule = { default: ComponentType }
-type PageId = 'board' | 'calendar' | 'notFound'
+type PageId = 'calendar' | 'notFound'
 
-// Each page chunk is loaded from one place: React.lazy renders it and the idle prefetch warms it.
+interface NetworkInformationLike {
+  readonly saveData?: boolean
+  readonly effectiveType?: string
+}
+
+function isConstrainedConnection(): boolean {
+  const connection = (navigator as Navigator & { connection?: NetworkInformationLike }).connection
+  if (!connection) return false
+  if (connection.saveData === true) return true
+  return (
+    connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g' || connection.effectiveType === '3g'
+  )
+}
+
+// Secondary page chunks are loaded from one place: React.lazy renders them and the idle prefetch warms them.
 const PAGE_LOADERS: Record<PageId, () => Promise<PageModule>> = {
-  board: () => import('@/pages/home').then((m) => ({ default: m.HomePage })),
   calendar: () => import('@/pages/calendar').then((m) => ({ default: m.CalendarPage })),
   notFound: () => import('@/pages/not-found').then((m) => ({ default: m.NotFoundPage })),
 }
 
-const HomePage = lazy(PAGE_LOADERS.board)
 const CalendarPage = lazy(PAGE_LOADERS.calendar)
 const NotFoundPage = lazy(PAGE_LOADERS.notFound)
 
 function usePrefetchPages() {
   useEffect(() => {
+    if (isConstrainedConnection()) {
+      return undefined
+    }
+
     let cancelled = false
     const run = () => {
       if (cancelled) {

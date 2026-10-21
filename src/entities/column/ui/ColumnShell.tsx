@@ -6,7 +6,10 @@ interface ColumnShellProps {
   isHighlighted?: boolean
   isDragging?: boolean
   contentRef?: Ref<HTMLDivElement>
-  contentAriaProps?: Pick<HTMLAttributes<HTMLDivElement>, 'aria-roledescription' | 'aria-describedby'>
+  contentAriaProps?: Pick<
+    HTMLAttributes<HTMLDivElement>,
+    'role' | 'aria-label' | 'aria-roledescription' | 'aria-describedby'
+  >
   accentColor?: string
 }
 

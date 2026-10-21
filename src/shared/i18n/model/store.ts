@@ -172,6 +172,27 @@ function applyDocumentLanguage(locale: Locale): void {
   if (ogLocaleMeta) {
     ogLocaleMeta.setAttribute('content', OG_LOCALE_BY_LOCALE[effectiveLocale] ?? OG_LOCALE_BY_LOCALE[DEFAULT_LOCALE])
   }
+  const canonicalLink = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+  const currentHref = canonicalLink?.getAttribute('href')
+  if (canonicalLink && currentHref) {
+    try {
+      const nextUrl = new URL(localizePath(window.location.pathname, effectiveLocale), currentHref).toString()
+      canonicalLink.setAttribute('href', nextUrl)
+      const ogUrlMeta = document.querySelector<HTMLMetaElement>('meta[property="og:url"]')
+      if (ogUrlMeta) {
+        ogUrlMeta.setAttribute('content', nextUrl)
+      }
+      document.querySelectorAll<HTMLLinkElement>('link[rel="alternate"][hreflang]').forEach((link) => {
+        const hreflang = link.getAttribute('hreflang')
+        if (!hreflang) return
+        const targetLocale =
+          hreflang === 'x-default' ? DEFAULT_LOCALE : (resolveSupportedLocale(hreflang) ?? DEFAULT_LOCALE)
+        link.setAttribute('href', new URL(localizePath(window.location.pathname, targetLocale), currentHref).toString())
+      })
+    } catch {
+      // Ignore relative or non-URL canonical hrefs in isolated test fixtures.
+    }
+  }
 }
 
 applyDocumentLanguage(useI18nStore.getState().locale)

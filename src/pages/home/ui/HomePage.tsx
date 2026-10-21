@@ -12,6 +12,7 @@ export function HomePage() {
 
   return (
     <div className={styles.page}>
+      <h1 className={styles.srOnly}>{t('seo.board.title')}</h1>
       <Board />
     </div>
   )

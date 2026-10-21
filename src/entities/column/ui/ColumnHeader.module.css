@@ -11,12 +11,22 @@
   gap: 6px;
 }
 
-.displayRow > :first-child {
+.heading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex: 1;
+}
+
+.heading > :first-child {
   min-width: 0;
   overflow: hidden;
 }
 
-.displayRow > :first-child > :first-child {
+.heading > :first-child > :first-child {
   min-width: 0;
   overflow: hidden;
 }
