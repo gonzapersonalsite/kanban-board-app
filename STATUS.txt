@@ -1,9 +1,9 @@
 ESTADO DEL PROYECTO
 GENERADO por tools/board desde el repositorio. No editar a mano: se reescribe.
-board-fingerprint:9bb6b76cff0af69d — su contenido cambió por última vez el 2026-10-20.
+board-fingerprint:d4efa4612b1cc1d4 — su contenido cambió por última vez el 2026-10-21.
 Esto es un resumen derivado. Manda el documento o el registro, no este fichero.
 ------------------------------------------------------------------------------
-PUERTAS      9 de 9 en verde (sin cambios desde 2026-10-20)
+PUERTAS      9 de 9 en verde (sin cambios desde 2026-10-21)
 ORDEN F      F0 ✔ > F1 ✔
 ORDEN H      H0 ✔ > H1 ✔
 

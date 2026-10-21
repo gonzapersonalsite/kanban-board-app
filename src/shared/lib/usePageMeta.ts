@@ -3,27 +3,37 @@ import { useEffect } from 'react'
 export interface PageMetaOptions {
   title: string
   description?: string
+  robots?: string
 }
 
-export function usePageMeta({ title, description }: PageMetaOptions) {
+export function usePageMeta({ title, description, robots }: PageMetaOptions) {
   useEffect(() => {
     const previousTitle = document.title
     const previousDescription = getMetaContent('description')
     const previousOgTitle = getMetaContent('og:title')
     const previousOgDescription = getMetaContent('og:description')
+    const previousRobots = getMetaContent('robots')
 
     document.title = title
     setMeta('description', description)
     setMeta('og:title', title)
     setMeta('og:description', description)
+    setMeta('robots', robots)
 
     return () => {
       document.title = previousTitle
       setMeta('description', previousDescription)
       setMeta('og:title', previousOgTitle ?? previousTitle)
       setMeta('og:description', previousOgDescription ?? previousDescription)
+      if (robots !== undefined) {
+        if (previousRobots === undefined) {
+          document.querySelector('meta[name="robots"]')?.remove()
+        } else {
+          setMeta('robots', previousRobots)
+        }
+      }
     }
-  }, [title, description])
+  }, [title, description, robots])
 }
 
 function getMetaContent(name: string): string | undefined {

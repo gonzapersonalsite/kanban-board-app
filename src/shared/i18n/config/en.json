@@ -185,7 +185,18 @@
     }
   },
   "not_found": {
-    "message": "The page you are looking for does not exist.",
-    "back_home": "Back to home"
+    "badge": "Off the board",
+    "heading": "This card slipped off the Kanban board",
+    "message": "Drag a recovery card into the “Done” column to navigate, or use the quick action buttons below.",
+    "back_home": "Back to home",
+    "open_calendar": "Open calendar",
+    "card_route_title": "Locate requested route",
+    "card_route_tag": "Blocked",
+    "card_home_title": "Return to your active board",
+    "card_calendar_title": "Open calendar view",
+    "card_drag_tag": "Drag to Done →",
+    "card_recover_tag": "Ready",
+    "drop_zone_hint": "Drop a card here to open that view",
+    "drop_zone_active": "Release card to navigate now!"
   }
 }

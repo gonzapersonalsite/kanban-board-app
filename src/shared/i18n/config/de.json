@@ -185,7 +185,18 @@
     }
   },
   "not_found": {
-    "message": "Die gesuchte Seite existiert nicht.",
-    "back_home": "Zurück zur Startseite"
+    "badge": "Außerhalb des Boards",
+    "heading": "Diese Karte ist vom Kanban-Board gerutscht",
+    "message": "Ziehe eine Rettungskarte in die Spalte „Erledigt“, um zu navigieren, oder nutze die Direktbuttons.",
+    "back_home": "Zurück zur Startseite",
+    "open_calendar": "Zum Kalender",
+    "card_route_title": "Angeforderte Route suchen",
+    "card_route_tag": "Blockiert",
+    "card_home_title": "Zum aktiven Board zurückkehren",
+    "card_calendar_title": "Kalenderansicht öffnen",
+    "card_drag_tag": "Nach Erledigt ziehen →",
+    "card_recover_tag": "Bereit",
+    "drop_zone_hint": "Karte hier ablegen, um die Ansicht zu öffnen",
+    "drop_zone_active": "Loslassen, um jetzt zu wechseln!"
   }
 }

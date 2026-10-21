@@ -185,7 +185,18 @@
     }
   },
   "not_found": {
-    "message": "La página que buscas no existe.",
-    "back_home": "Volver al inicio"
+    "badge": "Fuera del tablero",
+    "heading": "Esta tarjeta se ha salido del tablero Kanban",
+    "message": "Arrastra una tarjeta de rescate a la columna «Terminado» para navegar, o usa los botones directos.",
+    "back_home": "Volver al inicio",
+    "open_calendar": "Ir al calendario",
+    "card_route_title": "Buscar la ruta solicitada",
+    "card_route_tag": "Bloqueada",
+    "card_home_title": "Volver a tu tablero activo",
+    "card_calendar_title": "Abrir vista de calendario",
+    "card_drag_tag": "Arrastra a Terminado →",
+    "card_recover_tag": "Listo",
+    "drop_zone_hint": "Suelta aquí una tarjeta para abrir esa vista",
+    "drop_zone_active": "¡Suelta la tarjeta para ir ahora!"
   }
 }

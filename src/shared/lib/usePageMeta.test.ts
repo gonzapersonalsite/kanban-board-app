@@ -112,4 +112,28 @@ describe('usePageMeta', () => {
     rerender({ title: 'T', description: 'Second.' })
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', 'Second.')
   })
+
+  it('sets_and_removes_robots_meta_when_provided', () => {
+    document.querySelector('meta[name="robots"]')?.remove()
+
+    const { unmount } = renderHook(() => usePageMeta({ title: '404', robots: 'noindex' }))
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute('content', 'noindex')
+    unmount()
+
+    expect(document.querySelector('meta[name="robots"]')).toBeNull()
+  })
+
+  it('restores_previous_robots_meta_on_unmount', () => {
+    const meta = document.createElement('meta')
+    meta.setAttribute('name', 'robots')
+    meta.setAttribute('content', 'index,follow')
+    document.head.appendChild(meta)
+
+    const { unmount } = renderHook(() => usePageMeta({ title: '404', robots: 'noindex' }))
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute('content', 'noindex')
+    unmount()
+
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute('content', 'index,follow')
+    meta.remove()
+  })
 })

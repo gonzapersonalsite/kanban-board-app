@@ -114,7 +114,7 @@ description: Convenciones de kanban-board-app (arquitectura de estado y store, d
 
 ## Vista previa social y ficheros legibles por agentes
 
-- Los crawlers sociales, buscadores y agentes de IA leen el HTML sin ejecutar JavaScript, así que lo que deben ver lo escribe el build: `tooling/agent-files/vitePlugin.ts`, registrado en `vite.config.ts`. `usePageMeta` solo actualiza el título y la descripción para las personas que navegan por la app.
+- Los crawlers sociales, buscadores y agentes de IA leen el HTML sin ejecutar JavaScript, así que lo que deben ver lo escribe el build: `tooling/agent-files/vitePlugin.ts`, registrado en `vite.config.ts`. `usePageMeta` actualiza el título, la descripción y, opcionalmente, `<meta name="robots">` (p. ej., `noindex` en `NotFoundPage`) para las personas y agentes que navegan por la app.
 - **Una sola fuente:** `tooling/agent-files/site.ts` guarda la dirección del sitio (`SITE_URL`, `absoluteUrl`), los shells localizados (`SHELL_LOCALES` para la ruta raíz, `/en` y `/de`) y el nombre y la descripción del sitio. La app nunca necesita su propia dirección, así que vive con su único consumidor, las herramientas de build, no en `src`; cambiar de dominio cambia `SITE_URL` y nada más.
 - **Vista previa social y shells por idioma:** `index.html` declara las etiquetas Open Graph y Twitter con `og:url` apuntando a la raíz del sitio y rutas de imagen relativas a la raíz. El build escribe el shell raíz en español (`index.html`) y emite los shells en inglés (`/en`) y alemán (`/de`) con `<html lang>`, `<title>`, `description`, `og:locale`, `og:title`, `og:description`, `og:url`, `canonical` y `hreflang` (`es`, `en`, `de`, `x-default`) desde `tooling/agent-files/site.ts`, y rechaza una ruta de imagen que no sea relativa a la raíz o una etiqueta ausente o repetida; los valores de `index.html` solo sirven al servidor de desarrollo. Twitter/X usa como respaldo `og:title` y `og:description`, así que `index.html` no los repite.
 - **Portada:** `public/og-cover.png`, un PNG de 1200×630 cuyo tipo, tamaño y texto alternativo declara `index.html`. Muestra el nombre de la app, el lema y el stack sobre un tablero dibujado con los tokens del tema oscuro, renderizado desde una página HTML en Edge headless; el nombre y el lema quedan dentro del cuadrado central de 630×630 para vistas previas que recortan en cuadrado. Como las plataformas cachean las vistas previas por URL, cambiar la imagen exige un nombre de fichero nuevo; tras desplegar, refresca la vista previa con LinkedIn Post Inspector.
@@ -246,6 +246,8 @@ task_dialog/  → task_dialog.title, task_dialog.title_label, task_dialog.cancel
 dialog/       → dialog.close
 seed/         → seed.column_todo, seed.column_in_progress, seed.column_done, seed.tasks.<id>.title|description
 dnd/          → dnd.role_description, dnd.instructions, dnd.cancelled, dnd.task|column.picked_up|over_column|dropped
+seo/          → seo.board.title|description, seo.calendar.title|description, seo.not_found.title|description
+not_found/    → not_found.badge, not_found.heading, not_found.message, not_found.back_home, not_found.open_calendar, not_found.card_*, not_found.drop_zone_*
 ```
 
 Pautas:
