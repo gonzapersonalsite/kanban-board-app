@@ -24,6 +24,12 @@ export default defineConfig({
               test: /[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom)[\\/]/,
               priority: 20,
             },
+            // dnd-kit changes only on upgrades, so its chunk stays cached across deploys.
+            {
+              name: 'dnd-vendor',
+              test: /[\\/]node_modules[\\/]@dnd-kit[\\/]/,
+              priority: 15,
+            },
           ],
         },
       },

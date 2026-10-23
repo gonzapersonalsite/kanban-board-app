@@ -1,7 +1,7 @@
 # Notas de desarrollo (índice)
 
 GENERADO por tools/board desde `docs/registry/deliveries/` y `docs/registry/lessons/`. No editar a mano: se reescribe.
-board-fingerprint:5bb94afb1f14e5d4 — su contenido cambió por última vez el 2026-10-20.
+board-fingerprint:47f2c3fcce8bcc73 — su contenido cambió por última vez el 2026-10-23.
 
 Cada entrega es un fichero `docs/registry/deliveries/<fecha>-<tema>.md` con lo que se hizo, cómo se
 verificó y qué costó; cada lección es un fichero `docs/registry/lessons/<identidad>.md` y se cita como
@@ -9,8 +9,9 @@ verificó y qué costó; cada lección es un fichero `docs/registry/lessons/<ide
 entregas dicen cómo llegó a estar así. Aquí van las más recientes de cada clase; todas,
 mes a mes, en su índice del mes.
 
-## Entregas (3; aquí las 3 más recientes)
+## Entregas (4; aquí las 4 más recientes)
 
+- 2026-10-23 `#2026-10-23-split-dnd-vendor-chunk` Separar dnd-kit en su propio chunk de vendor
 - 2026-10-20 `#2026-10-20-localized-spanish-routes-and-shells` Español por defecto en la raíz y rutas y shells estáticos en /en y /de
 - 2026-10-19 `#2026-10-19-scaffold-upgrade-to-0-3-3` Actualización a agentic-scaffold 0.3.3, con las piezas en conflicto conciliadas
 - 2026-10-18 `#2026-10-18-adopt-agentic-scaffold-and-react-fsd` Adopción de agentic-scaffold, la capa react-vite y el stack react-fsd
@@ -27,5 +28,5 @@ mes a mes, en su índice del mes.
 
 ## Por mes (2 índices)
 
-- `docs/registry/index/notes-2026-10.md` — 2026-10: 3 entregas, 0 lecciones
+- `docs/registry/index/notes-2026-10.md` — 2026-10: 4 entregas, 0 lecciones
 - `docs/registry/index/notes-2026-09.md` — 2026-09: 0 entregas, 7 lecciones
