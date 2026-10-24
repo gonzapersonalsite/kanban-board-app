@@ -12,6 +12,12 @@
     "theme": "Tema",
     "language": "Idioma"
   },
+  "credits": {
+    "title": "Créditos",
+    "role": "Desarrollador Full Stack",
+    "note": "Tus tableros se quedan en este navegador. Sin cuenta ni servidor.",
+    "email": "Email"
+  },
   "data_portability": {
     "title": "Copia de seguridad",
     "description": "Descarga una copia de seguridad completa de tus tableros, columnas y tareas. Después podrás llevarla a otro navegador o dispositivo.",

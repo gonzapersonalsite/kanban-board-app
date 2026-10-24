@@ -123,6 +123,28 @@ describe('Header', () => {
     expect(screen.getByRole('button', { name: /review backup/i })).toBeInTheDocument()
   })
 
+  it('shows_the_author_credits_at_the_end_of_the_settings_dialog', () => {
+    resetPersistedKanbanStore(useKanbanStore.setState)
+
+    render(
+      <MemoryRouter initialEntries={[`/board/${BOARD_MAIN_ID}`]}>
+        <Header />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /settings/i }))
+
+    expect(screen.getByRole('heading', { name: 'Credits' })).toBeInTheDocument()
+    expect(screen.getByText('Gonzalo Martínez García')).toBeInTheDocument()
+    expect(screen.getByText('Full Stack Developer')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Portfolio' })).toHaveAttribute(
+      'href',
+      'https://mi-portafolio-gonzalo.vercel.app/',
+    )
+    expect(screen.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', 'https://github.com/gonzapersonalsite')
+    expect(screen.getByRole('link', { name: 'Email' })).toHaveAttribute('href', 'mailto:gonzalomartinezg2001@gmail.com')
+  })
+
   it('shows_a_tooltip_for_the_settings_button', () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
 

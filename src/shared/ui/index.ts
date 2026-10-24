@@ -1,5 +1,6 @@
 export { AppIcon } from './AppIcon'
 export { Button } from './Button'
+export { Credits } from './Credits'
 export { Dialog } from './Dialog'
 export { IconButton } from './IconButton'
 export { Input } from './Input'

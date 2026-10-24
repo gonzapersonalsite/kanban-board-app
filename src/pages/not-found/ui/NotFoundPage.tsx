@@ -4,7 +4,7 @@ import { ArrowLeft, Calendar, CheckCircle2, Compass, GripVertical, Home } from '
 import { buildBoardPath, resolveFallbackBoardId, useBoards } from '@/entities/board'
 import { usePageMeta } from '@/shared/lib'
 import { DEFAULT_LOCALE, extractPathLocale, localizePath, useTranslation } from '@/shared/i18n'
-import { Button } from '@/shared/ui'
+import { Button, Credits } from '@/shared/ui'
 import styles from './NotFoundPage.module.css'
 
 type RecoveryCardId = 'home' | 'calendar'
@@ -196,6 +196,13 @@ export function NotFoundPage() {
           <span>{t('not_found.open_calendar')}</span>
         </Button>
       </div>
+
+      <footer className={styles.footer} aria-labelledby="credits-title">
+        <h2 id="credits-title" className={styles.footerTitle}>
+          {t('credits.title')}
+        </h2>
+        <Credits />
+      </footer>
     </section>
   )
 }

@@ -1,7 +1,7 @@
 # Registro de decisiones (índice)
 
 GENERADO por tools/board desde `docs/registry/decisions/`. No editar a mano: se reescribe.
-board-fingerprint:6f8cf7a6b5ec232a — su contenido cambió por última vez el 2026-10-20.
+board-fingerprint:f942bbdeabd611ff — su contenido cambió por última vez el 2026-10-24.
 
 Cada decisión es un fichero `docs/registry/decisions/<identidad>.md` con su cabecera de campos y su
 texto; una cita `#<identidad>` resuelve abriendo ese fichero. Cómo se escribe una y cómo
@@ -18,8 +18,9 @@ de `none`.
 ## DEUDAS VIVAS (0)
 
 
-## PROVISIONALES (0)
+## PROVISIONALES (1)
 
+- `#credits-in-settings-and-the-404-footer` — La autoría vive en Ajustes y en el footer de la 404, no en el tablero (PROVISIONAL 2026-10-24) · none
 
 ## EL RESTO (4), SOLO CONTADAS
 
@@ -28,4 +29,4 @@ CONFIRMADAS 4 · RESUELTAS 0 · DESCARTADAS 0 · RETIRADAS 0
 ## Por fase (2 índices)
 
 - `docs/registry/index/decisions-F1.md` — F1: 1
-- `docs/registry/index/decisions-none.md` — sin fase: 3
+- `docs/registry/index/decisions-none.md` — sin fase: 4

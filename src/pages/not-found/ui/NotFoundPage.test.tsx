@@ -67,6 +67,25 @@ describe('NotFoundPage', () => {
     expect(screen.getByText(`/en/calendar/${BOARD_MAIN_ID}`)).toBeInTheDocument()
   })
 
+  it('closes_the_page_with_the_author_credits_footer', () => {
+    resetPersistedKanbanStore(useKanbanStore.setState)
+
+    render(
+      <MemoryRouter initialEntries={['/missing']}>
+        <Routes>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Credits' })).toBeInTheDocument()
+    expect(screen.getByText('Gonzalo Martínez García')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Portfolio' })).toHaveAttribute(
+      'href',
+      'https://mi-portafolio-gonzalo.vercel.app/',
+    )
+  })
+
   it('navigates_when_dragging_and_dropping_a_recovery_card_into_the_done_column', () => {
     resetPersistedKanbanStore(useKanbanStore.setState)
     render(

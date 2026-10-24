@@ -12,6 +12,12 @@
     "theme": "Theme",
     "language": "Language"
   },
+  "credits": {
+    "title": "Credits",
+    "role": "Full Stack Developer",
+    "note": "Your boards stay in this browser. No account, no server.",
+    "email": "Email"
+  },
   "data_portability": {
     "title": "Backup data",
     "description": "Download a full backup of your boards, columns, and tasks. You can move it to another browser or device later.",

@@ -12,6 +12,12 @@
     "theme": "Design",
     "language": "Sprache"
   },
+  "credits": {
+    "title": "Credits",
+    "role": "Full-Stack-Entwickler",
+    "note": "Deine Boards bleiben in diesem Browser. Kein Konto, kein Server.",
+    "email": "E-Mail"
+  },
   "data_portability": {
     "title": "Datensicherung",
     "description": "Lade ein vollständiges Backup deiner Boards, Spalten und Aufgaben herunter. Du kannst es später in einen anderen Browser oder auf ein anderes Gerät mitnehmen.",
