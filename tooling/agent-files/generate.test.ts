@@ -59,6 +59,13 @@ describe('buildAgentFiles', () => {
     expect(llms).toContain(`](${absoluteUrl('/')})`)
   })
 
+  it('does_credit_the_author_with_the_public_role_when_llms_txt_is_built', () => {
+    const llms = sourceOf('/llms.txt')
+
+    expect(llms).toContain('Gonzalo Martínez, Full Stack Developer.')
+    expect(llms).not.toMatch(/junior/i)
+  })
+
   it('does_link_only_documents_of_this_repository_that_exist_when_llms_txt_names_them', () => {
     const llms = sourceOf('/llms.txt')
 

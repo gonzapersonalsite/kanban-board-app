@@ -34,7 +34,7 @@ export const buildLlmsTxt = (): string => {
     '',
     '## Optional',
     '',
-    `- [Author's portfolio](${PORTFOLIO_URL}): Gonzalo Martínez, Junior Full Stack Developer.`,
+    `- [Author's portfolio](${PORTFOLIO_URL}): Gonzalo Martínez, Full Stack Developer.`,
     '',
   ].join('\n')
 }
