@@ -2,9 +2,9 @@
 title: Un nombre o una clave va en inglés; un texto para leer, en el idioma del equipo
 state: confirmed
 date: 2026-10-06
+domain: contribution
 origin: agentic-scaffold
 ---
-
 **Un nombre o una clave va en inglés; un texto para leer va en el idioma del equipo,
 que por defecto es el español.** Propuesta del agente: una de las opciones de un
 estudio de la plantilla que una segunda pasada verificó, y la que el dueño eligió

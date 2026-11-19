@@ -1,9 +1,9 @@
 ---
 title: Una guarda dentro del proceso no protege contra el proceso que no llega a construirla
 date: 2026-09-21
+domain: verification
 origin: clayfarer
 ---
-
 **Un vigilante de tiempo que vive dentro del proceso vigilado no cubre el caso en
 que ese proceso nunca lo construye:** un error de parseo al arrancar deja el proceso
 vivo, sin vigilante y sin veredicto, y quien lo lanzó espera para siempre.

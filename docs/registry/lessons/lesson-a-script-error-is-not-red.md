@@ -1,9 +1,9 @@
 ---
 title: Un error de script no es rojo por sí solo, es verde falso o cuelgue
 date: 2026-09-21
+domain: verification
 origin: clayfarer
 ---
-
 **Un error en tiempo de ejecución dentro de un test o de una puerta no garantiza
 un exit distinto de cero.** En muchos runtimes aborta solo la función donde ocurre y
 el llamador sigue; el runner llega al final e imprime su veredicto sin los checks que

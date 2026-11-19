@@ -39,7 +39,8 @@ pnpm dev
 ## Scripts and gates
 
 ```bash
-python verify.py    # Run all repository gates declared in gates.txt
+python verify.py    # Run all repository gates declared in gates.txt; the full run is the pre-push hook's
+python verify.py -- <label>  # Before a commit, the gates the change can move
 pnpm dev            # Start the dev server
 pnpm build          # Type-check + production build
 pnpm run typecheck  # TypeScript project build (tsc -b)

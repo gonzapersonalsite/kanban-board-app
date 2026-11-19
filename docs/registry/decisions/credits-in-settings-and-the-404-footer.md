@@ -1,7 +1,8 @@
 ---
 title: La autoría vive en Ajustes y en el footer de la 404, no en el tablero
-state: provisional
+state: confirmed
 date: 2026-10-24
+domain: interface
 phase: none
 ---
 **La autoría vive en el bloque de créditos de Ajustes y en el footer de la
@@ -9,6 +10,14 @@ página 404; el tablero y el calendario no llevan un footer persistente.** El
 dueño eligió esta opción entre las que le puso el agente y pidió estudiarla al
 tocar el proyecto; no la dictó. La implementación mantiene intacta la altura de
 trabajo del tablero.
+
+**Confirmada por delegación del dueño.** Quedaba provisional hasta que el
+dueño viera el bloque y el footer funcionando, y el dueño delegó esa revisión:
+«quiero que dejes tu todo remediado y aprobado y listo sin deuda, no te cortes
+o dejes cosas sin hacer por mi, tienes carta blanca». El agente los vio
+funcionando en el servidor de desarrollo, con la refutación de abajo delante:
+Ajustes cierra con la sección de créditos, la 404 cierra con su `<footer>` con
+el mismo contenido y los mismos enlaces, y el tablero no lleva footer.
 
 **Forma.**
 
@@ -41,6 +50,3 @@ trabajo del tablero.
   un final de documento. El bloque de Ajustes y el footer de la 404 dan
   presencia sin tocar el espacio de trabajo. Si el dueño prefiere visibilidad
   permanente, se mide una barra de estado y se decide con esa medición.
-
-2026-10-24: queda provisional hasta que el dueño vea el bloque y el footer
-funcionando; entonces se confirma o se cambia.

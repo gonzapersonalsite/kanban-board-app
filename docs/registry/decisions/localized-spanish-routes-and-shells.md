@@ -2,6 +2,7 @@
 title: Español es el idioma por defecto en la raíz y el inglés y alemán viven bajo /en y /de
 state: confirmed
 date: 2026-10-20
+domain: localization
 phase: F1
 ---
 **Español es el idioma por defecto en la raíz y el inglés y alemán viven bajo

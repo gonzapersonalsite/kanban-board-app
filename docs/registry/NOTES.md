@@ -1,7 +1,7 @@
 # Notas de desarrollo (índice)
 
 GENERADO por tools/board desde `docs/registry/deliveries/` y `docs/registry/lessons/`. No editar a mano: se reescribe.
-board-fingerprint:aa4c5c8635ca5153 — su contenido cambió por última vez el 2026-11-11.
+board-fingerprint:e929d2f559865156 — su contenido cambió por última vez el 2026-11-19.
 
 Cada entrega es un fichero `docs/registry/deliveries/<fecha>-<tema>.md` con lo que se hizo, cómo se
 verificó y qué costó; cada lección es un fichero `docs/registry/lessons/<identidad>.md` y se cita como
@@ -9,8 +9,9 @@ verificó y qué costó; cada lección es un fichero `docs/registry/lessons/<ide
 entregas dicen cómo llegó a estar así. Aquí van las más recientes de cada clase; todas,
 mes a mes, en su índice del mes.
 
-## Entregas (9; aquí las 9 más recientes)
+## Entregas (10; aquí las 10 más recientes)
 
+- 2026-11-19 `#2026-11-19-scaffold-upgrade-to-0-6-0` Actualización a agentic-scaffold 0.6.0, migración del registro y parches de React
 - 2026-11-11 `#2026-11-11-scaffold-upgrade-to-0-4-0` Actualización a agentic-scaffold 0.4.0, con el tablero como página
 - 2026-10-30 `#2026-10-30-dependency-refresh` Actualización de dependencias y alineación del toolchain de pnpm
 - 2026-10-27 `#2026-10-27-public-role-in-agent-files` El llms.txt presenta al autor con su puesto público
@@ -33,6 +34,6 @@ mes a mes, en su índice del mes.
 
 ## Por mes (3 índices)
 
-- `docs/registry/index/notes-2026-11.md` — 2026-11: 1 entregas, 0 lecciones
+- `docs/registry/index/notes-2026-11.md` — 2026-11: 2 entregas, 0 lecciones
 - `docs/registry/index/notes-2026-10.md` — 2026-10: 8 entregas, 0 lecciones
 - `docs/registry/index/notes-2026-09.md` — 2026-09: 0 entregas, 7 lecciones

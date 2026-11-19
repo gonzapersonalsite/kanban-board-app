@@ -1,9 +1,9 @@
 ---
 title: Los ejemplos que hay en el repositorio son la plantilla real, no el README
 date: 2026-09-21
+domain: contribution
 origin: agentic-scaffold
 ---
-
 **Un agente copia lo que ve, no lo que se le explica.** En una prueba ciega, un
 agente sin contexto siguió el procedimiento entero correctamente —leyó el contrato,
 creó el registro en su sitio, corrió las puertas, no commiteó— y lo único que hizo

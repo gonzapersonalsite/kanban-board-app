@@ -37,6 +37,10 @@ describe('BoardDndContext accessibility', () => {
     }
     document.getAnimations ??= () => []
     Element.prototype.getAnimations ??= () => []
+    // Ending a drag runs the drop animation; jsdom has no Web Animations, so it finishes at once.
+    Element.prototype.animate ??= function () {
+      return { finished: Promise.resolve() } as unknown as Animation
+    }
     vi.stubGlobal('IntersectionObserver', NoopObserver)
     vi.stubGlobal('ResizeObserver', NoopObserver)
     vi.stubGlobal('matchMedia', (query: string) => ({
@@ -84,5 +88,10 @@ describe('BoardDndContext accessibility', () => {
     fireEvent.keyDown(activator, { code: 'Space', key: ' ' })
 
     await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Has cogido la tarea "Alpha".'))
+
+    // Unmounting mid-drag makes @dnd-kit destroy its manager inside a React insertion
+    // effect, which then schedules updates and React warns; a person ends the drag first.
+    fireEvent.keyDown(activator, { code: 'Escape', key: 'Escape' })
+    await waitFor(() => expect(screen.getByRole('status')).not.toHaveTextContent('Has cogido la tarea "Alpha".'))
   })
 })

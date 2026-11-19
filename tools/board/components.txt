@@ -72,4 +72,4 @@ file stack:react-fsd | tooling/agent-files/vitePlugin.test.ts | c8b0c890697d7e23
 file stack:react-fsd | tooling/agent-files/vitePlugin.ts | 4a40898eb16b5e1a80a658a1c6af9c53993858110ba49b8a6d49d3aab397367b
 file stack:react-fsd | vitest.setup.ts | kept
 
-applied d94a2b3b653d937f2a09bdbd5334f725511a7374
+applied 4948119a82832a79f2c66380f8f29ca8a0630811

@@ -2,9 +2,9 @@
 title: Activar el hook de pre-push es un paso por clon, no una puerta
 state: confirmed
 date: 2026-09-21
+domain: verification
 origin: agentic-scaffold
 ---
-
 **Activar el hook de pre-push es un paso por clon y ninguna puerta lo vigila.**
 `core.hooksPath` es configuración local de git: no viaja con el clon ni con una
 copia. Se activa una vez por clon, como dice `README.md` en «Trabajar aquí», y

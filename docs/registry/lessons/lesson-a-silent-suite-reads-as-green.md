@@ -1,9 +1,9 @@
 ---
 title: Una suite que no ejecuta un solo check se lee exactamente igual que una verde
 date: 2026-09-21
+domain: verification
 origin: clayfarer
 ---
-
 **Una suite que corre y no informa nada se lee igual que una que pasó.** Visto de
 verdad: un script bajo test no compilaba, cada llamada de la suite reventaba, y el
 runner imprimió «0 fallos» con exit 0 porque contaba fallos y no comprobaciones. Los

@@ -1,9 +1,9 @@
 ---
 title: Cuatro formas en que una herramienta que reescribe a ciegas perdió ficheros
 date: 2026-09-21
+domain: contribution
 origin: clayfarer
 ---
-
 **Ninguna herramienta reescribe ficheros a ciegas** (regla dura 8 de `AGENTS.md`), y
 la regla existe porque un repositorio ya perdió ficheros de cuatro maneras distintas:
 

@@ -2,6 +2,7 @@
 title: La precedencia respeta la excepción específica del dueño
 state: confirmed
 date: 2026-10-24
+domain: contribution
 phase: none
 ---
 **La precedencia respeta la excepción específica del dueño.** El dueño

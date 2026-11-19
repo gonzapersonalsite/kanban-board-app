@@ -1,9 +1,9 @@
 ---
 title: Un tope de bytes sobre un monolito no acota el crecimiento, programa la próxima cirugía
 date: 2026-09-21
+domain: board-and-registry
 origin: clayfarer
 ---
-
 **Un tope de bytes sobre un fichero que crece por diseño no acota nada: fija la fecha
 de la siguiente intervención manual.** Medido en el proyecto de origen: el registro de
 decisiones pasó de 6 KB a 606 KB en diez días con todas las puertas en verde, y cada
