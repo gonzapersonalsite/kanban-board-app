@@ -3,10 +3,10 @@
 Kanban Board es una aplicación React construida con Vite y TypeScript y
 organizada con Feature-Sliced Design. Este documento manda sobre la forma del
 código de `src`: dónde va cada cosa, qué puede importar qué y por dónde salen
-los datos de los componentes. Cómo se trabaja en el repositorio lo manda
-`AGENTS.md`; las librerías y convenciones propias del proyecto (store,
+los datos de los componentes. La puesta en marcha del proyecto está en
+`README.md`; las librerías y convenciones propias del proyecto (store,
 drag-and-drop, tokens de diseño, i18n, pruebas y prácticas) las recoge la skill
-`kanban-board-conventions`; y cómo se pone en marcha un clon, `README.md`.
+`kanban-board-conventions`; y el contrato del equipo se recoge en `AGENTS.md`.
 Las herramientas de build en `tooling/` y la configuración en la raíz no son
 código de la aplicación: estas reglas, y el lint que las sostiene, leen solo
 `src`.
@@ -27,9 +27,8 @@ plantilla de texto, aunque no tenga huecos, o una variable), ni un tipo que
 importa (`typeof import('…')` o `import('…').Tipo`): lo que se importa así es
 convención, y `eslint.config.test.ts` tiene sus casos.
 Un comentario no apaga ninguna regla: el lint da por aviso un `eslint-disable`,
-y un aviso es rojo (`--max-warnings=0` en `pnpm run lint`, exigido por
-`python verify.py`), así que una excepción vive en `eslint.config.js`, junto a
-su decisión. Las reglas marcadas como «convención» no las comprueba nada: las
+y la acción del proyecto `./dev lint` exige cero avisos, así que una excepción
+vive en `eslint.config.js`, junto a su decisión. Las reglas marcadas como «convención» no las comprueba nada: las
 sostiene la revisión del diff, y se convierten en regla de lint con su caso en
 cuanto alguien encuentra cómo.
 
