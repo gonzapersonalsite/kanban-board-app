@@ -2,3 +2,4 @@
 # core.autocrlf: every tool that writes here writes LF.
 * text=auto eol=lf
 *.bat text eol=crlf
+*.cmd text eol=crlf

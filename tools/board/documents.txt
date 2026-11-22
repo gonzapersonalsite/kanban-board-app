@@ -34,6 +34,7 @@
 # --- Live documents (AGENTS.md §4, minus the CLOSED archives) ---
 live AGENTS.md
 live README.md
+live docs/ACTUALIZAR.md
 live docs/registry/README.md
 live tools/board/README.md
 
@@ -75,12 +76,15 @@ closed docs/archive/ROADMAP.md
 closed docs/archive/TOOLING.md
 
 # --- GENERATED trees: they do not exist until someone builds ---
-# generated build
+generated .dev-runtime
 
 # --- Extensions that make a fragment a path ---
 extension .md
 extension .txt
 extension .py
+extension .cmd
+extension .ps1
+extension .sh
 
 # --- The react-vite layer ---
 code .ts //

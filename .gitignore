@@ -37,3 +37,6 @@ Thumbs.db
 node_modules/
 dist/
 reports/
+
+# Container launcher runtime state (locks, barriers, per-run evidence)
+.dev-runtime/

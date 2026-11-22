@@ -30,28 +30,29 @@ Exact versions live in `package.json`.
 
 ## Getting started
 
+Requires Docker with Linux containers and Compose (use `.\dev.cmd` in Windows PowerShell/cmd or `./dev` in POSIX):
+
 ```bash
-pnpm install --frozen-lockfile --ignore-scripts
+./dev prepare
 git config core.hooksPath .githooks
-pnpm dev
+./dev start
 ```
 
 ## Scripts and gates
 
 ```bash
-python verify.py    # Run all repository gates declared in gates.txt; the full run is the pre-push hook's
-python verify.py -- <label>  # Before a commit, the gates the change can move
-pnpm dev            # Start the dev server
-pnpm build          # Type-check + production build
-pnpm run typecheck  # TypeScript project build (tsc -b)
-pnpm lint           # ESLint: architecture, TypeScript and React hooks rules; a warning is red
-pnpm run format:check # Prettier formatting check
-pnpm test           # Vitest: the app tests (jsdom), and the lint cases and the build tooling (node)
-pnpm test:coverage  # Vitest with the coverage thresholds of vite.config.ts
-pnpm preview        # Preview the production build
+./dev verify              # Run all repository gates declared in gates.txt; the full run is the pre-push hook's
+./dev verify -- <label>   # Before a commit, the gates the change can move
+./dev start               # Start the dev server (stop with ./dev stop)
+./dev build               # Type-check + production build
+./dev typecheck           # TypeScript project build (tsc -b)
+./dev lint                # ESLint: architecture, TypeScript and React hooks rules; a warning is red
+./dev format              # Prettier formatting check (./dev format-fix to format)
+./dev tests               # Vitest: the app tests (jsdom), and the lint cases and the build tooling (node)
+./dev start --preview     # Preview the production build
 ```
 
-Git hooks (`.githooks/`): `commit-msg` validates the commit message format (`tools/board/commit_message.py`), and `pre-push` refuses to push with uncommitted or untracked files or out-of-date indices and runs `python -I verify.py` (`tools/board/pre_push.py`).
+Git hooks (`.githooks/`): `commit-msg` validates the commit message format (`tools/board/commit_message.py`), and `pre-push` refuses to push with uncommitted or untracked files or out-of-date indices and runs the project launcher's verification (`tools/board/pre_push.py`).
 
 ## Architecture
 

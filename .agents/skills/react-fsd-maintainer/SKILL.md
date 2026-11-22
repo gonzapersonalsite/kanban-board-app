@@ -25,8 +25,9 @@ cambio.
    su CSS Module y su test al lado (`<Componente>.test.tsx`). Son los dos
    únicos sufijos de test: un `.spec` o un `.stories` con extensión de código
    (`.ts`, `.tsx`, `.js`…) es un error del lint.
-5. **Las puertas.** `pnpm run lint`, `pnpm run typecheck` y `pnpm run test`
-   para iterar; `python verify.py` antes de dar la parte por lista.
+5. **Las puertas.** Usa las operaciones `lint`, `typecheck` y `tests` del lanzador
+   para iterar, y `verify` antes de dar la parte por lista. El README muestra
+   cómo invocarlo en Windows y POSIX.
 
 ## Bajar código a otra capa
 
