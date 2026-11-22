@@ -321,6 +321,37 @@ function Invoke-External {
     }
 }
 
+function Test-TransientFileError($ErrorRecord) {
+    $ex = $ErrorRecord.Exception
+    while ($null -ne $ex) {
+        if ($ex -is [System.IO.FileNotFoundException] -or
+            $ex -is [System.IO.DirectoryNotFoundException] -or
+            $ex -is [System.IO.PathTooLongException] -or
+            $ex -is [System.IO.DriveNotFoundException]) {
+            return $false
+        }
+        if ($ex -is [System.IO.IOException] -or $ex -is [System.UnauthorizedAccessException]) {
+            return $true
+        }
+        $ex = $ex.InnerException
+    }
+    return $false
+}
+
+function Invoke-WithFileRetry([scriptblock]$Action, [int]$MaxAttempts = 20) {
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        try {
+            return (& $Action)
+        } catch {
+            if ($attempt -ge $MaxAttempts -or -not (Test-TransientFileError $_)) {
+                throw
+            }
+            $delayMs = [Math]::Min(25 * $attempt, 200)
+            [System.Threading.Thread]::Sleep($delayMs)
+        }
+    }
+}
+
 function Write-TextAtomic([string]$Path, [string]$Text) {
     $dir = Split-Path -Parent $Path
     if ($dir -and -not (Test-Path -LiteralPath $dir)) {
@@ -328,17 +359,28 @@ function Write-TextAtomic([string]$Path, [string]$Text) {
     }
     $tmp = "$Path.$([Guid]::NewGuid().ToString('N')).tmp"
     $bytes = [System.Text.Encoding]::UTF8.GetBytes($Text)
-    $fs = [System.IO.File]::Open($tmp, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
     try {
-        $fs.Write($bytes, 0, $bytes.Length)
-        $fs.Flush($true)
+        $fs = [System.IO.File]::Open($tmp, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+        try {
+            $fs.Write($bytes, 0, $bytes.Length)
+            $fs.Flush($true)
+        } finally {
+            $fs.Dispose()
+        }
+        # Windows file watchers and antivirus scanners briefly open newly written
+        # runtime state files without FileShare.Delete; retry Replace/Move in a
+        # bounded window so transient sharing violations do not abort a run.
+        Invoke-WithFileRetry {
+            if ([System.IO.File]::Exists($Path)) {
+                [System.IO.File]::Replace($tmp, $Path, [NullString]::Value)
+            } else {
+                [System.IO.File]::Move($tmp, $Path)
+            }
+        }
     } finally {
-        $fs.Dispose()
-    }
-    if (Test-Path -LiteralPath $Path) {
-        [System.IO.File]::Replace($tmp, $Path, [NullString]::Value)
-    } else {
-        [System.IO.File]::Move($tmp, $Path)
+        if ([System.IO.File]::Exists($tmp)) {
+            try { [System.IO.File]::Delete($tmp) } catch { }
+        }
     }
 }
 
@@ -346,10 +388,31 @@ function Write-JsonAtomic([string]$Path, [hashtable]$Obj) {
     Write-TextAtomic -Path $Path -Text (($Obj | ConvertTo-Json -Depth 10 -Compress) + "`n")
 }
 
+function Read-TextShared([string]$Path) {
+    return (Invoke-WithFileRetry {
+        $fs = [System.IO.File]::Open($Path, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, ([System.IO.FileShare]::ReadWrite -bor [System.IO.FileShare]::Delete))
+        try {
+            $sr = New-Object System.IO.StreamReader($fs, [System.Text.Encoding]::UTF8, $true)
+            try { return $sr.ReadToEnd() } finally { $sr.Dispose() }
+        } finally {
+            $fs.Dispose()
+        }
+    })
+}
+
 function Read-JsonFile([string]$Path) {
-    if (-not (Test-Path -LiteralPath $Path)) { return $null }
-    $raw = [System.IO.File]::ReadAllText($Path, [System.Text.Encoding]::UTF8)
+    if (-not [System.IO.File]::Exists($Path)) { return $null }
+    $raw = Read-TextShared -Path $Path
     return ($raw | ConvertFrom-Json)
+}
+
+function Remove-FileWithRetry([string]$Path) {
+    if (-not [System.IO.File]::Exists($Path)) { return }
+    Invoke-WithFileRetry {
+        if ([System.IO.File]::Exists($Path)) {
+            [System.IO.File]::Delete($Path)
+        }
+    }
 }
 
 function Acquire-CheckoutLock([string]$LockPath) {
@@ -566,10 +629,14 @@ function Remove-EphemeralProject([string]$DockerExe, [string]$WorkDir, [string]$
 
 function Set-CreateRequest($Path, $Barrier, [string]$Token, [string[]]$Services) {
     if (-not $Barrier.createConfirmed) { throw "Previous Compose create request is indeterminate. Barrier retained at $Path." }
+    $next = $Barrier.Clone()
+    $next.createConfirmed = $false
+    $next.stepToken = $Token
+    $next.services = $Services
+    Write-JsonAtomic $Path $next
     $Barrier.createConfirmed = $false
     $Barrier.stepToken = $Token
     $Barrier.services = $Services
-    Write-JsonAtomic $Path $Barrier
 }
 
 function Get-ObjProp($Obj, [string]$Name, $Default = $null) {
@@ -589,7 +656,7 @@ function Test-RequestObserved($DockerExe, $Root, $Barrier) {
     $runId = [string](Get-ObjProp $Barrier 'runId' '')
     if ($token -match '^[0-9a-f]{16}$') {
         $marker = Join-Path $Root ".dev-runtime\runs\$runId\started-$token"
-        if ([IO.File]::Exists($marker) -and [IO.File]::ReadAllText($marker).TrimEnd() -ceq $token) { return $true }
+        if ([IO.File]::Exists($marker) -and (Read-TextShared $marker).TrimEnd() -ceq $token) { return $true }
         $name = "$project-$token"
         $q = Invoke-External $DockerExe @('ps','-a','--format','{{.Names}}','--filter',"label=com.docker.compose.project=$project",'--filter',"name=^/$name$") $Root -TimeoutSeconds $DOCKER_QUICK_TIMEOUT
         return ($q.ExitCode -eq 0 -and $q.StdOut.Trim() -ceq $name)
@@ -616,7 +683,7 @@ function Finish-StepRequest($DockerExe, $Root, $Path, $Barrier, $Result, $Action
     }
     if ($Result.ExitCode -eq 0 -and -not $Result.TimedOut -and -not $Result.Interrupted) {
         $receipt = Join-Path $Root ".dev-runtime\runs\$($Barrier.runId)\complete-$Action"
-        if (-not [IO.File]::Exists($receipt) -or [IO.File]::ReadAllText($receipt).TrimEnd() -cne $Barrier.stepToken) {
+        if (-not [IO.File]::Exists($receipt) -or (Read-TextShared $receipt).TrimEnd() -cne $Barrier.stepToken) {
             [Console]::Error.WriteLine("REFUSED: Missing completion receipt for $Action")
             $Result.ExitCode = 125
         }
@@ -660,7 +727,7 @@ function Resolve-StaleBarrier([string]$DockerExe, [string]$Root, [string]$Checko
         [Console]::Error.WriteLine("REFUSED: Recovery could not confirm removal of ${bProject}: $($clean.Error). Barrier kept.")
         return $false
     }
-    Remove-Item -LiteralPath $BarrierPath -Force
+    Remove-FileWithRetry -Path $BarrierPath
     return $true
 }
 
@@ -1094,7 +1161,7 @@ function Main([string[]]$InputArgs) {
                 [Console]::Error.WriteLine("REFUSED: Could not confirm stop of ${demoProject}: $($cleanDemo.Error)")
                 return $EXIT_REFUSED
             }
-            if (Test-Path -LiteralPath $demoPath) { Remove-Item -LiteralPath $demoPath -Force }
+            Remove-FileWithRetry -Path $demoPath
             [Console]::Out.WriteLine("RESULT: demo stopped ($demoProject)")
             return $EXIT_OK
         }
@@ -1142,7 +1209,7 @@ function Main([string[]]$InputArgs) {
             if ($upRes.TimedOut -or $upRes.ExitCode -ne 0) {
                 if ((Get-DemoStatus $dockerExe $root $checkoutId $demoPath) -ne 'indeterminate') {
                     $clean = Remove-EphemeralProject $dockerExe $workDir $stackCompose $demoProject $baseEnv
-                    if ($clean.Ok) { Remove-Item -LiteralPath $demoPath }
+                    if ($clean.Ok) { Remove-FileWithRetry -Path $demoPath }
                 }
                 [Console]::Error.WriteLine("FAILED: demo start failed (exit $($upRes.ExitCode)).")
                 return $EXIT_RED
@@ -1151,7 +1218,7 @@ function Main([string[]]$InputArgs) {
             $bound = $portQuery.StdOut.Trim()
             if ($portQuery.ExitCode -ne 0 -or $bound -notmatch '^127\.0\.0\.1:[1-9][0-9]*$') {
                 $clean = Remove-EphemeralProject $dockerExe $workDir $stackCompose $demoProject $baseEnv
-                if ($clean.Ok) { Remove-Item -LiteralPath $demoPath }
+                if ($clean.Ok) { Remove-FileWithRetry -Path $demoPath }
                 [Console]::Error.WriteLine("REFUSED: Demo service did not bind a loopback port (got '$bound').")
                 return $EXIT_REFUSED
             }
@@ -1241,7 +1308,7 @@ function Main([string[]]$InputArgs) {
                 [Console]::Error.WriteLine("REFUSED: Run ended without confirmed Docker create (createConfirmed=false). Barrier kept at $barrierPath.")
                 $overallExit = $EXIT_REFUSED
             } else {
-                if (Test-Path -LiteralPath $barrierPath) { Remove-Item -LiteralPath $barrierPath -Force }
+                Remove-FileWithRetry -Path $barrierPath
             }
         }
 

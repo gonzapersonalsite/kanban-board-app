@@ -80,4 +80,4 @@ file stack:react-fsd | tools/react.sh | f08b0b8cb0835499d9ed92d311d52f0ea170eea1
 file stack:react-fsd | tools/stack.txt | 7d98b4ee10be01009a55bce0ebf35540a8beb662c93e65b68989f205809a8924
 file stack:react-fsd | vitest.setup.ts | kept
 
-applied 2e152c68bbbbc6bb6615e2928663aeccf6dcab15
+applied d086d1ee0b82b606399ec931ee5c2c57996389f7

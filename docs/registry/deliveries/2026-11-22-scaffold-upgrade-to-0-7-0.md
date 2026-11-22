@@ -42,9 +42,12 @@ puertas React corren en contenedores Docker Linux coordinados desde el host con
 
 **Cómo se verificó.** El árbol de partida estaba limpio. `templates upgrade`
 planificó `ea9712794ef7` sin conflictos y `--apply` lo escribió; todos los
-pendientes quedaron cerrados con `--done` (`0` pendientes). `.\dev.cmd prepare`
-construyó las imágenes y restauró las dependencias con `--ignore-scripts`;
-`.\dev.cmd verify` salió en verde con las 9 puertas (811 checks del tablero, 28
-comprobaciones de documentos y 511 tests de Vitest, 0 fallos).
+pendientes quedaron cerrados con `--done` (`0` pendientes). Posteriormente se
+aplicó el parche `2e152c6` → `d086d1e` de `tools/launcher/dev.ps1` (plan
+`c4fd49e022b7`, reintento ante bloqueos breves de archivo en Windows).
+`.\dev.cmd prepare` construyó las imágenes y restauró las dependencias con
+`--ignore-scripts`; `.\dev.cmd verify` salió en verde con las 9 puertas (811
+checks del tablero, 28 comprobaciones de documentos y 511 tests de Vitest, 0
+fallos).
 
 **Pendiente.** Nada de esta parte.
