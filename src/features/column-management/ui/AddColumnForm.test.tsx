@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { AddColumnForm } from '@/features/column-management/ui/AddColumnForm'
 import { renderWithKanban } from '@/test/helpers/renderWithKanban'
@@ -28,5 +28,26 @@ describe('AddColumnForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /add column/i }))
 
     expect(useKanbanStore.getState().columnsByBoard[BOARD_MAIN_ID]).toHaveLength(before)
+  })
+
+  it('describes_each_field_with_the_error_of_its_own_form_when_two_forms_share_a_page', () => {
+    renderWithKanban(
+      <>
+        <section aria-label="First form">
+          <AddColumnForm />
+        </section>
+        <section aria-label="Second form">
+          <AddColumnForm />
+        </section>
+      </>,
+    )
+
+    screen.getAllByRole('button', { name: /add column/i }).forEach((button) => fireEvent.click(button))
+
+    const errorsInsideTheirOwnForm = screen.getAllByRole('region').map((form) => {
+      const field = within(form).getByLabelText('Column title')
+      return form.contains(document.getElementById(field.getAttribute('aria-describedby') ?? ''))
+    })
+    expect(errorsInsideTheirOwnForm).toEqual([true, true])
   })
 })

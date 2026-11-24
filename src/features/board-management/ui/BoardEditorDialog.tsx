@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { Button, Dialog, Input } from '@/shared/ui'
 import styles from './BoardManagement.module.css'
 
@@ -28,6 +29,8 @@ export function BoardEditorDialog({
   onClose,
   onSubmit,
 }: BoardEditorDialogProps) {
+  const errorId = useId()
+
   if (!open) return null
 
   return (
@@ -39,11 +42,11 @@ export function BoardEditorDialog({
           placeholder={placeholder}
           aria-label={title}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? 'board-dialog-error' : undefined}
+          aria-describedby={error ? errorId : undefined}
           autoFocus
         />
         {error && (
-          <p id="board-dialog-error" className={styles.error} role="alert">
+          <p id={errorId} className={styles.error} role="alert">
             {error}
           </p>
         )}

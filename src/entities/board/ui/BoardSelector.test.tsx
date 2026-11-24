@@ -52,4 +52,26 @@ describe('BoardSelector', () => {
 
     expect(useKanbanStore.getState().activeBoardId).toBe(secondaryBoardId)
   })
+
+  it('labels_each_select_with_its_own_label_when_two_selectors_share_a_page', () => {
+    useI18nStore.getState().setLocale('en')
+    renderWithKanban(
+      <>
+        <BoardSelector
+          boards={useKanbanStore.getState().boards}
+          activeBoardId={useKanbanStore.getState().activeBoardId}
+          onBoardChange={() => {}}
+        />
+        <BoardSelector
+          boards={useKanbanStore.getState().boards}
+          activeBoardId={useKanbanStore.getState().activeBoardId}
+          onBoardChange={() => {}}
+        />
+      </>,
+    )
+
+    const selects = screen.getAllByRole<HTMLSelectElement>('combobox', { name: /switch board/i })
+
+    expect(selects.map((select) => select.labels.length)).toEqual([1, 1])
+  })
 })

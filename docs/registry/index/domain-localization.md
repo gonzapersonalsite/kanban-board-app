@@ -1,10 +1,14 @@
 # Idiomas, rutas localizadas y shells HTML (índice)
 
 GENERADO por tools/board desde `docs/registry/decisions/` y `docs/registry/lessons/`. No editar a mano: se reescribe.
-board-fingerprint:be1bc10070041351 — su contenido cambió por última vez el 2026-11-19.
+board-fingerprint:92456e1f46efa9b0 — su contenido cambió por última vez el 2026-11-24.
 
 Cada decisión y cada lección del dominio `localization`, por identidad; todas rigen hoy. Antes de tocar este
 sistema se consulta esta página. El índice principal es `docs/registry/DECISIONS.md`.
+
+## ABIERTAS (1)
+
+- `#texts-the-interface-says-only-in-english` — El botón de tema y las dos pantallas de error hablan solo en inglés (OPEN 2026-11-24) · none
 
 ## CONFIRMADAS (1)
 

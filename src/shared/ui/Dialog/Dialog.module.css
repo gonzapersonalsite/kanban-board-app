@@ -20,8 +20,16 @@
 
   /* Limit height so content above is still partially visible */
   max-height: 92dvh;
-  display: flex;
   flex-direction: column;
+}
+
+/*
+ * Only once open: a display on .dialog would also show the element before showModal() runs, a field
+ * with autoFocus would take the focus there, and the browser would return the focus to that field
+ * instead of the opener when the dialog closes.
+ */
+.dialog[open] {
+  display: flex;
 }
 
 /* Backdrop: semi-transparent overlay */

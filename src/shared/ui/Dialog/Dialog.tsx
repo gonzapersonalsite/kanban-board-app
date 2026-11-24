@@ -13,15 +13,23 @@ interface DialogProps {
 
 export function Dialog({ open, onClose, title, children, closeLabel = 'Close dialog' }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const openerRef = useRef<Element | null>(null)
 
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
 
     if (open && !dialog.open) {
+      openerRef.current = document.activeElement
       dialog.showModal()
     } else if (!open && dialog.open) {
       dialog.close()
+    }
+
+    // The browser returns the focus to the opener only when a modal dialog is closed, and this one
+    // leaves by being removed: the focus goes back here, once the page is no longer inert behind it.
+    return () => {
+      if (openerRef.current instanceof HTMLElement) openerRef.current.focus()
     }
   }, [open])
 

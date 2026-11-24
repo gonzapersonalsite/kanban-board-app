@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useId, useRef, type ReactNode } from 'react'
+import { useLayoutEffect, useState, useId, useRef, type FocusEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './Tooltip.module.css'
 
@@ -37,6 +37,12 @@ export function Tooltip({ text, children }: TooltipProps) {
 
   const hide = () => setVisible(false)
 
+  // A dialog returns the focus to the button that opened it: without this, its tooltip would come up
+  // and stay for someone who is using the mouse.
+  const showForKeyboardFocus = (event: FocusEvent<HTMLSpanElement>) => {
+    if (event.target.matches(':focus-visible')) show()
+  }
+
   useLayoutEffect(() => {
     if (!visible || !triggerRef.current || !tooltipRef.current) return
 
@@ -58,7 +64,13 @@ export function Tooltip({ text, children }: TooltipProps) {
   }, [text, visible])
 
   return (
-    <span className={styles.wrapper} onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide}>
+    <span
+      className={styles.wrapper}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      onFocus={showForKeyboardFocus}
+      onBlur={hide}
+    >
       <span ref={triggerRef} aria-describedby={id} className={styles.trigger}>
         {children}
       </span>

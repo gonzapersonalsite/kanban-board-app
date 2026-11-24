@@ -173,4 +173,17 @@ describe('DataImportSection', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('The selected backup file could not be read.')
     expect(useToastStore.getState().notifications.at(-1)?.message).toBe('The selected backup file could not be read.')
   })
+
+  it('labels_each_file_field_with_its_own_label_when_two_sections_share_a_page', () => {
+    const { container } = render(
+      <>
+        <DataImportSection />
+        <DataImportSection />
+      </>,
+    )
+
+    const fileFields = [...container.querySelectorAll<HTMLInputElement>('input[type="file"]')]
+
+    expect(fileFields.map((field) => field.labels?.length)).toEqual([1, 1])
+  })
 })

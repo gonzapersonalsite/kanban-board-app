@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from 'react'
+import { useId, useState, type KeyboardEvent } from 'react'
 import { Plus } from 'lucide-react'
 import { useKanbanStore } from '@/shared/api'
 import { useTranslation } from '@/shared/i18n'
@@ -10,6 +10,7 @@ export function AddColumnForm() {
   const [title, setTitle] = useState('')
   const [error, setError] = useState<string | null>(null)
   const addColumn = useKanbanStore((state) => state.addColumn)
+  const errorId = useId()
 
   const handleSubmit = () => {
     const trimmed = title.trim()
@@ -43,11 +44,11 @@ export function AddColumnForm() {
         placeholder={t('column.title_placeholder')}
         aria-label={t('column.title_aria')}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? 'add-column-error' : undefined}
+        aria-describedby={error ? errorId : undefined}
         className={styles.input}
       />
       {error && (
-        <p id="add-column-error" className={styles.error} role="alert">
+        <p id={errorId} className={styles.error} role="alert">
           {error}
         </p>
       )}

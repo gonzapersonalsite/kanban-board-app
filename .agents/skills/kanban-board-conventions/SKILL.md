@@ -70,11 +70,12 @@ description: Convenciones de kanban-board-app (arquitectura de estado y store, d
 - Un componente contenedor ligero vive en `src/shared/ui/Dialog/Dialog.tsx` con apertura y cierre imperativos mediante `ref`.
 - Usa `showModal()` para comportamiento modal y `close()` para cerrar.
 - El componente `Dialog` acepta una prop opcional `closeLabel` (por defecto `'Close dialog'`) para el `aria-label` del botón de cierre.
+- `Dialog` devuelve el foco al elemento que lo tenía al abrirse, se cierre como se cierre. Casi todos sus consumidores lo desmontan al cerrar (`if (!open) return null`), y el navegador solo devuelve el foco cuando un diálogo modal se cierra, no cuando se quita del documento: por eso lo hace el componente. NO le pongas `display` a `.dialog` fuera de `[open]`: mostraría el diálogo antes de `showModal()`.
 
 ## Tooltips
 
 - Componente genérico de tooltip en `src/shared/ui/Tooltip/Tooltip.tsx`.
-- Acepta `text` (`string`) y `children` (`ReactNode`). Envuelve cualquier elemento para mostrar un tooltip al pasar el ratón o recibir foco.
+- Acepta `text` (`string`) y `children` (`ReactNode`). Envuelve cualquier elemento para mostrar un tooltip al pasar el ratón o cuando el teclado le trae el foco (`:focus-visible`); no cuando el foco vuelve solo tras un clic, como al cerrarse un diálogo.
 - Usa `position: fixed` con coordenadas calculadas mediante `getBoundingClientRect()` al mostrarse, de modo que flota por encima de cualquier contenedor con `overflow: hidden/auto` (columnas, modales).
 - Accesibilidad: conectado mediante `aria-describedby` en el elemento disparador y `role="tooltip"` en el tooltip.
 - Aplicado a todos los botones de solo icono en `ColumnHeader` y `TaskCard` (editar, eliminar, guardar título, cancelar edición).

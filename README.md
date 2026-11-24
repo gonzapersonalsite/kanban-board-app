@@ -58,6 +58,8 @@ Git hooks (`.githooks/`): `commit-msg` validates the commit message format (`too
 
 Feature-Sliced Design: `docs/ARCHITECTURE.md` rules the shape of the code and says what enforces each rule; `AGENTS.md` and `.agents/skills/` hold the working rules and the project conventions.
 
+The [design guide](DESIGN.md) says who the interface is for, which visual and interaction decisions it has taken, where each one is made and how to check them in a browser.
+
 Crawlers do not run the app's JavaScript, so the build writes what they read: the social preview of `index.html` and the files for crawlers and AI agents (llms.txt, robots.txt, sitemap.xml), all from one source, `tooling/agent-files/site.ts`.
 
 ## License

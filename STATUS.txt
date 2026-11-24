@@ -1,17 +1,21 @@
 ESTADO DEL PROYECTO
 GENERADO por tools/board desde el repositorio. No editar a mano: se reescribe.
-board-fingerprint:88b1d8b84f75a91a — su contenido cambió por última vez el 2026-11-19.
+board-fingerprint:be6c03afe001b654 — su contenido cambió por última vez el 2026-11-24.
 Esto es un resumen derivado. Manda el documento o el registro, no este fichero.
 ------------------------------------------------------------------------------
 PUERTAS      9 de 9 en verde (sin cambios desde 2026-10-21)
 ORDEN F      F0 ✔ > F1 ✔
 ORDEN H      H0 ✔ > H1 ✔
 
-FRENTES ABIERTOS  0 vivos (0 registros salieron por docs/registry/retired.txt)
+FRENTES ABIERTOS  4 vivos (0 registros salieron por docs/registry/retired.txt)
   Cada frente es una decision abierta; la fase es la que su registro declara. La
   lista entera, en el indice de decisiones (seccion ABIERTAS).
   POR FASE (0):
-  SIN FASE PENDIENTE (0) — su registro dice `none`, o solo nombra fases ya hechas:
+  SIN FASE PENDIENTE (4) — su registro dice `none`, o solo nombra fases ya hechas:
+    · El calendario pierde la columna del domingo en una pantalla estrecha con la letra grande
+    · El botón de tema y las dos pantallas de error hablan solo en inglés
+    · Los suelos táctiles del kit no llegan a todos los controles
+    · Qué recibe el foco al abrir un diálogo con un campo está sin decidir
 
 DEUDAS       0 vivas, 0 pagadas
 ------------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { Upload, TriangleAlert } from 'lucide-react'
 import { useTranslation } from '@/shared/i18n'
 import { Button } from '@/shared/ui'
@@ -24,6 +25,7 @@ export function DataImportSection({ onImportComplete }: DataImportSectionProps) 
     reviewSelectedFile,
     confirmImport,
   } = useDataImport({ onImportComplete })
+  const fileInputId = useId()
 
   const formattedExportedAt = preview
     ? new Intl.DateTimeFormat(locale, {
@@ -40,12 +42,12 @@ export function DataImportSection({ onImportComplete }: DataImportSectionProps) 
       </div>
 
       <div className={styles.filePicker}>
-        <label className={styles.fileLabel} htmlFor="backup-file-input">
+        <label className={styles.fileLabel} htmlFor={fileInputId}>
           {t('data_portability.select_file')}
         </label>
         <input
           key={inputKey}
-          id="backup-file-input"
+          id={fileInputId}
           className={styles.fileInput}
           type="file"
           accept=".json,application/json"

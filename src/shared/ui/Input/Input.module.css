@@ -24,12 +24,13 @@
 }
 
 /*
- * Touch: taller touch target + 16px font prevents iOS Safari auto-zoom
- * when focusing the input (iOS zooms in when font-size < 16px).
+ * Touch: taller touch target + a font of at least 16px prevents iOS Safari auto-zoom
+ * when focusing the input (iOS zooms in when font-size < 16px); above that floor it
+ * follows the reader's font size.
  */
 @media (pointer: coarse) {
   .input {
     height: var(--control-size-lg);
-    font-size: 16px;
+    font-size: max(16px, var(--font-size-body));
   }
 }
