@@ -47,4 +47,16 @@ describe('TaskDialog', () => {
 
     expect(onClose).toHaveBeenCalledOnce()
   })
+
+  it('takes_no_due_date_with_a_year_longer_than_the_screens_can_show', () => {
+    renderWithKanban(<TaskDialog open onClose={vi.fn()} onSave={vi.fn()} initialTitle="Existing" />)
+
+    expect(screen.getByLabelText('Due date')).toHaveAttribute('max', '9999-12-31')
+  })
+
+  it('opens_with_the_focus_on_the_title_of_the_task', () => {
+    renderWithKanban(<TaskDialog open onClose={vi.fn()} onSave={vi.fn()} initialTitle="Existing" />)
+
+    expect(screen.getByPlaceholderText('Task title')).toHaveFocus()
+  })
 })

@@ -22,15 +22,3 @@
   border-color: var(--color-border-focus);
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
 }
-
-/*
- * Touch: taller touch target + a font of at least 16px prevents iOS Safari auto-zoom
- * when focusing the input (iOS zooms in when font-size < 16px); above that floor it
- * follows the reader's font size.
- */
-@media (pointer: coarse) {
-  .input {
-    height: var(--control-size-lg);
-    font-size: max(16px, var(--font-size-body));
-  }
-}

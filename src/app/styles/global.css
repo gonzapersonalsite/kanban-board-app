@@ -52,8 +52,13 @@
   --control-size-md: 2.5rem;
   --control-size-lg: 2.75rem;
 
-  /* Touch target minimum (WCAG 2.5.5 / Apple HIG) */
+  /*
+   * Pointer targets: the floor of every control (WCAG 2.5.8), the one a finger gets (WCAG 2.5.5 /
+   * Apple HIG) and the one of the pointer in use.
+   */
+  --target-size-min: 24px;
   --touch-target-min: 44px;
+  --pointer-target-min: var(--target-size-min);
 
   /* Safe-area insets — filled by the browser on devices with notch/island */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -141,6 +146,36 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+}
+
+/* ─── Pointer targets ─────────────────────────────────────────────────────── */
+/*
+ * The floor of every control, said once. :where() leaves it without weight on purpose: a component
+ * that gives its control a larger minimum keeps it, and the only one that goes under the floor says
+ * so in its own stylesheet. #touch-floors-of-the-kit-do-not-reach-every-control
+ */
+:where(a[href], button, input, select, textarea, summary, [role='button']) {
+  min-block-size: var(--pointer-target-min);
+  min-inline-size: var(--pointer-target-min);
+}
+
+@media (pointer: coarse) {
+  /* Under a finger the floor is the touch one and every size of the kit is its largest. */
+  :root {
+    --pointer-target-min: var(--touch-target-min);
+    --control-size-sm: max(var(--control-size-lg), var(--touch-target-min));
+    --control-size-md: max(var(--control-size-lg), var(--touch-target-min));
+  }
+
+  /*
+   * Safari on iOS zooms the page in when a field with smaller text takes the focus. !important because
+   * a font size has no floor of its own and every field sets one: none of them is larger than 1rem.
+   */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1rem) !important;
+  }
 }
 
 /* ─── Scrollbar styling (chromium + firefox) ──────────────────────────────── */

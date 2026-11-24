@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from '@/shared/i18n'
-import { Dialog, Input, Textarea, Button } from '@/shared/ui'
+import { Dialog, DIALOG_INITIAL_FOCUS, Input, Textarea, Button } from '@/shared/ui'
 import styles from './TaskDialog.module.css'
 
 interface TaskDialogProps {
@@ -48,7 +48,7 @@ export function TaskDialog({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={t('task_dialog.title_placeholder')}
-            autoFocus
+            {...DIALOG_INITIAL_FOCUS}
           />
         </label>
         <label className={styles.label}>
@@ -62,7 +62,8 @@ export function TaskDialog({
         </label>
         <label className={styles.label}>
           {t('task_dialog.due_date_label')}
-          <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+          {/* A longer year is a day no screen can show: #a-due-date-is-a-day-of-the-calendar */}
+          <Input type="date" max="9999-12-31" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
         </label>
         <div className={styles.actions}>
           <Button type="button" variant="ghost" onClick={handleClose}>

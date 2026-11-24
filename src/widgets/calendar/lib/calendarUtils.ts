@@ -66,6 +66,14 @@ export function formatMonthYear(year: number, month: number, locale: string): st
   return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(new Date(year, month, 1))
 }
 
+export function formatDayLabel(dateStr: string, locale: string): string {
+  return new Date(`${dateStr}T12:00:00`).toLocaleDateString(locale, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
 export function getDayNames(locale: string): string[] {
   return Array.from({ length: 7 }, (_, i) =>
     new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(new Date(2024, 0, i + 1)),

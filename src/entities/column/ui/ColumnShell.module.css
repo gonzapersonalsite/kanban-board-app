@@ -13,7 +13,12 @@
   transition:
     border-color 150ms ease,
     background-color 150ms ease;
-  animation: columnEnter 0.35s ease-out both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .shell {
+    animation: columnEnter 0.35s ease-out both;
+  }
 }
 
 @keyframes columnEnter {

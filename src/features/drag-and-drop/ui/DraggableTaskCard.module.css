@@ -1,4 +1,9 @@
 .wrapper {
-  transition: transform 200ms ease;
   touch-action: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wrapper {
+    transition: transform 200ms ease;
+  }
 }

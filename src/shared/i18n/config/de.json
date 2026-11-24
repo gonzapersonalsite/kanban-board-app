@@ -102,6 +102,18 @@
   "dialog": {
     "close": "Dialog schließen"
   },
+  "theme": {
+    "switch_to_dark": "Zum dunklen Modus wechseln",
+    "switch_to_light": "Zum hellen Modus wechseln"
+  },
+  "toast": {
+    "dismiss": "Benachrichtigung schließen"
+  },
+  "error": {
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Ein unerwarteter Fehler hat verhindert, dass diese Ansicht geladen wird. Lade die Seite neu, um es noch einmal zu versuchen.",
+    "reload": "Seite neu laden"
+  },
   "dnd": {
     "role_description": "ziehbar",
     "instructions": "Drücke die Leertaste oder die Eingabetaste, um eine Karte oder Spalte aufzunehmen. Verschiebe sie mit den Pfeiltasten, lege sie mit der Leertaste oder der Eingabetaste ab oder brich mit Escape ab.",
@@ -155,7 +167,8 @@
   "validation": {
     "title_required": "Titel darf nicht leer sein",
     "task_not_found": "Aufgabe nicht gefunden",
-    "invalid_position": "Ungültige Position"
+    "invalid_position": "Ungültige Position",
+    "invalid_due_date": "Das Fälligkeitsdatum ist ungültig"
   },
   "storage": {
     "save_error": "Fehler beim Speichern. Bitte verfügbaren Speicherplatz prüfen.",

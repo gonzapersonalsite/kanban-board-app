@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { Button, Dialog, Input } from '@/shared/ui'
+import { Button, Dialog, DIALOG_INITIAL_FOCUS, Input } from '@/shared/ui'
 import styles from './BoardManagement.module.css'
 
 interface BoardEditorDialogProps {
@@ -43,7 +43,7 @@ export function BoardEditorDialog({
           aria-label={title}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          autoFocus
+          {...DIALOG_INITIAL_FOCUS}
         />
         {error && (
           <p id={errorId} className={styles.error} role="alert">

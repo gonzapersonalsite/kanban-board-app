@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { CheckCircle, XCircle, Info, AlertTriangle, X } from 'lucide-react'
+import { useTranslation } from '@/shared/i18n'
 import { useToastStore, type AppNotification } from '@/shared/toast'
 import { IconButton } from '../IconButton'
 import styles from './Toast.module.css'
@@ -13,7 +14,13 @@ const ICON_MAP = {
 
 const DISMISS_DELAY = 3500
 
-function ToastItem({ notification, onDismiss }: { notification: AppNotification; onDismiss: () => void }) {
+interface ToastItemProps {
+  notification: AppNotification
+  dismissLabel: string
+  onDismiss: () => void
+}
+
+function ToastItem({ notification, dismissLabel, onDismiss }: ToastItemProps) {
   useEffect(() => {
     const timer = setTimeout(onDismiss, DISMISS_DELAY)
     return () => clearTimeout(timer)
@@ -25,12 +32,13 @@ function ToastItem({ notification, onDismiss }: { notification: AppNotification;
     <div className={`${styles.item} ${styles[notification.type]}`} role="alert">
       <Icon className={styles.icon} aria-hidden="true" />
       <span className={styles.message}>{notification.message}</span>
-      <IconButton icon={<X />} label="Dismiss notification" onClick={onDismiss} className={styles.dismiss} />
+      <IconButton icon={<X />} label={dismissLabel} onClick={onDismiss} className={styles.dismiss} />
     </div>
   )
 }
 
 export function Toast() {
+  const { t } = useTranslation()
   const notifications = useToastStore((s) => s.notifications)
   const removeNotification = useToastStore((s) => s.removeNotification)
 
@@ -39,7 +47,12 @@ export function Toast() {
   return (
     <div className={styles.container} aria-live="polite">
       {notifications.map((n) => (
-        <ToastItem key={n.id} notification={n} onDismiss={() => removeNotification(n.id)} />
+        <ToastItem
+          key={n.id}
+          notification={n}
+          dismissLabel={t('toast.dismiss')}
+          onDismiss={() => removeNotification(n.id)}
+        />
       ))}
     </div>
   )

@@ -40,7 +40,8 @@ description: Convenciones de kanban-board-app (arquitectura de estado y store, d
 - Usa los tokens de tamaño de control:
   - `--control-size-sm` para controles compactos de escritorio.
   - `--control-size-md` para inputs y selects principales.
-  - `--control-size-lg` para contextos táctiles (`coarse-pointer`).
+  - `--control-size-lg` para el tamaño mayor. Bajo `@media (pointer: coarse)`, `global.css` da a `--control-size-sm` y `--control-size-md` el valor de `--control-size-lg`: NO repitas esa regla en la hoja de un componente.
+- Los suelos de puntero se dicen una vez, en `global.css`: una regla `:where(...)` sin peso da a todo control `min-block-size` y `min-inline-size` iguales a `--pointer-target-min` (24 px, `--target-size-min`; 44 px, `--touch-target-min`, bajo un dedo), y bajo un dedo ningún campo baja de 16 px de letra. Un componente puede darle a su control un mínimo mayor; solo baja del suelo táctil quien lo dice en su hoja con su porqué, y hoy es solo el calendario (`#touch-floors-of-the-kit-do-not-reach-every-control`). Lo exige `tooling/styles/stylesheets.test.ts`.
 - Usa tokens fluidos basados en `clamp()` para que la interfaz escale. Prioriza reutilizar tokens frente a reglas de fuente responsivas por componente salvo que el componente tenga una necesidad genuinamente única.
 
 ## Iconos
@@ -56,7 +57,7 @@ description: Convenciones de kanban-board-app (arquitectura de estado y store, d
   - indicador pequeño → `--icon-size-sm`
   - icono de acción estándar → `--icon-size-md`
   - icono destacado → `--icon-size-lg`
-- Los controles de solo icono en escritorio NO DEBEN ser menores que `--control-size-sm`. En contextos táctiles (`coarse-pointer`) DEBEN usar `--control-size-lg`.
+- Los controles de solo icono en escritorio NO DEBEN ser menores que `--control-size-sm`. En contextos táctiles (`coarse-pointer`) ese token ya vale `--control-size-lg`.
 
 ## Generación de IDs
 
@@ -69,7 +70,8 @@ description: Convenciones de kanban-board-app (arquitectura de estado y store, d
 - Usa el elemento nativo **HTML `<dialog>`** (Baseline Widely available). NO instales una librería de modales.
 - Un componente contenedor ligero vive en `src/shared/ui/Dialog/Dialog.tsx` con apertura y cierre imperativos mediante `ref`.
 - Usa `showModal()` para comportamiento modal y `close()` para cerrar.
-- El componente `Dialog` acepta una prop opcional `closeLabel` (por defecto `'Close dialog'`) para el `aria-label` del botón de cierre.
+- El componente `Dialog` exige la prop `closeLabel`, el `aria-label` traducido del botón de cierre (`t('dialog.close')`): no tiene texto por defecto para que ningún diálogo hable en otro idioma. Su título le da nombre con `aria-labelledby` y un id de `useId()`.
+- Al abrirse, `Dialog` enfoca el control que su contenido marca con `{...DIALOG_INITIAL_FOCUS}` (de `@/shared/ui`): el primer campo de un formulario o, en una confirmación, la opción que no destruye. Sin marca, el foco queda en el botón de cerrar. NO uses `autoFocus` dentro de un diálogo: React enfoca al montar, cuando el diálogo aún está cerrado (`#which-element-takes-the-focus-when-a-dialog-opens`).
 - `Dialog` devuelve el foco al elemento que lo tenía al abrirse, se cierre como se cierre. Casi todos sus consumidores lo desmontan al cerrar (`if (!open) return null`), y el navegador solo devuelve el foco cuando un diálogo modal se cierra, no cuando se quita del documento: por eso lo hace el componente. NO le pongas `display` a `.dialog` fuera de `[open]`: mostraría el diálogo antes de `showModal()`.
 
 ## Tooltips
@@ -103,7 +105,7 @@ description: Convenciones de kanban-board-app (arquitectura de estado y store, d
 - Las páginas DEBEN cargarse de forma diferida con `React.lazy()` en el nivel de ruta para dividir el bundle, y `AppRouter` pre-carga los chunks en reposo (`requestIdleCallback` con respaldo `setTimeout`).
 - Cada ruta envuelve su página diferida en `<Suspense>` con su esqueleto específico de vista (`BoardRouteSkeleton` para tablero y `CalendarRouteSkeleton` para calendario en `src/app/router/ui/AppShellRoute.tsx`), que respeta la geometría real de la pantalla y `prefers-reduced-motion`.
 - El marco compartido de las rutas (`Header`, futura navegación persistente y demás UI del shell) DEBE vivir en una ruta de layout de `src/app/router` con `<Outlet />`, nunca dentro de páginas individuales. Las páginas solo renderizan el contenido específico de su ruta.
-- Los límites de error están manejados actualmente por el `<ErrorBoundary>` de nivel de aplicación en `src/app/providers/`.
+- Hay dos límites de error: el `<ErrorBoundary>` de nivel de aplicación en `src/app/providers/` y el `errorElement` de las rutas, `RouteErrorBoundary` en `src/app/router/ui/AppRouter.tsx`. Los dos dicen qué ha pasado y qué hacer con las claves `error.*` de los ficheros de idioma y mandan el error a la consola con su etiqueta; NUNCA enseñan el mensaje del error en pantalla (`#texts-the-interface-says-only-in-english`).
 - Las rutas tienen alcance de tablero e idioma (español por defecto en la ruta raíz, inglés bajo `/en` y alemán bajo `/de`):
   - ruta raíz (y `/en`, `/de`) → redirige a `/board/:activeBoardId` (o `/en/board/:activeBoardId`, `/de/board/:activeBoardId`)
   - `/board/:boardId` (y `/en/board/:boardId`, `/de/board/:boardId`) → vista de tablero
@@ -155,7 +157,8 @@ description: Convenciones de kanban-board-app (arquitectura de estado y store, d
 - Tablero de ejemplo en la primera visita: `createInitialKanbanState()` en `src/shared/api/slices/helpers.ts` es el estado previo a la hidratación, por lo que solo es visible cuando no hay nada persistido bajo `kanban-board-storage`. Siembra el tablero por defecto localizado con tareas de ejemplo (`seed.tasks.*`) cuyas fechas de vencimiento son relativas a la visita actual. Los datos persistidos DEBEN reemplazarlo siempre al hidratar: nunca mezcles tareas de ejemplo con datos guardados ni las vuelvas a añadir. Los tableros creados con `addBoard` nacen vacíos (`createBoardData`).
 - Ciclo de vida del tablero de ejemplo (`createSampleBoardLifecycle()` en `src/shared/api/sampleBoard.ts`, conectado una vez en `src/shared/api/store.ts`): mientras el ejemplo no se haya tocado, nunca se escribe en almacenamiento, y un cambio de idioma lo relocaliza in situ con `localizeSampleBoard()` (mismos IDs y fechas de vencimiento, para que las rutas y las claves de React sigan siendo válidas). «Intacto» se decide por identidad de referencia de `boards`, `activeBoardId`, `columnsByBoard` y `tasksByBoard`, así que toda acción del store DEBE seguir reemplazando las colecciones que cambia en vez de mutarlas. El primer cambio se persiste con normalidad y, a partir de entonces, los cambios de idioma nunca tocan el tablero. Nunca relocalices ni reescribas datos persistidos.
 - Funciones de slice: `createBoardSlice`, `createColumnSlice`, `createTaskSlice`, `createDndSlice` en ficheros separados bajo `src/shared/api/slices/`.
-- La migración del esquema persistido desde el estado plano heredado se gestiona mediante `version` + `migrate` en `src/shared/api/store.ts`. Conserva la clave de almacenamiento `kanban-board-storage`.
+- La migración del esquema persistido se gestiona mediante `version` + `migrate` en `src/shared/api/store.ts` (`KANBAN_STORAGE_VERSION`, `migrateKanbanState`): la versión 1 pasa del estado plano heredado a varios tableros, y la 2 quita las fechas de vencimiento que no son un día del calendario, dejando la tarea. Conserva la clave de almacenamiento `kanban-board-storage`. Un cambio de esquema sube la versión y añade su paso, con su test en `store.test.ts`.
+- Una fecha de vencimiento es un día `AAAA-MM-DD` que existe, o no hay fecha: lo decide `isCalendarDay` (`src/shared/api/dueDate.ts`), y lo aplican el campo (`max="9999-12-31"`), las acciones del store (aviso `validation.invalid_due_date`) y la importación (`KanbanRestoreError`). Las pantallas que la formatean cuentan con ello (`#a-due-date-is-a-day-of-the-calendar`).
 
 ## Portabilidad de datos
 
@@ -292,15 +295,16 @@ Pautas:
   - `--color-card-shadow-hover`: color de sombra de tarjeta al pasar el ratón
 - **Colores de acento de columna**: definidos como el array constante `COLUMN_ACCENT_COLORS` en `src/widgets/board/ui/Board.tsx`. Se pasan a `SortableColumn` → `ColumnShell` como prop `accentColor`, aplicados mediante `style` en línea como la custom property `--column-accent`. El mismo color se pasa a `DraggableTaskCard` → `TaskCard` como `--card-accent` para la franja lateral izquierda. Los colores rotan con `index % COLUMN_ACCENT_COLORS.length`.
 - **Glassmorphism del Header**: `src/widgets/header/ui/Header.module.css` usa `background: rgba(255,255,255,0.75)` + `backdrop-filter: blur(16px)`. El modo oscuro se aplica con el selector de elemento `[data-theme='dark'] header { background: rgba(39,39,42,0.75) }` en `src/app/styles/global.css`.
-- **Gradiente primario de Button**: `src/shared/ui/Button/Button.module.css` usa `background: linear-gradient(135deg, #6366f1, #8b5cf6)` con `box-shadow` coloreado. El hover oscurece el gradiente y aplica `translateY(-1px)`.
+- **Gradiente primario de Button**: `src/shared/ui/Button/Button.module.css` usa `background: linear-gradient(135deg, #6366f1, #8b5cf6)` con `box-shadow` coloreado. El hover oscurece el gradiente y, solo para quien no pidió menos movimiento, aplica `translateY(-1px)`.
 
 ## Restricciones de CSS y animaciones
 
+- **Nada se mueve para quien pidió menos movimiento**: toda `animation`, toda transición de algo que se desplaza o cambia de tamaño (`transform`, `translate`, `scale`, `rotate`, posiciones, tamaños, márgenes o `all`) y todo `transform` en `:hover` o `:active` van dentro de `@media (prefers-reduced-motion: no-preference)`. Fuera solo cambian colores, opacidades y sombras. Lo exige `tooling/styles/stylesheets.test.ts` (`#nothing-moves-for-a-reader-who-asked-for-less-motion`).
 - **Sin `transform` en `@keyframes` sobre elementos ordenables**: las declaraciones de animación CSS (`@keyframes`) prevalecen sobre las declaraciones normales del autor (incluido `style` en línea) en la cascada CSS. Si un `@keyframes` declara `transform`, pisa cualquier `transform` en línea aplicado por `@dnd-kit` durante el arrastre y rompe el drag-and-drop.
   - ✅ `@keyframes` solo con `opacity` → seguro para animaciones de entrada en tarjetas y columnas.
   - ✅ `transform` en selectores `.hover` o `.overlayCard` → seguro (no está dentro de `@keyframes`, y los overlays son elementos separados).
   - ❌ `@keyframes` con `transform: scale(...)` o `transform: translateY(...)` → ROMPE el posicionamiento de dnd-kit.
-- **Animaciones de entrada**: `cardEnter` (`TaskCard`) y `columnEnter` (`ColumnShell`) son fundidos simples de `opacity` con `animation-fill-mode: both`, sin escalado ni desplazamiento.
+- **Animaciones de entrada**: `cardEnter` (`TaskCard`) y `columnEnter` (`ColumnShell`) son fundidos simples de `opacity` con `animation-fill-mode: both`, sin escalado ni desplazamiento, y solo para quien no pidió menos movimiento.
 - **Rotación del overlay de arrastre**: `BoardDndContext.module.css` añade `rotate(2deg)` a `.overlayCard` mediante una regla `transform` estática (no un keyframe). Es seguro porque `DragOverlay` es un elemento separado renderizado por dnd-kit, no un elemento ordenable.
 
 ## Antipatrones (tolerancia cero)

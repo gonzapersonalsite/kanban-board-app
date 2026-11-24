@@ -23,13 +23,3 @@
   border-color: var(--color-border-focus);
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
 }
-
-/*
- * Touch: a font of at least 16px prevents iOS Safari auto-zoom when focusing the textarea;
- * above that floor it follows the reader's font size.
- */
-@media (pointer: coarse) {
-  .textarea {
-    font-size: max(16px, 0.875rem);
-  }
-}

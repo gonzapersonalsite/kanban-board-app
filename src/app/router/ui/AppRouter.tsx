@@ -1,7 +1,13 @@
 import { Suspense, lazy, useEffect, type ComponentType } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider, useLocation, useRouteError } from 'react-router-dom'
 import { useKanbanStore } from '@/shared/api'
-import { PREFIXED_LOCALES, extractPathLocale, resolveSupportedLocale, useI18nStore } from '@/shared/i18n'
+import {
+  PREFIXED_LOCALES,
+  extractPathLocale,
+  resolveSupportedLocale,
+  useI18nStore,
+  useTranslation,
+} from '@/shared/i18n'
 import { buildBoardPath, resolveFallbackBoardId, type BoardViewRoute } from '@/entities/board'
 import { HomePage } from '@/pages/home'
 import { useSyncBoardRoute } from '../model/useSyncBoardRoute'
@@ -68,15 +74,22 @@ function usePrefetchPages() {
   }, [])
 }
 
+// The error is for whoever debugs and goes to the console; the screen says what happened and what the
+// reader can do. #texts-the-interface-says-only-in-english
 function RouteErrorBoundary() {
+  const { t } = useTranslation()
   const error = useRouteError()
+
+  useEffect(() => {
+    console.error('[RouteErrorBoundary]', error)
+  }, [error])
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>Something went wrong</h1>
-      <p className={styles.message}>{error instanceof Error ? error.message : 'Unexpected error'}</p>
-      <button className={styles.reloadButton} onClick={() => window.location.reload()}>
-        Reload page
+      <h1 className={styles.heading}>{t('error.title')}</h1>
+      <p className={styles.message}>{t('error.description')}</p>
+      <button type="button" className={styles.reloadButton} onClick={() => window.location.reload()}>
+        {t('error.reload')}
       </button>
     </div>
   )

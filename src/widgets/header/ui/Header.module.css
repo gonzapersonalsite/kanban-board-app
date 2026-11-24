@@ -61,7 +61,7 @@
   justify-content: center;
   min-height: var(--control-size-sm);
   padding: 0 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border-bottom: 2px solid transparent;
   transition:
     color 150ms ease,

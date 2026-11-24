@@ -102,6 +102,18 @@
   "dialog": {
     "close": "Cerrar ventana"
   },
+  "theme": {
+    "switch_to_dark": "Cambiar a modo oscuro",
+    "switch_to_light": "Cambiar a modo claro"
+  },
+  "toast": {
+    "dismiss": "Cerrar notificación"
+  },
+  "error": {
+    "title": "Algo ha ido mal",
+    "description": "Un error inesperado ha impedido cargar esta pantalla. Recarga la página para volver a intentarlo.",
+    "reload": "Recargar la página"
+  },
   "dnd": {
     "role_description": "arrastrable",
     "instructions": "Para coger una tarjeta o una columna, pulsa Espacio o Intro. Muévela con las flechas y vuelve a pulsar Espacio o Intro para soltarla, o pulsa Escape para cancelar.",
@@ -155,7 +167,8 @@
   "validation": {
     "title_required": "El título no puede estar vacío",
     "task_not_found": "Tarea no encontrada",
-    "invalid_position": "Posición no válida"
+    "invalid_position": "Posición no válida",
+    "invalid_due_date": "La fecha de vencimiento no es válida"
   },
   "storage": {
     "save_error": "No se han podido guardar los datos. Comprueba el espacio de almacenamiento disponible.",

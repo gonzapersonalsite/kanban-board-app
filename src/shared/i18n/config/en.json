@@ -102,6 +102,18 @@
   "dialog": {
     "close": "Close dialog"
   },
+  "theme": {
+    "switch_to_dark": "Switch to dark mode",
+    "switch_to_light": "Switch to light mode"
+  },
+  "toast": {
+    "dismiss": "Dismiss notification"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error stopped this screen from loading. Reload the page to try again.",
+    "reload": "Reload page"
+  },
   "dnd": {
     "role_description": "draggable",
     "instructions": "To pick up a card or column, press Space or Enter. Move it with the arrow keys, press Space or Enter again to drop it, or press Escape to cancel.",
@@ -155,7 +167,8 @@
   "validation": {
     "title_required": "Title cannot be empty",
     "task_not_found": "Task not found",
-    "invalid_position": "Invalid position"
+    "invalid_position": "Invalid position",
+    "invalid_due_date": "The due date is not valid"
   },
   "storage": {
     "save_error": "Failed to save data. Check available storage space.",

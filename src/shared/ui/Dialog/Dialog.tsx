@@ -1,6 +1,7 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { IconButton } from '../IconButton'
+import { DIALOG_INITIAL_FOCUS_SELECTOR } from './initialFocus'
 import styles from './Dialog.module.css'
 
 interface DialogProps {
@@ -8,12 +9,13 @@ interface DialogProps {
   onClose: () => void
   title: string
   children: ReactNode
-  closeLabel?: string
+  closeLabel: string
 }
 
-export function Dialog({ open, onClose, title, children, closeLabel = 'Close dialog' }: DialogProps) {
+export function Dialog({ open, onClose, title, children, closeLabel }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const openerRef = useRef<Element | null>(null)
+  const titleId = useId()
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -22,6 +24,8 @@ export function Dialog({ open, onClose, title, children, closeLabel = 'Close dia
     if (open && !dialog.open) {
       openerRef.current = document.activeElement
       dialog.showModal()
+      // showModal() leaves the focus on the first control, the close button.
+      dialog.querySelector<HTMLElement>(DIALOG_INITIAL_FOCUS_SELECTOR)?.focus()
     } else if (!open && dialog.open) {
       dialog.close()
     }
@@ -59,9 +63,11 @@ export function Dialog({ open, onClose, title, children, closeLabel = 'Close dia
   if (!open) return null
 
   return (
-    <dialog ref={dialogRef} className={styles.dialog} onClose={onClose}>
+    <dialog ref={dialogRef} className={styles.dialog} onClose={onClose} aria-labelledby={titleId}>
       <div className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
+        <h2 id={titleId} className={styles.title}>
+          {title}
+        </h2>
         <IconButton icon={<X />} label={closeLabel} onClick={onClose} />
       </div>
       <div className={styles.body}>{children}</div>

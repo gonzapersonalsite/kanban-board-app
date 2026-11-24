@@ -4,6 +4,18 @@ import type { KanbanState, Task, TaskSlice } from './types'
 import { getActiveBoardId, getActiveBoardTasks, setActiveBoardTasks } from './helpers'
 import { useI18nStore } from '@/shared/i18n'
 import { useToastStore } from '@/shared/toast'
+import { isCalendarDay } from '../dueDate'
+
+// The date field does not give one, and the store keeps none: #a-due-date-is-a-day-of-the-calendar
+function refusesDueDate(dueDate: string | undefined): boolean {
+  if (!dueDate || isCalendarDay(dueDate)) {
+    return false
+  }
+
+  const t = useI18nStore.getState().t
+  useToastStore.getState().addNotification('error', t('validation.invalid_due_date'))
+  return true
+}
 
 export function createTaskSlice(
   initialState: Pick<KanbanState, 'tasksByBoard'>,
@@ -16,6 +28,10 @@ export function createTaskSlice(
       if (!trimmed) {
         const t = useI18nStore.getState().t
         useToastStore.getState().addNotification('error', t('validation.title_required'))
+        return
+      }
+
+      if (refusesDueDate(dueDate)) {
         return
       }
 
@@ -46,7 +62,11 @@ export function createTaskSlice(
       useToastStore.getState().addNotification('success', t('feedback.task_created'))
     },
 
-    updateTask: (columnId, taskId, data) =>
+    updateTask: (columnId, taskId, data) => {
+      if (refusesDueDate(data.dueDate)) {
+        return
+      }
+
       set((state) => {
         const boardId = getActiveBoardId(state)
         if (!boardId) {
@@ -69,7 +89,8 @@ export function createTaskSlice(
             [columnId]: columnTasks.map((task) => (task.id === taskId ? { ...task, ...data } : task)),
           }),
         }
-      }),
+      })
+    },
 
     deleteTask: (columnId, taskId) => {
       set((state) => {

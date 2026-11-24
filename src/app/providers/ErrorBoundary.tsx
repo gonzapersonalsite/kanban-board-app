@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import { useI18nStore } from '@/shared/i18n'
 import styles from './ErrorBoundary.module.css'
 
 interface ErrorBoundaryProps {
@@ -30,14 +31,17 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   render() {
     if (this.state.hasError) {
+      // Read once and not subscribed: this screen replaces the whole app, language selector included.
+      const { t } = useI18nStore.getState()
+
       return (
         <div className={styles.container}>
           <div className={styles.card}>
             <AlertTriangle className={styles.icon} aria-hidden="true" />
-            <h1 className={styles.title}>Something went wrong</h1>
-            <p className={styles.description}>An unexpected error occurred. Please try reloading the page.</p>
+            <h1 className={styles.title}>{t('error.title')}</h1>
+            <p className={styles.description}>{t('error.description')}</p>
             <button type="button" className={styles.button} onClick={this.handleReload}>
-              Reload page
+              {t('error.reload')}
             </button>
           </div>
         </div>

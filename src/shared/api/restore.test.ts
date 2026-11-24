@@ -3,7 +3,31 @@ import { createKanbanFixture } from '@/test/fixtures/kanbanFixtures'
 import { createTestKanbanStore } from '@/test/helpers/storeTestUtils'
 import { KanbanRestoreError, normalizePortableKanbanState, restoreKanbanStateInStore } from './restore'
 
+function stateWithOneTaskDue(dueDate: unknown) {
+  return {
+    boards: [{ id: 'board-1', title: 'Board 1' }],
+    activeBoardId: 'board-1',
+    columnsByBoard: { 'board-1': [{ id: 'col-1', title: 'Todo' }] },
+    tasksByBoard: { 'board-1': { 'col-1': [{ id: 'task-1', title: 'Task', description: '', dueDate }] } },
+  }
+}
+
 describe('kanban restore boundary', () => {
+  it('keeps_the_due_date_of_a_task_when_it_is_a_day_of_the_calendar', () => {
+    const normalized = normalizePortableKanbanState(stateWithOneTaskDue(' 2028-02-29 '))
+
+    expect(normalized.tasksByBoard['board-1']['col-1'][0].dueDate).toBe('2028-02-29')
+  })
+
+  it.each(['not-a-date', '2026-02-30', '2026-13-01', '24/11/2026', '2026-11-24T10:00:00Z', '2026-1-5'])(
+    'rejects_a_task_due_on_%s_because_no_screen_can_show_that_day',
+    (dueDate) => {
+      expect(() => normalizePortableKanbanState(stateWithOneTaskDue(dueDate))).toThrowError(
+        new KanbanRestoreError(`Task "task-1" in column "col-1" has a dueDate that is not a YYYY-MM-DD day.`),
+      )
+    },
+  )
+
   it('normalizes_portable_state_and_discards_orphaned_data', () => {
     const normalized = normalizePortableKanbanState({
       boards: [{ id: ' board-1 ', title: '  Board 1  ' }],

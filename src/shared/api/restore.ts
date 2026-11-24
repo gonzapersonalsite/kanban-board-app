@@ -8,6 +8,7 @@ import type {
   TasksByBoard,
   TasksByColumn,
 } from './slices/types'
+import { isCalendarDay } from './dueDate'
 import { useKanbanStore } from './store'
 
 export class KanbanRestoreError extends Error {
@@ -169,7 +170,10 @@ function normalizeTasks(value: unknown, boardId: BoardId, columnId: ColumnId): T
       candidate.description,
       `Task "${id}" in column "${columnId}" must have a description string.`,
     )
-    const dueDate = normalizeOptionalString(candidate.dueDate)
+    const dueDate = normalizeDueDate(
+      candidate.dueDate,
+      `Task "${id}" in column "${columnId}" has a dueDate that is not a YYYY-MM-DD day.`,
+    )
 
     if (seenTaskIds.has(id)) {
       throw new KanbanRestoreError(`Task id "${id}" is duplicated in column "${columnId}" of board "${boardId}".`)
@@ -202,7 +206,7 @@ function normalizeString(value: unknown, message: string): string {
   return value
 }
 
-function normalizeOptionalString(value: unknown): string | undefined {
+function normalizeDueDate(value: unknown, message: string): string | undefined {
   if (value === undefined) {
     return undefined
   }
@@ -212,7 +216,15 @@ function normalizeOptionalString(value: unknown): string | undefined {
   }
 
   const normalized = value.trim()
-  return normalized.length > 0 ? normalized : undefined
+  if (normalized.length === 0) {
+    return undefined
+  }
+
+  if (!isCalendarDay(normalized)) {
+    throw new KanbanRestoreError(message)
+  }
+
+  return normalized
 }
 
 function toRecord(value: unknown, message: string): Record<string, unknown> {

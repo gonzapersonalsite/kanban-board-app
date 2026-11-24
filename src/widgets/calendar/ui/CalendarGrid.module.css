@@ -8,8 +8,10 @@
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
@@ -22,7 +24,7 @@
 .navBtn {
   background: none;
   border: 1px solid var(--color-card-border);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   width: 32px;
   height: 32px;
   font-size: 1.125rem;
@@ -50,7 +52,8 @@
 .todayBtn {
   background: none;
   border: 1px solid var(--color-card-border);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
+  margin-inline-start: auto;
   padding: 6px 14px;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -63,14 +66,33 @@
   background: rgba(0, 0, 0, 0.06);
 }
 
+/*
+ * The month never shrinks under its content: when it is taller than the page the calendar scrolls, and
+ * when its seven days are wider than this box the box scrolls sideways.
+ */
+.gridViewport {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.gridViewport:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;
-  flex: 1;
+  flex: 1 0 auto;
+  min-width: min-content;
   background: var(--color-card-border);
   border: 1px solid var(--color-card-border);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -102,8 +124,13 @@
   background: rgba(0, 0, 0, 0.02);
 }
 
+/* Dimmed as far as its text still reads: the days of the other months hold tasks too. */
 .otherMonth {
-  opacity: 0.35;
+  opacity: 0.65;
+}
+
+.otherMonth .moreBtn {
+  color: var(--color-text);
 }
 
 .today {
@@ -148,6 +175,7 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  -webkit-box-pack: center;
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -207,7 +235,7 @@
   text-align: left;
   padding: 8px 12px;
   border: 1px solid var(--color-card-border);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   background: var(--color-card-bg);
   cursor: pointer;
   font-size: 0.875rem;
@@ -222,6 +250,18 @@
 
 .dayOverflowItem:hover {
   background: rgba(0, 0, 0, 0.04);
+}
+
+/*
+ * A task of a month cell keeps the floor of every pointer under a finger too: at the touch floor two
+ * tasks and their count do not fit in a cell. #touch-floors-of-the-kit-do-not-reach-every-control
+ */
+@media (pointer: coarse) {
+  .taskLabel,
+  .moreBtn {
+    min-block-size: var(--target-size-min);
+    min-inline-size: var(--target-size-min);
+  }
 }
 
 @media (min-width: 768px) {

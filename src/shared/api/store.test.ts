@@ -5,7 +5,7 @@ import { createTestKanbanStore } from '@/test/helpers/storeTestUtils'
 import { createInitialKanbanState } from './slices/helpers'
 import type { KanbanState, PortableKanbanState } from './slices/types'
 import { useKanbanStore } from './store'
-import { createSafeStorage, KANBAN_STORAGE_KEY, migrateKanbanState } from './store'
+import { createSafeStorage, KANBAN_STORAGE_KEY, KANBAN_STORAGE_VERSION, migrateKanbanState } from './store'
 
 function pickPortableState(state: KanbanState): PortableKanbanState {
   const { boards, activeBoardId, columnsByBoard, tasksByBoard } = state
@@ -105,7 +105,7 @@ describe('sample board lifecycle', () => {
 
   it('never_changes_persisted_user_data_when_the_locale_changes', async () => {
     const userData = createKanbanFixture()
-    const storedValue = JSON.stringify({ state: userData, version: 1 })
+    const storedValue = JSON.stringify({ state: userData, version: KANBAN_STORAGE_VERSION })
     localStorage.setItem(KANBAN_STORAGE_KEY, storedValue)
     const { useKanbanStore: store, useI18nStore: i18n } = await loadFreshStores()
 
@@ -180,6 +180,43 @@ describe('store migration', () => {
     expect(migrated.columnsByBoard?.[boardId]).toEqual(legacyState.columns)
     expect(migrated.tasksByBoard?.[boardId]?.['col-1']).toEqual(legacyState.tasks['col-1'])
     expect(migrated.tasksByBoard?.[boardId]?.['col-2']).toEqual([])
+  })
+
+  it('keeps_a_task_and_drops_its_due_date_when_a_board_was_stored_with_a_date_no_screen_can_show', () => {
+    const stored = {
+      boards: [{ id: 'board-1', title: 'Board' }],
+      activeBoardId: 'board-1',
+      columnsByBoard: { 'board-1': [{ id: 'col-1', title: 'To Do' }] },
+      tasksByBoard: {
+        'board-1': {
+          'col-1': [
+            { id: 'task-1', title: 'Typed with a long year', description: '', dueDate: '20000-01-01' },
+            { id: 'task-2', title: 'Due on a real day', description: '', dueDate: '2026-07-15' },
+            { id: 'task-3', title: 'Never due', description: '' },
+          ],
+        },
+      },
+    }
+
+    const migrated = migrateKanbanState(stored, 1)
+
+    expect(migrated.tasksByBoard?.['board-1']['col-1']).toEqual([
+      { id: 'task-1', title: 'Typed with a long year', description: '' },
+      { id: 'task-2', title: 'Due on a real day', description: '', dueDate: '2026-07-15' },
+      { id: 'task-3', title: 'Never due', description: '' },
+    ])
+  })
+
+  it('opens_a_board_stored_with_a_due_date_no_screen_can_show_without_that_date', async () => {
+    const userData = createKanbanFixture()
+    const [firstColumn] = userData.columnsByBoard[userData.activeBoardId]
+    userData.tasksByBoard[userData.activeBoardId][firstColumn.id][0].dueDate = '20000-01-01'
+    localStorage.setItem(KANBAN_STORAGE_KEY, JSON.stringify({ state: userData, version: 1 }))
+
+    await useKanbanStore.persist.rehydrate()
+
+    const [firstTask] = useKanbanStore.getState().tasksByBoard[userData.activeBoardId][firstColumn.id]
+    expect({ title: firstTask.title, dueDate: firstTask.dueDate }).toEqual({ title: 'Alpha', dueDate: undefined })
   })
 
   it('shows_an_error_when_persisted_storage_cannot_be_saved', () => {

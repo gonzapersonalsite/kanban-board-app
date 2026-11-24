@@ -1,6 +1,6 @@
 export function AppIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect width="32" height="32" rx="6" fill="#6366f1" />
       <rect x="5" y="6" width="22" height="2" rx="1" fill="#fff" opacity="0.9" />
       <rect x="5" y="11" width="22" height="2" rx="1" fill="#fff" opacity="0.7" />

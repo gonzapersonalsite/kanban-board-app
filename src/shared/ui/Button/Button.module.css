@@ -10,8 +10,7 @@
   cursor: pointer;
   transition:
     background-color 120ms ease,
-    box-shadow 120ms ease,
-    transform 150ms ease;
+    box-shadow 120ms ease;
   line-height: 1;
 }
 
@@ -56,7 +55,20 @@
   background-color: #4338ca;
   background-image: linear-gradient(135deg, #4338ca, #5b21b6);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
-  transform: translateY(-1px);
+}
+
+/* The button lifts only for the reader who has not asked for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .button {
+    transition:
+      background-color 120ms ease,
+      box-shadow 120ms ease,
+      transform 150ms ease;
+  }
+
+  .primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
 }
 
 .ghost {
@@ -78,17 +90,9 @@
   background: #b91c1c;
 }
 
-/*
- * Touch devices: bump all button heights to the 44px minimum
- * so every interactive element is comfortable to tap (WCAG 2.5.5 / Apple HIG).
- */
+/* Touch: the small button grows with the sizes of the kit (global.css) and takes a wider side. */
 @media (pointer: coarse) {
   .sm {
-    height: var(--control-size-lg);
     padding-inline: 16px;
-  }
-
-  .md {
-    height: var(--control-size-lg);
   }
 }

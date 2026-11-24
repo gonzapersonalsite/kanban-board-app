@@ -25,10 +25,15 @@ vi.mock('@dnd-kit/react/sortable', () => ({
   }),
 }))
 
+// What the board page throws while it renders, for the tests of the screen a failed route leaves.
+const boardPage = vi.hoisted(() => ({ failure: null as Error | null }))
+
 vi.mock('@/pages/home', () => ({
   HomePage: () => {
     const location = useLocation()
     const params = useParams()
+
+    if (boardPage.failure) throw boardPage.failure
 
     return <div>{`Home Page:${location.pathname}:${params.boardId ?? ''}`}</div>
   },
@@ -54,7 +59,43 @@ vi.mock('@/widgets/header', () => ({
 describe('AppRouter', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    boardPage.failure = null
     window.history.pushState({}, '', '/')
+  })
+
+  it('says_what_happened_in_the_language_of_the_interface_when_a_route_fails_to_render', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    boardPage.failure = new Error('Invalid time value')
+    resetPersistedKanbanStore(useKanbanStore.setState)
+    window.history.pushState({}, '', `/board/${BOARD_MAIN_ID}`)
+    vi.resetModules()
+    const { AppRouter } = await import('./AppRouter')
+
+    render(<AppRouter />)
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Algo ha ido mal' })).toBeInTheDocument()
+    })
+    expect(screen.getByRole('button', { name: 'Recargar la página' })).toBeInTheDocument()
+  })
+
+  it('keeps_the_message_of_a_failed_route_off_the_screen_and_leaves_it_in_the_console', async () => {
+    vi.spyOn(navigator, 'language', 'get').mockReturnValue('es-ES')
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    boardPage.failure = new Error('Invalid time value')
+    resetPersistedKanbanStore(useKanbanStore.setState)
+    window.history.pushState({}, '', `/board/${BOARD_MAIN_ID}`)
+    vi.resetModules()
+    const { AppRouter } = await import('./AppRouter')
+
+    render(<AppRouter />)
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Recargar la página' })).toBeInTheDocument()
+    })
+    expect(screen.queryByText(/Invalid time value/)).toBeNull()
+    expect(consoleError).toHaveBeenCalledWith('[RouteErrorBoundary]', boardPage.failure)
   })
 
   it('redirects_root_to_the_spanish_active_board_route_by_default', async () => {

@@ -36,4 +36,10 @@ describe('BoardEditorDialog', () => {
 
     expect(errorsInsideTheirOwnDialog).toEqual([true, true])
   })
+
+  it('opens_with_the_focus_on_the_name_of_the_board', () => {
+    render(<EditorWithError title="New board" />)
+
+    expect(screen.getByRole('textbox', { name: 'New board' })).toHaveFocus()
+  })
 })

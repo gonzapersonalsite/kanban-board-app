@@ -89,15 +89,8 @@
   height: var(--control-size-sm);
 }
 
-/*
- * Touch devices don't have hover — always show the edit icon
- * and ensure the button meets the 44px touch target minimum (WCAG 2.5.5).
- */
+/* Touch devices don't have hover — always show the edit icon. */
 @media (pointer: coarse) {
-  .titleButton {
-    min-height: var(--touch-target-min);
-  }
-
   .editIcon {
     opacity: 1;
   }

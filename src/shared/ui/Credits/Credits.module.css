@@ -45,6 +45,8 @@
 }
 
 .link {
+  display: inline-flex;
+  align-items: center;
   border-radius: 2px;
   color: var(--color-primary);
   font-size: var(--font-size-body-sm);

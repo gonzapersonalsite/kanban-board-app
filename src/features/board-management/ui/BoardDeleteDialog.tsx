@@ -1,4 +1,4 @@
-import { Button, Dialog } from '@/shared/ui'
+import { Button, Dialog, DIALOG_INITIAL_FOCUS } from '@/shared/ui'
 import styles from './BoardManagement.module.css'
 
 interface BoardDeleteDialogProps {
@@ -32,7 +32,7 @@ export function BoardDeleteDialog({
         <p className={styles.message}>{message}</p>
         <p className={styles.message}>{boardTitle}</p>
         <div className={styles.dialogActions}>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} {...DIALOG_INITIAL_FOCUS}>
             {cancelLabel}
           </Button>
           <Button variant="danger" onClick={onConfirm}>

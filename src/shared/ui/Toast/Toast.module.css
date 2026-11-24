@@ -19,8 +19,13 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   border-left: 4px solid;
-  animation: slideIn 0.25s ease-out;
   pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .item {
+    animation: slideIn 0.25s ease-out;
+  }
 }
 
 .success {

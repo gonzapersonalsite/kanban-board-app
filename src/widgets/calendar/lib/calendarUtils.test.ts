@@ -5,6 +5,7 @@ import {
   getDueDateStatus,
   getTodayStr,
   getDayNames,
+  formatDayLabel,
   formatMonthYear,
 } from './calendarUtils'
 import type { ColumnId, Task } from '@/shared/api'
@@ -126,6 +127,16 @@ describe('calendarUtils', () => {
     it('uses_spanish_locale', () => {
       const result = formatMonthYear(2026, 0, 'es')
       expect(result).toMatch(/enero.*2026/)
+    })
+  })
+
+  describe('formatDayLabel', () => {
+    it.each([
+      ['en', 'Wednesday, July 15'],
+      ['es', 'miércoles, 15 de julio'],
+      ['de', 'Mittwoch, 15. Juli'],
+    ])('says_the_weekday_the_day_and_the_month_in_%s', (locale, label) => {
+      expect(formatDayLabel('2026-07-15', locale)).toBe(label)
     })
   })
 })

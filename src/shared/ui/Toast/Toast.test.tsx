@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useI18nStore } from '@/shared/i18n'
 import { useToastStore } from '@/shared/toast'
 import { Toast } from './Toast'
 
@@ -10,6 +11,7 @@ describe('Toast', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    act(() => useI18nStore.getState().setLocale('en'))
   })
 
   it('renders_nothing_when_there_are_no_notifications', () => {
@@ -37,6 +39,15 @@ describe('Toast', () => {
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     expect(useToastStore.getState().notifications).toEqual([])
+  })
+
+  it('names_its_dismiss_button_in_the_language_of_the_interface', () => {
+    act(() => useI18nStore.getState().setLocale('es'))
+    act(() => useToastStore.getState().addNotification('info', 'Léeme'))
+
+    render(<Toast />)
+
+    expect(screen.getByRole('button', { name: 'Cerrar notificación' })).toBeInTheDocument()
   })
 
   it('dismisses_a_notification_by_itself_after_three_and_a_half_seconds', () => {

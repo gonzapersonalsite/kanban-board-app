@@ -64,4 +64,16 @@ describe('BoardManagement', () => {
     expect(useKanbanStore.getState().boards.some((board) => board.id === secondaryBoardId)).toBe(false)
     expect(useKanbanStore.getState().activeBoardId).toBe(BOARD_MAIN_ID)
   })
+
+  it('opens_the_delete_confirmation_with_the_focus_on_cancel', () => {
+    useI18nStore.getState().setLocale('en')
+    renderWithKanban(<BoardManagement />)
+    act(() => {
+      useKanbanStore.getState().addBoard('Secondary')
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /delete board/i }))
+
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus()
+  })
 })

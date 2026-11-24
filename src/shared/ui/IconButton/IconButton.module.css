@@ -58,11 +58,3 @@
 .danger:hover:not(:disabled) {
   background: rgba(220, 38, 38, 0.08);
 }
-
-/* Touch devices: expand to 44×44 minimum for comfortable tapping */
-@media (pointer: coarse) {
-  .button {
-    width: var(--control-size-lg);
-    height: var(--control-size-lg);
-  }
-}

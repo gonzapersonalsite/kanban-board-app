@@ -6,6 +6,7 @@ import {
   TASK_ALPHA_ID,
   TASK_BETA_ID,
 } from '@/test/fixtures/kanbanFixtures'
+import { useToastStore } from '@/shared/toast'
 import { createTestKanbanStore, resetKanbanStore } from '@/test/helpers/storeTestUtils'
 
 vi.mock('nanoid', () => ({
@@ -17,6 +18,7 @@ describe('taskSlice', () => {
 
   beforeEach(() => {
     resetKanbanStore(store)
+    useToastStore.setState({ notifications: [] })
   })
 
   describe('addTask', () => {
@@ -37,6 +39,18 @@ describe('taskSlice', () => {
       store.getState().addTask(COLUMN_TODO_ID, '   ')
 
       expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toHaveLength(before)
+    })
+
+    it('adds_no_task_and_says_why_when_its_due_date_is_no_day_of_the_calendar', () => {
+      const before = store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].length
+
+      store.getState().addTask(COLUMN_TODO_ID, 'New task', '', '2026-02-30')
+
+      expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toHaveLength(before)
+      expect(useToastStore.getState().notifications.at(-1)).toMatchObject({
+        type: 'error',
+        message: 'The due date is not valid',
+      })
     })
   })
 
@@ -66,6 +80,28 @@ describe('taskSlice', () => {
       })
 
       expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toEqual(before)
+    })
+
+    it('keeps_the_task_as_it_was_and_says_why_when_its_new_due_date_is_no_day_of_the_calendar', () => {
+      const before = store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]
+
+      store.getState().updateTask(COLUMN_TODO_ID, TASK_ALPHA_ID, { title: 'Updated alpha', dueDate: '20000-01-01' })
+
+      expect(store.getState().tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID]).toEqual(before)
+      expect(useToastStore.getState().notifications.at(-1)).toMatchObject({
+        type: 'error',
+        message: 'The due date is not valid',
+      })
+    })
+
+    it('changes_the_due_date_of_a_task_to_another_day_of_the_calendar', () => {
+      store.getState().updateTask(COLUMN_TODO_ID, TASK_ALPHA_ID, { dueDate: '2026-08-01' })
+
+      const updated = store
+        .getState()
+        .tasksByBoard[BOARD_MAIN_ID][COLUMN_TODO_ID].find((task) => task.id === TASK_ALPHA_ID)
+
+      expect(updated?.dueDate).toBe('2026-08-01')
     })
   })
 
