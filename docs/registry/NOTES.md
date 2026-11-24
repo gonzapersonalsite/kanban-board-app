@@ -1,7 +1,7 @@
 # Notas de desarrollo (índice)
 
 GENERADO por tools/board desde `docs/registry/deliveries/` y `docs/registry/lessons/`. No editar a mano: se reescribe.
-board-fingerprint:d9b3ee77fc471d1e — su contenido cambió por última vez el 2026-11-24.
+board-fingerprint:74146e6b7b1030c6 — su contenido cambió por última vez el 2026-11-24.
 
 Cada entrega es un fichero `docs/registry/deliveries/<fecha>-<tema>.md` con lo que se hizo, cómo se
 verificó y qué costó; cada lección es un fichero `docs/registry/lessons/<identidad>.md` y se cita como
@@ -9,11 +9,12 @@ verificó y qué costó; cada lección es un fichero `docs/registry/lessons/<ide
 entregas dicen cómo llegó a estar así. Aquí van las más recientes de cada clase; todas,
 mes a mes, en su índice del mes.
 
-## Entregas (14; aquí las 14 más recientes)
+## Entregas (15; aquí las 15 más recientes)
 
 - 2026-11-24 `#2026-11-24-design-guide-and-reader-conditions` Guía de diseño del producto y la interfaz bajo las condiciones de quien la lee
 - 2026-11-24 `#2026-11-24-interface-decisions-closed-before-redesign` Las decisiones abiertas de la interfaz cerradas antes del rediseño, con el calendario que se desplaza, el foco al abrir un diálogo, los suelos de puntero, los textos traducidos, el movimiento reducido y las fechas que no rompen el tablero
 - 2026-11-24 `#2026-11-24-scaffold-upgrade-to-0-8-1` Actualización a agentic-scaffold 0.8.1 y auditoría sobre el árbol de trabajo
+- 2026-11-24 `#2026-11-24-scaffold-upgrade-to-0-8-2` Actualización a agentic-scaffold 0.8.2: los lanzadores dicen por qué se rechaza un plan
 - 2026-11-22 `#2026-11-22-scaffold-upgrade-to-0-7-0` Actualización a agentic-scaffold 0.7.0 y lanzador containerizado
 - 2026-11-19 `#2026-11-19-scaffold-upgrade-to-0-6-0` Actualización a agentic-scaffold 0.6.0, migración del registro y parches de React
 - 2026-11-11 `#2026-11-11-scaffold-upgrade-to-0-4-0` Actualización a agentic-scaffold 0.4.0, con el tablero como página
@@ -38,6 +39,6 @@ mes a mes, en su índice del mes.
 
 ## Por mes (3 índices)
 
-- `docs/registry/index/notes-2026-11.md` — 2026-11: 6 entregas, 0 lecciones
+- `docs/registry/index/notes-2026-11.md` — 2026-11: 7 entregas, 0 lecciones
 - `docs/registry/index/notes-2026-10.md` — 2026-10: 8 entregas, 0 lecciones
 - `docs/registry/index/notes-2026-09.md` — 2026-09: 0 entregas, 7 lecciones
